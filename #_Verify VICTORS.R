@@ -3,6 +3,9 @@
 ## Paper: https://www.science.org/doi/10.1126/science.aad0501
 ### ChatGPT Record: https://chat.openai.com/share/58ed3d0f-f52f-4643-8ce7-8d2b4997829a
 
+# [] Set_Ref_Delet 修正
+
+
 ##### Presetting ######
 rm(list = ls()) # Clean variable ##* Comment out if Run All
 memory.limit(150000)
@@ -176,7 +179,7 @@ for (score_type in score_types) {
 ##### Visualization #####
 # ## Plot cell type count
 # try({ source("Run_CellCount.R") })
-source("Plot_Histograms_AnnoDiagnosis.R")
+source("Visualization_AnnoDiagnosis.R")
 
 
 ##### Export #####
