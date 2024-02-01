@@ -66,7 +66,7 @@ CombPlot_VICTORS_Hist <- function(Metadata, Set_Annotation = "Cell_Type",
 }
 
 CombPlot <- CombPlot_VICTORS_Hist(metadata, Set_Annotation = score_types[1],
-                                  Set_fill = State, Set_color = color_State)
+                                  Set_fill = "State", Set_color = color_State)
 print(CombPlot)
 
 
