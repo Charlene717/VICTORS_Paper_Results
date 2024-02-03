@@ -4,6 +4,12 @@
 ### ChatGPT Record: https://chat.openai.com/share/58ed3d0f-f52f-4643-8ce7-8d2b4997829a
 
 # [] Set_Ref_Delet 修正
+# [] 程式碼整理
+
+# [] For Run All
+# [] Run All視覺化
+
+# [] Regression包兩層
 
 
 ##### Presetting ######
