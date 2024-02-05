@@ -25,15 +25,19 @@ for (cell in cell_types) {
 # 使用來自所有的seuratObject_Ref模型預測seuratObject_Sample
 predict_seurat_LR_All <- function(seuratObject, models, cell_types, score_columns) {
   results_df <- data.frame(matrix(nrow=nrow(seuratObject@meta.data), ncol=length(cell_types)))
-  colnames(results_df) <- paste0(cell_types, " LRScore")
+  colnames(results_df) <- paste0(cell_types, " VICTORSScore")
 
   for (cell in cell_types) {
     X_data <- as.matrix(seuratObject@meta.data[, score_columns])
 
     prob <- predict(models[[cell]], newx=X_data, type="response", s=0.01)
-    results_df[[paste0(cell, " LRScore")]] <- prob[,1]
+    results_df[[paste0(cell, " VICTORSScore")]] <- prob[,1]
 
   }
+
+
+  # Rename meta.data
+  colnames(seuratObject@meta.data) <- gsub("VICTORSScore$", "VICTORSScore.1", colnames(seuratObject@meta.data))
 
   # Update metadata
   seuratObject@meta.data <- cbind(seuratObject@meta.data, results_df)
