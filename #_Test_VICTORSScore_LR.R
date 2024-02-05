@@ -3,6 +3,28 @@ if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("glmnet")) install.packages("glmnet"); library(glmnet)
 
+#### Rank Score ####
+Set_RankScore = FALSE # Set_RankScore = TRUE
+if(Set_RankScore == TRUE){
+  # 從seuratObject選出符合條件的欄位
+  score_columns_ref <- grep("VICTORSScore$", colnames(seuratObject_Ref@meta.data), value=TRUE)
+  score_columns_sample <- grep("VICTORSScore$", colnames(seuratObject_Sample@meta.data), value=TRUE)
+
+  # Function to rank values in a row and return the rankings
+  rank_row <- function(row) { rank(row) }
+
+  # Apply the ranking for seuratObject_Ref
+  ranked_data_ref <- t(apply(seuratObject_Ref@meta.data[, score_columns_ref], 1, rank_row))
+  colnames(seuratObject_Ref@meta.data) <- gsub("VICTORSScore$", "VICTORSScore.woRank", colnames(seuratObject_Ref@meta.data))
+  seuratObject_Ref@meta.data <- cbind(seuratObject_Ref@meta.data, ranked_data_ref)
+
+  # Apply the ranking for seuratObject_Sample
+  ranked_data_sample <- t(apply(seuratObject_Sample@meta.data[, score_columns_sample], 1, rank_row))
+  colnames(seuratObject_Sample@meta.data) <- gsub("VICTORSScore$", "VICTORSScore.woRank", colnames(seuratObject_Sample@meta.data))
+  seuratObject_Sample@meta.data <- cbind(seuratObject_Sample@meta.data, ranked_data_sample)
+}
+
+
 #### Logistic Regression ####
 # 從seuratObject_Ref@meta.data選出符合條件的欄位
 score_columns_ref <- grep("VICTORSScore$", colnames(seuratObject_Ref@meta.data), value=TRUE)
