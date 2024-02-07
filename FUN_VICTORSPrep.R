@@ -42,7 +42,7 @@ setGeneric("get_metadata", def = function(object) {
 ################################################################################
 ## getFeatureSpace.R
 
-getFeatureSpace <- function(object, pvar, correction = "fdr", sig = 1, reduction = "pca"){
+getFeatureSpace <- function(object, pvar, correction = "fdr", sig = 0.01, reduction = "pca"){
 
 
   # Validations -------------------------------------------------------------
