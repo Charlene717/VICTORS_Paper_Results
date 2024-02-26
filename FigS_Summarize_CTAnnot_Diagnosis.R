@@ -10,14 +10,16 @@ library(data.table)
 
 #### Load data ####
 # load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_GSE136831_COPD/#_AllMix_Export_GSE136831_Sum/20240110193729_GSE136831_Sum_SVDLRglmnet_ROC.RData")
-
-# folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20240111_IntCT_scRNAseqPanc_Muraro/#_AllMix_Export_20240111_IntCT_scRNAseqPanc_Baron_Muraro_Sum/"
-# load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20240111_IntCT_scRNAseqPanc_Muraro/#_AllMix_Export_20240111_IntCT_scRNAseqPanc_Baron_Muraro_Sum/20240111113332_Muraro_Baron_Sum_SVDLRglmnet_ROC.RData")
-
 # load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20231209_GSE132044_OriQC_DeBug/#_AllMix_Export_GSE132044_OriQC_DeBug_Sum/20240101035050_GSE132044_Sum_SVDLRglmnet_ROC.RData")
 
-folder_path <-"D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_GSE135893_GSE128033_PropSame/#_AllMix_Export_GSE135893_GSE128033_Sum/"
-load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_GSE135893_GSE128033_PropSame/#_AllMix_Export_GSE135893_GSE128033_Sum/20240115025955_GSE135893_GSE128033_Sum_SVDLRglmnet_ROC.RData")
+folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20240111_IntCT_scRNAseqPanc_Muraro/#_AllMix_Export_20240111_IntCT_scRNAseqPanc_Baron_Muraro_Sum/"
+load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20240111_IntCT_scRNAseqPanc_Muraro/#_AllMix_Export_20240111_IntCT_scRNAseqPanc_Baron_Muraro_Sum/20240111113332_Muraro_Baron_Sum_SVDLRglmnet_ROC.RData")
+
+
+# folder_path <-"D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_GSE135893_GSE128033_PropSame/#_AllMix_Export_GSE135893_GSE128033_Sum/"
+# load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_GSE135893_GSE128033_PropSame/#_AllMix_Export_GSE135893_GSE128033_Sum/20240115025955_GSE135893_GSE128033_Sum_SVDLRglmnet_ROC.RData")
+
+
 
 
 # all_data$Actual_Cell_Type %>% unique()
