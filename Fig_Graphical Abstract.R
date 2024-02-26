@@ -130,5 +130,18 @@ Plot_UMAP_ACT_Ref <- DimPlot(seuratObject_Ref, reduction = "umap", group.by = "A
 Plot_UMAP_ACT_Ref
 
 
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+
+# pdf(paste0(export_folder, "/", export_name, "_Graphical_Abstract.pdf"),
+pdf(paste0(Name_time_wo_micro, "_Graphical_Abstract.pdf"),
+    width = 16, height = 8)
+
+print(Plot_UMAP_Unknown + Plot_UMAP_VICTORS)
+# print(Plot_UMAP_VICTORS)
+print(Plot_UMAP_Annotation)
+print(Plot_UMAP_ACT)
+
+print(Plot_UMAP_ACT_Ref)
 
 
+dev.off()
