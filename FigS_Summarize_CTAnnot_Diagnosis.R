@@ -40,7 +40,7 @@ Set_Obs_CellType <- "Alpha cell" # "Beta cell" # "Alpha cell" # "Acinar cell"
 
 # Set_Obs_CellType <- "Epithelial cell" # "Myeloid cell" # "Natural killer T cell"
 
-Set_Ref_State <- "with" # FALSE  # TRUE # "with" #"lack" #"Comp
+Set_Ref_State <- "Comp" # "with" #"lack" #"Comp"
 
 if(Set_Ref_State == "with" ){
   Set_Title_End <- paste0(" (Ref with ",Set_Obs_CellType,")")
@@ -53,7 +53,7 @@ if(Set_Ref_State == "with" ){
 if(Set_Ref_State == "with" ){
   Set_Title_End2 <- paste0(" when reference with",Set_Obs_CellType)
 }else if (Set_Ref_State == "Comp"){
-  Set_Title_End <- paste0(" when reference with all cell type")
+  Set_Title_End2 <- paste0(" when reference with all cell type")
 }else{
   Set_Title_End2 <- paste0(" when reference lack ",Set_Obs_CellType)
 }
@@ -91,6 +91,7 @@ if(Set_Ref_State == "with" ){
     filter(Mislabel_CellType != Set_Obs_CellType) %>%
     filter(Actual_Cell_Type == Set_Obs_CellType)
 }else if (Set_Ref_State == "Comp"){
+  alpha_cell_data <- selected_data %>%
     filter(Mislabel_CellType == "None") %>%
     filter(Actual_Cell_Type == Set_Obs_CellType)
 }else{
