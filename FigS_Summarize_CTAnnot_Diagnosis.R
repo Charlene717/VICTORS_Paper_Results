@@ -20,8 +20,6 @@ load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20240111_IntCT_scRNAseqPanc_Mur
 # load("D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_GSE135893_GSE128033_PropSame/#_AllMix_Export_GSE135893_GSE128033_Sum/20240115025955_GSE135893_GSE128033_Sum_SVDLRglmnet_ROC.RData")
 
 
-
-
 # all_data$Actual_Cell_Type %>% unique()
 
 all_data_ori <- all_data
@@ -38,22 +36,26 @@ if(grepl("GSE135893", folder_path)) {
 
 #### Set Parameter ####
 # Set_Obs_CellType <- "CD4+ T cell" # "CD4+ T cell" # "Cytotoxic T cell"
-Set_Obs_CellType <- "Acinar cell" # "Acinar cell" # "Beta cell" # "Alpha cell"
+Set_Obs_CellType <- "Alpha cell" # "Beta cell" # "Alpha cell" # "Acinar cell"
 
 # Set_Obs_CellType <- "Epithelial cell" # "Myeloid cell" # "Natural killer T cell"
 
-Set_Obs_CellType_Reverse <- FALSE  # TRUE
+Set_Ref_State <- "with" # FALSE  # TRUE # "with" #"lack" #"Comp
 
-if(Set_Obs_CellType_Reverse){
+if(Set_Ref_State == "with" ){
   Set_Title_End <- paste0(" (Ref with ",Set_Obs_CellType,")")
+}else if (Set_Ref_State == "Comp"){
+  Set_Title_End <- paste0(" (Ref with all cell type",")")
 }else{
   Set_Title_End <- paste0(" (Ref lack ",Set_Obs_CellType,")")
 }
 
-if(Set_Obs_CellType_Reverse){
+if(Set_Ref_State == "with" ){
   Set_Title_End2 <- paste0(" when reference with",Set_Obs_CellType)
+}else if (Set_Ref_State == "Comp"){
+  Set_Title_End <- paste0(" when reference with all cell type")
 }else{
-  Set_Title_End2 <- paste0(" when referenc lack ",Set_Obs_CellType)
+  Set_Title_End2 <- paste0(" when reference lack ",Set_Obs_CellType)
 }
 
 # Name_Note <- paste0(Name_Note,"_",Set_Obs_CellType,Set_Title_End)
@@ -84,9 +86,12 @@ selected_data <- selected_data %>%
   mutate(label_SCINA_NoReject = ifelse(label_SCINA_NoReject == "unknown", "Unassign", label_SCINA_NoReject))
 
 # 篩選出 Actual_Cell_Type 為 Set_Obs_CellType 的數據
-if(Set_Obs_CellType_Reverse){
+if(Set_Ref_State == "with" ){
   alpha_cell_data <- selected_data %>%
     filter(Mislabel_CellType != Set_Obs_CellType) %>%
+    filter(Actual_Cell_Type == Set_Obs_CellType)
+}else if (Set_Ref_State == "Comp"){
+    filter(Mislabel_CellType == "None") %>%
     filter(Actual_Cell_Type == Set_Obs_CellType)
 }else{
   alpha_cell_data <- selected_data %>%
@@ -185,28 +190,35 @@ color_Class <- list(
 
 # Prepare and reshape the data for each method
 prepare_data <- function(data, method, diag_methods, Set_CellType, Set_CellType_Reverse) {
-  if(Set_CellType_Reverse){
+  if(Set_CellType_Reverse == "with"){
     data %>%
       filter(Actual_Cell_Type == Set_CellType) %>%
       filter(Mislabel_CellType != Set_CellType) %>%
       select(Predicted_Cell_Type = {{method}}, all_of(diag_methods)) %>%
       pivot_longer(cols = -Predicted_Cell_Type, names_to = "Diag_Method", values_to = "Class") %>%
       mutate(Method_Type = as.character(substitute(method)))
-  }else{
-    data %>%
-      filter(Actual_Cell_Type == Set_CellType) %>%
-      filter(Mislabel_CellType == Set_CellType) %>%
-      select(Predicted_Cell_Type = {{method}}, all_of(diag_methods)) %>%
-      pivot_longer(cols = -Predicted_Cell_Type, names_to = "Diag_Method", values_to = "Class") %>%
-      mutate(Method_Type = as.character(substitute(method)))
+    }else if(Set_CellType_Reverse == "Comp"){
+      data %>%
+        filter(Actual_Cell_Type == Set_CellType) %>%
+        filter(Mislabel_CellType == "None") %>%
+        select(Predicted_Cell_Type = {{method}}, all_of(diag_methods)) %>%
+        pivot_longer(cols = -Predicted_Cell_Type, names_to = "Diag_Method", values_to = "Class") %>%
+        mutate(Method_Type = as.character(substitute(method)))
+    }else{
+      data %>%
+        filter(Actual_Cell_Type == Set_CellType) %>%
+        filter(Mislabel_CellType == Set_CellType) %>%
+        select(Predicted_Cell_Type = {{method}}, all_of(diag_methods)) %>%
+        pivot_longer(cols = -Predicted_Cell_Type, names_to = "Diag_Method", values_to = "Class") %>%
+        mutate(Method_Type = as.character(substitute(method)))
+    }
+
   }
 
-}
-
-singleR_data <- prepare_data(selected_data, label_singleR_NoReject, c("label_singleR_DiagPara", "DiagPara_label_singleR_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Obs_CellType_Reverse)
-scmap_data <- prepare_data(selected_data, label_scmap_NoReject, c("label_scmap_DiagPara", "DiagPara_label_scmap_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Obs_CellType_Reverse)
-SCINA_data <- prepare_data(selected_data, label_SCINA_NoReject, c("label_SCINA_DiagPara", "DiagPara_label_SCINA_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Obs_CellType_Reverse)
-scPred_data <- prepare_data(selected_data, label_scPred_NoReject_Annot, c("label_scPred_DiagPara_Annot", "DiagPara_label_scPred_NoReject_Annot_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Obs_CellType_Reverse)
+singleR_data <- prepare_data(selected_data, label_singleR_NoReject, c("label_singleR_DiagPara", "DiagPara_label_singleR_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+scmap_data <- prepare_data(selected_data, label_scmap_NoReject, c("label_scmap_DiagPara", "DiagPara_label_scmap_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+SCINA_data <- prepare_data(selected_data, label_SCINA_NoReject, c("label_SCINA_DiagPara", "DiagPara_label_SCINA_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+scPred_data <- prepare_data(selected_data, label_scPred_NoReject_Annot, c("label_scPred_DiagPara_Annot", "DiagPara_label_scPred_NoReject_Annot_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
 
 # Combine all method data
 combined_data <- bind_rows(singleR_data, scmap_data, SCINA_data, scPred_data) %>%
@@ -238,12 +250,12 @@ ggplot(combined_data, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Count
   labs(title = paste0("Annotation on ",Set_Obs_CellType, Set_Title_End2),
 
        x = "Diagnostic Method", y = "Predicted Cell Type", size = "Count", color = "Class") +
-  theme(panel.border = element_rect(colour = "black", fill=NA, size=2),
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
         axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14),
         aspect.ratio = 1,
-        plot.title = element_text(size = 16),
+        plot.title = element_text(size = 12),
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 12)) -> Plot_Bubble
 Plot_Bubble
@@ -273,7 +285,7 @@ ggplot(combined_data2, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Coun
     axis.text.y = element_text(size = 12),
     axis.title = element_text(size = 14),
     aspect.ratio = 1,
-    plot.title = element_text(size = 16),
+    plot.title = element_text(size = 12),
     legend.title = element_text(size = 14),
     legend.text = element_text(size = 12)) -> Plot_Bubble2
 Plot_Bubble2
