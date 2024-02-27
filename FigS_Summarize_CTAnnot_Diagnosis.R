@@ -64,7 +64,7 @@ Name_ExportFolder <- folder_path # Name_ExportFolder <- paste0("Export_IntegAll"
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 # Name_ExportFolder <- paste0(Name_ExportFolder,"/",Name_time_wo_micro)
 # if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
-Name_Export<- paste0(Name_time_wo_micro,"_",Name_Note)
+Name_Export <- paste0(Name_time_wo_micro,"_",Name_Note)
 
 
 
@@ -247,6 +247,9 @@ ggplot(combined_data, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Count
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 12)) -> Plot_Bubble
 Plot_Bubble
+
+filtered_dataframe_FP <- combined_data %>% filter(Class == 'FP')
+
 
 
 ## Filter data for specific cell types
