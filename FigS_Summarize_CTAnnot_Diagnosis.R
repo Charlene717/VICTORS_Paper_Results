@@ -49,6 +49,13 @@ if(Set_Obs_CellType_Reverse){
 }else{
   Set_Title_End <- paste0(" (Ref lack ",Set_Obs_CellType,")")
 }
+
+if(Set_Obs_CellType_Reverse){
+  Set_Title_End2 <- paste0(" when reference with",Set_Obs_CellType)
+}else{
+  Set_Title_End2 <- paste0(" when referenc lack ",Set_Obs_CellType)
+}
+
 # Name_Note <- paste0(Name_Note,"_",Set_Obs_CellType,Set_Title_End)
 Name_Note <- paste0(Set_Obs_CellType,Set_Title_End)
 
@@ -227,9 +234,12 @@ ggplot(combined_data, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Count
   scale_color_manual(values = unlist(color_Class)) +
   theme_minimal(base_size = 14) +
   # labs(title = paste0(Set_Title_End, ": Distribution of TP, FP, FN, TN in Predicted Cell Types Across Methods"),
-  labs(title = paste0("Distribution of Metrics in Predicted Cell Types for ",Set_Obs_CellType," Across Methods",Set_Title_End),
+  # labs(title = paste0("Distribution of Metrics in Predicted Cell Types for ",Set_Obs_CellType," Across Methods",Set_Title_End),
+  labs(title = paste0("Annotation on ",Set_Obs_CellType, Set_Title_End2),
+
        x = "Diagnostic Method", y = "Predicted Cell Type", size = "Count", color = "Class") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=2),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14),
         aspect.ratio = 1,
@@ -252,15 +262,17 @@ ggplot(combined_data2, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Coun
   scale_color_manual(values = unlist(color_Class)) +
   theme_minimal(base_size = 14) +
   # labs(title = paste0(Set_Title_End, ": Distribution of TP, FP, FN, TN in Predicted Cell Types Across Methods"),
-  labs(title = paste0("Distribution of Metrics in Predicted Cell Types for ",Set_Obs_CellType," Across Methods",Set_Title_End),
+  # labs(title = paste0("Distribution of Metrics in Predicted Cell Types for ",Set_Obs_CellType," Across Methods",Set_Title_End),
+  labs(title = paste0("Annotation on ",Set_Obs_CellType, Set_Title_End2),
        x = "Diagnostic Method", y = "Predicted Cell Type", size = "Count", color = "Class") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-        axis.text.y = element_text(size = 12),
-        axis.title = element_text(size = 14),
-        aspect.ratio = 1,
-        plot.title = element_text(size = 16),
-        legend.title = element_text(size = 14),
-        legend.text = element_text(size = 12)) -> Plot_Bubble2
+  theme(
+    panel.border = element_rect(colour = "black", fill=NA, size=2),axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    aspect.ratio = 1,
+    plot.title = element_text(size = 16),
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12)) -> Plot_Bubble2
 Plot_Bubble2
 
 
