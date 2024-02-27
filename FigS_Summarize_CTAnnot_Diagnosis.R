@@ -296,8 +296,8 @@ Plot_Bubble2
 pdf(paste0(Name_ExportFolder, "/", Name_Export,"_Check.pdf"),
     width = 8, height = 5) #  width = 17, height = 17)
 
-print(Plot_Bubble2)
 print(Plot_Bubble)
+print(Plot_Bubble2)
 print(Plot_Heatmap)
 print(Plot_bar)
 
