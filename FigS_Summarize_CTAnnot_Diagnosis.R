@@ -38,9 +38,9 @@ if(grepl("GSE135893", folder_path)) {
 
 #### Set Parameter ####
 # Set_Obs_CellType <- "CD4+ T cell" # "CD4+ T cell" # "Cytotoxic T cell"
-# Set_Obs_CellType <- "Acinar cell" # "Acinar cell" # "Beta cell" # "Alpha cell"
+Set_Obs_CellType <- "Acinar cell" # "Acinar cell" # "Beta cell" # "Alpha cell"
 
-Set_Obs_CellType <- "Epithelial cell" # "Myeloid cell" # "Natural killer T cell"
+# Set_Obs_CellType <- "Epithelial cell" # "Myeloid cell" # "Natural killer T cell"
 
 Set_Obs_CellType_Reverse <- FALSE  # TRUE
 
@@ -232,6 +232,7 @@ ggplot(combined_data, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Count
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14),
+        aspect.ratio = 1,
         plot.title = element_text(size = 16),
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 12)) -> Plot_Bubble
@@ -256,6 +257,7 @@ ggplot(combined_data2, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Coun
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
         axis.text.y = element_text(size = 12),
         axis.title = element_text(size = 14),
+        aspect.ratio = 1,
         plot.title = element_text(size = 16),
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 12)) -> Plot_Bubble2
