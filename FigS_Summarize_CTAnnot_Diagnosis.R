@@ -266,7 +266,7 @@ ggplot(combined_data2, aes(x = Diag_Method, y = Predicted_Cell_Type, size = Coun
   labs(title = paste0("Annotation on ",Set_Obs_CellType, Set_Title_End2),
        x = "Diagnostic Method", y = "Predicted Cell Type", size = "Count", color = "Class") +
   theme(
-    panel.border = element_rect(colour = "black", fill=NA, size=2),axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+    panel.border = element_rect(colour = "black", fill=NA, size=1),axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
     axis.text.y = element_text(size = 12),
     axis.title = element_text(size = 14),
     aspect.ratio = 1,
