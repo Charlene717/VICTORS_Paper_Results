@@ -40,7 +40,7 @@ Set_Obs_CellType <- "Alpha cell" # "Beta cell" # "Alpha cell" # "Acinar cell"
 
 # Set_Obs_CellType <- "Epithelial cell" # "Myeloid cell" # "Natural killer T cell"
 
-Set_Ref_State <- "Comp" # "with" #"lack" #"Comp"
+Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
 
 if(Set_Ref_State == "with" ){
   Set_Title_End <- paste0(" (Ref with ",Set_Obs_CellType,")")
@@ -302,4 +302,6 @@ print(Plot_Heatmap)
 print(Plot_bar)
 
 dev.off()
+
+try(write_tsv(combined_data, paste0(Name_ExportFolder, "/", Name_Export, "_Check_Bubble.tsv")))
 
