@@ -51,9 +51,9 @@ if(Set_Ref_State == "with" ){
 }
 
 if(Set_Ref_State == "with" ){
-  Set_Title_End2 <- paste0(" when reference with",Set_Obs_CellType)
+  Set_Title_End2 <- paste0(" when reference include ",Set_Obs_CellType)
 }else if (Set_Ref_State == "Comp"){
-  Set_Title_End2 <- paste0(" when reference with all cell type")
+  Set_Title_End2 <- paste0(" when reference include all cell type")
 }else{
   Set_Title_End2 <- paste0(" when reference lack ",Set_Obs_CellType)
 }
