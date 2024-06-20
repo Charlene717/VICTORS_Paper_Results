@@ -1,3 +1,7 @@
+##### Presetting ######
+rm(list = ls()) # Clean variable
+memory.limit(150000)
+
 library(zellkonverter)
 
 library(reticulate)
