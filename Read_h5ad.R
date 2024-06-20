@@ -2,6 +2,8 @@
 rm(list = ls()) # Clean variable
 memory.limit(150000)
 
+
+#### Load package ####
 library(zellkonverter)
 
 library(reticulate)
