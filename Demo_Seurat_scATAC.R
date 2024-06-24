@@ -2,7 +2,7 @@
 
 
 library(SeuratData)
-InstallData("pbmcMultiome")
+# InstallData("pbmcMultiome")
 library(Seurat)
 library(Signac)
 library(EnsDb.Hsapiens.v86)
@@ -42,3 +42,9 @@ pbmc.atac <- RunTFIDF(pbmc.atac)
 pbmc.atac <- FindTopFeatures(pbmc.atac, min.cutoff = "q0")
 pbmc.atac <- RunSVD(pbmc.atac)
 pbmc.atac <- RunUMAP(pbmc.atac, reduction = "lsi", dims = 2:30, reduction.name = "umap.atac", reduction.key = "atacUMAP_")
+
+# Plot
+p1 <- DimPlot(pbmc.rna, group.by = "seurat_annotations", label = TRUE) + NoLegend() + ggtitle("RNA")
+p2 <- DimPlot(pbmc.atac, group.by = "orig.ident", label = FALSE) + NoLegend() + ggtitle("ATAC")
+p1 + p2
+
