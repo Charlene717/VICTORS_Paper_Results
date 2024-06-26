@@ -4,6 +4,12 @@
 rm(list = ls()) # Clean variable ##* Comment out if Run All
 memory.limit(150000)
 
+#### Load Packages ####
+# Load basic packages
+if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
+
+
 library(SeuratData)
 # InstallData("pbmcMultiome")
 library(Seurat)
