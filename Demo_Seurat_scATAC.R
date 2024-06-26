@@ -16,6 +16,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocMana
 
 if(!require("Signac")) install.packages("Signac"); library(Signac)
 if(!require("EnsDb.Hsapiens.v86")) BiocManager::install("EnsDb.Hsapiens.v86"); library(EnsDb.Hsapiens.v86)
+# if(!require("biovizBase")) BiocManager::install("biovizBase"); library(biovizBase)
 
 ## GitHub
 if(!require("remotes")) install.packages("remotes"); library(remotes)
@@ -26,13 +27,12 @@ InstallData("pbmcMultiome")
 
 
 
-
+#### Load Data ####
 # library(SeuratData)
 # InstallData("pbmcMultiome")
 # library(Seurat)
 # pbmc.rna <- LoadData("pbmcMultiome", "pbmc.rna")
 # pbmc.atac <- LoadData("pbmcMultiome", "pbmc.atac")
-
 
 # load both modalities
 pbmc.rna <- LoadData("pbmcMultiome", "pbmc.rna")
@@ -51,6 +51,7 @@ pbmc.rna <- RunPCA(pbmc.rna)
 pbmc.rna <- RunUMAP(pbmc.rna, dims = 1:30)
 
 # ATAC analysis add gene annotation information
+# BiocManager::install("biovizBase")
 annotations <- GetGRangesFromEnsDb(ensdb = EnsDb.Hsapiens.v86)
 seqlevelsStyle(annotations) <- "UCSC"
 genome(annotations) <- "hg38"
@@ -66,4 +67,10 @@ pbmc.atac <- RunUMAP(pbmc.atac, reduction = "lsi", dims = 2:30, reduction.name =
 p1 <- DimPlot(pbmc.rna, group.by = "seurat_annotations", label = TRUE) + NoLegend() + ggtitle("RNA")
 p2 <- DimPlot(pbmc.atac, group.by = "orig.ident", label = FALSE) + NoLegend() + ggtitle("ATAC")
 p1 + p2
+
+plot <- (p1 + p2) & xlab("UMAP 1") & ylab("UMAP 2") & theme(axis.title = element_text(size = 18))
+ggsave(filename = "../output/images/atacseq_integration_vignette.jpg", height = 7, width = 12, plot = plot,
+       quality = 50)
+
+#### Export ####
 
