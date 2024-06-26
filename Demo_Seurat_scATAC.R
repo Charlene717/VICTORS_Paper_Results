@@ -5,21 +5,31 @@ rm(list = ls()) # Clean variable ##* Comment out if Run All
 memory.limit(150000)
 
 #### Load Packages ####
-# Load basic packages
-if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+## Load packages by CRAN
 if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
+if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+# library(ggplot2); library(cowplot)
 
+## GitHub BiocManager
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+# BiocManager::install(c("BiocGenerics", "GenomeInfoDb", "GenomicRanges", "IRanges", "Rsamtools", "S4Vectors"))
+
+if(!require("Signac")) install.packages("Signac"); library(Signac)
+if(!require("EnsDb.Hsapiens.v86")) BiocManager::install("EnsDb.Hsapiens.v86"); library(EnsDb.Hsapiens.v86)
+
+## GitHub
+if(!require("remotes")) install.packages("remotes"); library(remotes)
+if(!require("SeuratData")) remotes::install_github("satijalab/seurat-data"); library(SeuratData)
 
 library(SeuratData)
+InstallData("pbmcMultiome")
+
+
+
+
+# library(SeuratData)
 # InstallData("pbmcMultiome")
-library(Seurat)
-library(Signac)
-library(EnsDb.Hsapiens.v86)
-library(ggplot2)
-library(cowplot)
-
-library(SeuratData)
-library(Seurat)
+# library(Seurat)
 # pbmc.rna <- LoadData("pbmcMultiome", "pbmc.rna")
 # pbmc.atac <- LoadData("pbmcMultiome", "pbmc.atac")
 
