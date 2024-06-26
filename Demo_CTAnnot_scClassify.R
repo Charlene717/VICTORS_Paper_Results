@@ -48,24 +48,35 @@ result <- scClassify(
 
 result.df <- result[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]] %>% as.data.frame()
 
+result_All <- scClassify(
+  exprsMat_train = as.matrix(counts(ref_sce)),
+  cellTypes_train = ref_sce$celltypes,
+  prob_threshold = 0,
+  exprsMat_test = as.matrix(counts(sample_sce))
+)
+
+result_All.df <- result_All[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]] %>% as.data.frame()
+
 
 # Add the predicted cell types to the Seurat object
 sample_sce$predicted_celltype <- result.df[,ncol(result.df)]
+sample_sce$predicted_celltype_All <- result_All.df[,ncol(result_All.df)]
 
 # Update Seurat object
 seuratObject_Sample$predicted_celltype <- sample_sce$predicted_celltype
+seuratObject_Sample$predicted_celltype_All <- sample_sce$predicted_celltype_All
 
 # Check results
 unique(seuratObject_Sample$predicted_celltype)
-
+unique(seuratObject_Sample$predicted_celltype_All)
 
 
 plot_scClassify <- DimPlot(seuratObject_Sample,group.by = "predicted_celltype", reduction = "umap")
 plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
-# plot_scClassify_All <- DimPlot(seuratObject_Sample,group.by = "predicted_celltype_All", reduction = "umap")
+plot_scClassify_All <- DimPlot(seuratObject_Sample,group.by = "predicted_celltype_All", reduction = "umap")
 
 plot_scClassify + plot_seurat
-# plot_scClassify_All + plot_seurat
+plot_scClassify_All + plot_seurat
 
 
 
