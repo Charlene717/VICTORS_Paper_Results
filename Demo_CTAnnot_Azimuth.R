@@ -19,6 +19,39 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 if(!require("Azimuth")) devtools::install_github("satijalab/azimuth", "seurat5"); library(Azimuth)
 
+## GitHub
+if(!require("remotes")) install.packages("remotes"); library(remotes)
+if(!require("SeuratData")) remotes::install_github("satijalab/seurat-data"); library(SeuratData)
+
+
+# Install the PBMC systematic comparative analyis (pmbcsca) dataset
+InstallData("pbmcsca")
+
+# returns a Seurat object named pbmcsca
+pbmcsca <- LoadData("pbmcsca")
+
+# The RunAzimuth function can take a Seurat object as input
+pbmcsca <- RunAzimuth(pbmcsca, reference = "pbmcref")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #### Load Data ####
 load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
 
