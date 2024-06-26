@@ -138,10 +138,16 @@ if(Set_Reference == "HumanPrimaryCellAtlasData"){
     "Proliferative cell"= "#8c564b",
     "Fibroblast" = "#478047",
     # "Endothelial cell" = "#83d663",
-    "Epithelial cell" = "#83d663",
+    "Epithelial cell" = "#459127",
     "Lymphoid endothelial cell" = "#34b399",
     "Smooth muscle Cell" = "#ba5d8d",
     "Mito_high" =  "#84e8d4",
+
+    ## GSE136831
+    "Monocyte" = "#5d785d",
+    "Fibroblast" = "#478047",
+    "Macrophage" = "#8c564b",
+    "Innate lymphoid cell" = "#b06868",
 
 
     "A549" = "#e377c2",
@@ -262,10 +268,16 @@ if(Set_Sample == "HumanPrimaryCellAtlasData"){
     "Proliferative cell"= "#8c564b",
     "Fibroblast" = "#478047",
     # "Endothelial cell" = "#83d663",
-    "Epithelial cell" = "#83d663",
+    "Epithelial cell" = "#459127",
     "Lymphoid endothelial cell" = "#34b399",
     "Smooth muscle Cell" = "#ba5d8d",
     "Mito_high" =  "#84e8d4",
+
+    ## GSE136831
+    "Monocyte" = "#5d785d",
+    "Fibroblast" = "#478047",
+    "Macrophage" = "#8c564b",
+    "Innate lymphoid cell" = "#b06868",
 
     "A549" = "#e377c2",
     "H1975" = "#62348c",
@@ -287,19 +299,10 @@ color_Class <- list(
   "FN" = "#368a5b", # "#8f174d",
   "Class 4" = "#73bd94", # "#696866" # "#d94185"
   "FP" = "#73bd94", # "#696866" # "#d94185"
-  "Other" = "#919191",
-  "NA" = "#919191"
+  "Other" = "#919191"
 )
 
 
-color_State <- list(
-  "T" = "#798ebd", # "#2c7856",
-  "F" = "#eb8fb4", # "#2c7856",
-  "NA" = "#9e9e9e"
-)
-
-
-## Set color for platform
 color_platform <-list(
   "GSE132044_10xV2" = "#8AC0C0",
   "GSE132044_10xV2A" = "#AED4D4", # "#13c274",
