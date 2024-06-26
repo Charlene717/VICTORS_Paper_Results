@@ -12,7 +12,9 @@ memory.limit(150000)
 if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 
-if(!require("SingleCellExperiment")) install.packages("SingleCellExperiment"); library(SingleCellExperiment)
+## BiocManager
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+if(!require("SingleCellExperiment")) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
 
 
 ## Make SingleCellExperiments
