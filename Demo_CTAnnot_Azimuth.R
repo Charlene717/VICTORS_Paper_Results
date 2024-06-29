@@ -37,6 +37,10 @@ pbmcsca <- LoadData("pbmcsca")
 pbmcsca <- RunAzimuth(pbmcsca, reference = "pbmcref")
 
 
+p1 <- DimPlot(pbmcsca, group.by = "predicted.celltype.l2", label = TRUE, label.size = 3) + NoLegend()
+p2 <- DimPlot(pbmcsca, group.by = "Method")
+p1 + p2
+
 
 
 
