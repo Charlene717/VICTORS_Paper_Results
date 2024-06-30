@@ -281,6 +281,10 @@ Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
   sample_sce$label_scClassify <- result.df[,ncol(result.df)]
   sample_sce$label_scClassify_NoReject <- result_All.df[,ncol(result_All.df)]
 
+  # Replace "unassigned" with "Unassign"
+  sample_sce$label_scClassify <- ifelse(sample_sce$label_scClassify == "unassigned", "Unassign", sample_sce$label_scClassify)
+  sample_sce$label_scClassify_NoReject <- ifelse(sample_sce$label_scClassify_NoReject == "unassigned", "Unassign", sample_sce$label_scClassify_NoReject)
+
   # Update Seurat object
   seuratObject_Sample$label_scClassify <- sample_sce$label_scClassify
   seuratObject_Sample$label_scClassify_NoReject <- sample_sce$label_scClassify_NoReject
