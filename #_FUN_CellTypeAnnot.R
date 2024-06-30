@@ -181,7 +181,10 @@ Run_SCINA <- function(seuratObject_Sample, seuratObject_Ref, ExportFolder = getw
 
 
 #### CHETAH ####
-Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
+Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref,...){
+  # PMID31226206 CHETAH
+  # https://www.bioconductor.org/packages/devel/bioc/vignettes/CHETAH/inst/doc/CHETAH_introduction.html
+
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if(!require("SingleCellExperiment")) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
   if(!require("CHETAH")) BiocManager::install("CHETAH"); library(CHETAH)
