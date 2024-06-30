@@ -179,15 +179,20 @@ Run_SCINA <- function(seuratObject_Sample, seuratObject_Ref, ExportFolder = getw
   return(seuratObject_Sample)
 }
 
+
 #### CHETAH ####
 Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
+  if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+  if(!require("SingleCellExperiment")) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+  if(!require("CHETAH")) BiocManager::install("CHETAH"); library(CHETAH)
+
   # Convert Seurat objects to SingleCellExperiment
   ref_sce <- as.SingleCellExperiment(seuratObject_Ref)
   sample_sce <- as.SingleCellExperiment(seuratObject_Sample)
 
 
   # Prepare Reference Data
-  ref_sce$celltypes <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+  ref_sce$celltypes <- seuratObject_Ref@meta.data[["Actual_Cell_Type"]]
 
 
   # Run CHETAH classifier
@@ -208,3 +213,5 @@ Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
 
   return(seuratObject_Sample)
 }
+
+seuratObject_Sample <- Run_CHETAH(seuratObject_Sample, seuratObject_Ref)
