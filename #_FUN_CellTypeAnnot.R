@@ -289,21 +289,19 @@ Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
 }
 
 
-## Test function
-load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
-
-seuratObject_Sample <- pbmc.rna
-seuratObject_Ref <- pbmc.rna
-seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
-
-
-
-seuratObject_Sample <- Run_scClassify(seuratObject_Sample, seuratObject_Ref)
-
-plot_scClassify <- DimPlot(seuratObject_Sample,group.by = "label_scClassify", reduction = "umap")
-plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
-plot_scClassify_All <- DimPlot(seuratObject_Sample,group.by = "label_scClassify_NoReject", reduction = "umap")
-
-plot_seurat + plot_scClassify + plot_scClassify_All
+# ## Test function
+# load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
+#
+# seuratObject_Sample <- pbmc.rna
+# seuratObject_Ref <- pbmc.rna
+# seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+#
+# seuratObject_Sample <- Run_scClassify(seuratObject_Sample, seuratObject_Ref)
+#
+# plot_scClassify <- DimPlot(seuratObject_Sample,group.by = "label_scClassify", reduction = "umap")
+# plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
+# plot_scClassify_All <- DimPlot(seuratObject_Sample,group.by = "label_scClassify_NoReject", reduction = "umap")
+#
+# plot_seurat + plot_scClassify + plot_scClassify_All
 
 
