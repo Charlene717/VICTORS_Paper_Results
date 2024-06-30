@@ -211,9 +211,11 @@ Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref,...){
 
 
   # Rename unassigned cell
-  celltypes <- ifelse(grepl("^Node", celltypes), "Unassigned", celltypes)
-  celltypes_All <- ifelse(grepl("^Node", celltypes_All), "Unassigned", celltypes_All)
+  celltypes <- ifelse(grepl("^Node", celltypes), "Unassign", celltypes)
+  celltypes <- ifelse(celltypes == "Unassigned", "Unassign", celltypes)
 
+  celltypes_All <- ifelse(grepl("^Node", celltypes_All), "Unassign", celltypes_All)
+  celltypes_All <- ifelse(celltypes_All == "Unassigned", "Unassign", celltypes_All)
 
   # Update Seurat Object
   seuratObject_Sample$label_CHETAH <- celltypes
@@ -280,6 +282,10 @@ Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
   # Add the predicted cell types to the Seurat object
   sample_sce$label_scClassify <- result.df[,ncol(result.df)]
   sample_sce$label_scClassify_NoReject <- result_All.df[,ncol(result_All.df)]
+
+  # Replace "unassigned" with "Unassign"
+  sample_sce$label_scClassify <- ifelse(sample_sce$label_scClassify == "unassigned", "Unassign", sample_sce$label_scClassify)
+  sample_sce$label_scClassify_NoReject <- ifelse(sample_sce$label_scClassify_NoReject == "unassigned", "Unassign", sample_sce$label_scClassify_NoReject)
 
   # Update Seurat object
   seuratObject_Sample$label_scClassify <- sample_sce$label_scClassify
