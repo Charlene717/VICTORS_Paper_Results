@@ -219,14 +219,14 @@ Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
   return(seuratObject_Sample)
 }
 
-## Test function
-seuratObject_Sample <- Run_CHETAH(seuratObject_Sample, seuratObject_Ref)
-
-plot_CHETAH <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH", reduction = "umap")
-plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
-plot_CHETAH_All <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH_NoReject", reduction = "umap")
-
-plot_seurat + plot_CHETAH + plot_CHETAH_All
+# ## Test function
+# seuratObject_Sample <- Run_CHETAH(seuratObject_Sample, seuratObject_Ref)
+#
+# plot_CHETAH <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH", reduction = "umap")
+# plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
+# plot_CHETAH_All <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH_NoReject", reduction = "umap")
+#
+# plot_seurat + plot_CHETAH + plot_CHETAH_All
 
 
 
