@@ -233,4 +233,65 @@ Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref,...){
 
 
 
+#### scClassify ####
+Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
+  # PMID32567229 scClassify
+  # https://sydneybiox.github.io/scClassify/articles/pretrainedModel.html
+  # https://www.embopress.org/doi/full/10.15252/msb.20199389
+
+  if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+  # BiocManager::install(c("S4Vectors", "hopach", "limma"))
+  # BiocManager::install(c("Rhdf5lib", "rhdf5filters", "rhdf5", "sparseMatrixStats", "graph", "HDF5Array", "DelayedMatrixStats", "GSEABase", "Cepo"))
+  if(!require("SingleCellExperiment")) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+
+  if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+  if(!require("scClassify")) devtools::install_github("SydneyBioX/scClassify"); library(scClassify)
+
+
+
+  # Convert Seurat objects to SingleCellExperiment
+  ref_sce <- as.SingleCellExperiment(seuratObject_Ref)
+  sample_sce <- as.SingleCellExperiment(seuratObject_Sample)
+
+
+  # Prepare Reference Data
+  ref_sce$celltypes <- seuratObject_Ref@meta.data[["Actual_Cell_Type"]]
+
+
+  # Run scClassify classifier
+  sample_sce <- scClassifyclassifier(input = sample_sce, ref_cells = ref_sce)
+  sample_sce_All <- scClassifyclassifier(input = sample_sce, ref_cells = ref_sce, thresh = 0)
+
+  # Plot classification
+  PlotscClassify(sample_sce)
+
+  # Extract cell types
+  celltypes <- sample_sce$celltype_scClassify
+  celltypes_All <- sample_sce_All$celltype_scClassify
+
+
+  # Update Seurat Object
+  seuratObject_Sample$label_scClassify <- celltypes
+  seuratObject_Sample$label_scClassify_NoReject <- celltypes_All
+
+  return(seuratObject_Sample)
+}
+
+
+## Test function
+load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
+
+seuratObject_Sample <- pbmc.rna
+seuratObject_Ref <- pbmc.rna
+seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+
+
+seuratObject_Sample <- Run_scClassify(seuratObject_Sample, seuratObject_Ref)
+
+plot_scClassify <- DimPlot(seuratObject_Sample,group.by = "label_scClassify", reduction = "umap")
+plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
+plot_scClassify_All <- DimPlot(seuratObject_Sample,group.by = "label_scClassify_NoReject", reduction = "umap")
+
+plot_seurat + plot_scClassify + plot_scClassify_All
+
 
