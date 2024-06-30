@@ -207,6 +207,9 @@ Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
   celltypes_All <- sample_sce_All$celltype_CHETAH
 
 
+  # Rename unassigned cell
+
+
   # Update Seurat Object
   seuratObject_Sample$label_CHETAH <- celltypes
   seuratObject_Sample$label_CHETAH_NoReject <- celltypes_All
@@ -214,4 +217,15 @@ Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
   return(seuratObject_Sample)
 }
 
+## Test function
 seuratObject_Sample <- Run_CHETAH(seuratObject_Sample, seuratObject_Ref)
+
+plot_CHETAH <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH", reduction = "umap")
+plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
+plot_CHETAH_All <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH_NoReject", reduction = "umap")
+
+plot_seurat + plot_CHETAH + plot_CHETAH_All
+
+
+
+
