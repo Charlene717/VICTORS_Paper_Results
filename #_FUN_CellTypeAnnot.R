@@ -208,6 +208,8 @@ Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
 
 
   # Rename unassigned cell
+  celltypes <- ifelse(grepl("^Node", celltypes), "Unassigned", celltypes)
+  celltypes_All <- ifelse(grepl("^Node", celltypes_All), "Unassigned", celltypes_All)
 
 
   # Update Seurat Object
