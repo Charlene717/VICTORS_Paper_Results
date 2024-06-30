@@ -179,4 +179,32 @@ Run_SCINA <- function(seuratObject_Sample, seuratObject_Ref, ExportFolder = getw
   return(seuratObject_Sample)
 }
 
+#### CHETAH ####
+Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref){
+  # Convert Seurat objects to SingleCellExperiment
+  ref_sce <- as.SingleCellExperiment(seuratObject_Ref)
+  sample_sce <- as.SingleCellExperiment(seuratObject_Sample)
 
+
+  # Prepare Reference Data
+  ref_sce$celltypes <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+
+
+  # Run CHETAH classifier
+  sample_sce <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce)
+  sample_sce_All <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce, thresh = 0)
+
+  # Plot classification
+  PlotCHETAH(sample_sce)
+
+  # Extract cell types
+  celltypes <- sample_sce$celltype_CHETAH
+  celltypes_All <- sample_sce_All$celltype_CHETAH
+
+
+  # Update Seurat Object
+  seuratObject_Sample$label_CHETAH <- celltypes
+  seuratObject_Sample$label_CHETAH_NoReject <- celltypes_All
+
+  return(seuratObject_Sample)
+}
