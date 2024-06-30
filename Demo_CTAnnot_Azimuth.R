@@ -42,38 +42,32 @@ p2 <- DimPlot(pbmcsca, group.by = "Method")
 p1 + p2
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#### Load Data ####
-load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
-
-seuratObject_Sample <- pbmc.rna
-seuratObject_Ref <- pbmc.rna
-
-
-# Run Azimuth for cell type annotation
-query <- RunAzimuth(
-  object = seuratObject_Sample,
-  reference = seuratObject_Ref,
-  normalization.method = "SCT",
-  reference.assay = "refAssay",
-  query.assay = "RNA",
-  reduction = "spca",
-  dims = 1:30
-)
-
+#######################################################
+# ## Error
+#
+# #### Load Data ####
+# load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
+#
+# seuratObject_Sample <- pbmc.rna
+# seuratObject_Ref <- pbmc.rna
+# seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+#
+#
+# # Run Azimuth for cell type annotation
+# seuratObject_Sample <- RunAzimuth(
+#   query = seuratObject_Sample,
+#   reference = list(
+#     ref = seuratObject_Ref,
+#     celltype_column = "Actual_Cell_Type"
+#   ))
+#
+# seuratObject_Sample <- RunAzimuth(
+#   query = seuratObject_Sample,
+#   reference = seuratObject_Ref,
+#   normalization.method = "SCT",
+#   reference.assay = "refAssay",
+#   query.assay = "RNA",
+#   reduction = "spca",
+#   dims = 1:30
+# )
+#
