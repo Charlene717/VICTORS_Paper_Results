@@ -23,7 +23,7 @@ load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMulti
 
 seuratObject_Sample <- pbmc.rna
 seuratObject_Ref <- pbmc.rna
-
+# seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
 
 # Convert Seurat objects to SingleCellExperiment
 ref_sce <- as.SingleCellExperiment(seuratObject_Ref)
