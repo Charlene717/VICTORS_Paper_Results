@@ -258,21 +258,32 @@ Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
   ref_sce$celltypes <- seuratObject_Ref@meta.data[["Actual_Cell_Type"]]
 
 
-  # Run scClassify classifier
-  sample_sce <- scClassifyclassifier(input = sample_sce, ref_cells = ref_sce)
-  sample_sce_All <- scClassifyclassifier(input = sample_sce, ref_cells = ref_sce, thresh = 0)
+  # Run scClassify
+  result <- scClassify(
+    exprsMat_train = as.matrix(counts(ref_sce)),
+    cellTypes_train = ref_sce$celltypes,
+    exprsMat_test = as.matrix(counts(sample_sce))
+  )
 
-  # Plot classification
-  PlotscClassify(sample_sce)
+  result.df <- result[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]] %>% as.data.frame()
 
-  # Extract cell types
-  celltypes <- sample_sce$celltype_scClassify
-  celltypes_All <- sample_sce_All$celltype_scClassify
+  result_All <- scClassify(
+    exprsMat_train = as.matrix(counts(ref_sce)),
+    cellTypes_train = ref_sce$celltypes,
+    prob_threshold = 0,
+    exprsMat_test = as.matrix(counts(sample_sce))
+  )
+
+  result_All.df <- result_All[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]] %>% as.data.frame()
 
 
-  # Update Seurat Object
-  seuratObject_Sample$label_scClassify <- celltypes
-  seuratObject_Sample$label_scClassify_NoReject <- celltypes_All
+  # Add the predicted cell types to the Seurat object
+  sample_sce$label_scClassify <- result.df[,ncol(result.df)]
+  sample_sce$label_scClassify_NoReject <- result_All.df[,ncol(result_All.df)]
+
+  # Update Seurat object
+  seuratObject_Sample$label_scClassify <- sample_sce$label_scClassify
+  seuratObject_Sample$label_scClassify_NoReject <- sample_sce$label_scClassify_NoReject
 
   return(seuratObject_Sample)
 }
@@ -284,6 +295,7 @@ load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMulti
 seuratObject_Sample <- pbmc.rna
 seuratObject_Ref <- pbmc.rna
 seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+
 
 
 seuratObject_Sample <- Run_scClassify(seuratObject_Sample, seuratObject_Ref)
