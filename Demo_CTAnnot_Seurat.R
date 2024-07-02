@@ -40,10 +40,16 @@ seuratObject_Sample <- FindVariableFeatures(seuratObject_Sample)
 anchors <- FindTransferAnchors(reference = seuratObject_Ref, query = seuratObject_Sample, dims = 1:30)
 
 # 轉移數據
-predictions <- TransferData(anchorset = anchors, refdata = seuratObject_Ref$cell_type, dims = 1:30)
+predictions <- TransferData(anchorset = anchors, refdata = seuratObject_Ref$Actual_Cell_Type, dims = 1:30)
 
 # 將預測結果添加到待標註數據中
 seuratObject_Sample <- AddMetaData(seuratObject_Sample, metadata = predictions)
+
+p1 <- DimPlot(seuratObject_Sample, group.by = "predicted.id", label = FALSE, label.size = 3) # + NoLegend()
+p2 <- DimPlot(seuratObject_Sample, group.by = "seurat_annotations")
+p1 + p2
+
+
 
 # 3. Mapping QC
 # 計算映射質量得分
@@ -69,9 +75,6 @@ confusionMatrix(data = seuratObject_Sample$predicted.celltype, reference = seura
 
 
 
-p1 <- DimPlot(pbmcsca, group.by = "predicted.celltype.l2", label = TRUE, label.size = 3) + NoLegend()
-p2 <- DimPlot(pbmcsca, group.by = "Method")
-p1 + p2
 
 
 #######################################################
