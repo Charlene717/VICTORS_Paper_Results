@@ -52,8 +52,15 @@ p1 + p2
 
 
 # 3. Mapping QC
-# 計算映射質量得分
-seuratObject_Sample <- MappingScore(seuratObject_Sample, anchorset = anchors)
+
+# # error
+# # 計算映射質量得分
+# seuratObject_Sample <- MappingScore(seuratObject_Sample, anchorset = anchors)
+
+# 計算每個細胞的最大預測得分
+seuratObject_Sample$mapping.score <- apply(seuratObject_Sample@meta.data[, grep("prediction.score", colnames(seuratObject_Sample@meta.data))], 1, max)
+
+
 
 # 可視化映射質量得分
 FeaturePlot(seuratObject_Sample, features = "mapping.score")
