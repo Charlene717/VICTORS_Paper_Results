@@ -346,16 +346,16 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat){
 }
 
 
-## Test Function
-
-seuratObject_Sample <- Run_Seurat_Annot(seuratObject_Sample, seuratObject_Ref)
-
-p1 <- DimPlot(seuratObject_Sample, group.by = "predicted.id", label = FALSE, label.size = 3) # + NoLegend()
-p2 <- DimPlot(seuratObject_Sample, group.by = "seurat_annotations")
-p1 + p2
-
-# 可視化映射質量得分
-FeaturePlot(seuratObject_Sample, features = "mapping.score")
+# ## Test Function
+# seuratObject_Sample <- Run_Seurat_Annot(seuratObject_Sample, seuratObject_Ref)
+#
+# p1 <- DimPlot(seuratObject_Sample, group.by = "label_Seurat", label = FALSE, label.size = 3) # + NoLegend()
+# p2 <- DimPlot(seuratObject_Sample, group.by = "label_Seurat_NoReject")
+# # p3 <- DimPlot(seuratObject_Sample, group.by = "seurat_annotations")
+# p1 + p2
+#
+# # Visualize mapping quality score
+# FeaturePlot(seuratObject_Sample, features = "mapping.score")
 
 
 # #### Seurat_Annot_Multimodal ####
