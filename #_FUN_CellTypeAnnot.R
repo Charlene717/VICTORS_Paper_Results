@@ -313,7 +313,6 @@ Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
 
 
 #### Seurat ####
-
 Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat){
   # Mapping and annotating query datasets
   # https://satijalab.org/seurat/articles/integration_mapping
@@ -323,25 +322,24 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat){
   if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
   if(!require("caret")) install.packages("caret"); library(caret)
 
-
-  ## 找到轉移錨點並轉移數據
-  # 找到轉移錨點
+  ## Find transfer anchors and transfer data
+  # Find transfer anchors
   anchors <- FindTransferAnchors(reference = Reference_Seurat, query = Query_Seurat, dims = 1:30)
 
-  # 轉移數據
+  # Transfer data
   predictions <- TransferData(anchorset = anchors, refdata = Reference_Seurat$Actual_Cell_Type, dims = 1:30)
 
-  # 將預測結果添加到待標註數據中
+  # Add predicted results to the query dataset
   Query_Seurat <- AddMetaData(Query_Seurat, metadata = predictions)
 
-  # 將 predicted.id 欄位改名為 label_Seurat_NoReject
+  # Rename the predicted.id column to label_Seurat_NoReject
   colnames(Query_Seurat@meta.data)[which(colnames(Query_Seurat@meta.data) == "predicted.id")] <- "label_Seurat_NoReject"
 
   ## Mapping QC
-  # 計算每個細胞的最大預測得分
+  # Calculate the maximum prediction score for each cell
   Query_Seurat$mapping.score <- apply(Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))], 1, max)
 
-  # 新增 label_Seurat 欄位，以 label_Seurat_NoReject 為基礎，但將 mapping.score < 0.8 的細胞標記為 Unassign
+  # Add label_Seurat column based on label_Seurat_NoReject but mark cells with mapping.score < 0.8 as Unassign
   Query_Seurat$label_Seurat <- ifelse(Query_Seurat$mapping.score < 0.8, "Unassign", Query_Seurat$label_Seurat_NoReject)
 
   return(Query_Seurat)
