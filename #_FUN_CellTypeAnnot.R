@@ -333,16 +333,20 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat){
 
   # 將預測結果添加到待標註數據中
   Query_Seurat <- AddMetaData(Query_Seurat, metadata = predictions)
-  # DimPlot(Query_Seurat, group.by = "predicted.id", label = FALSE, label.size = 3) # + NoLegend()
+
+  # 將 predicted.id 欄位改名為 label_Seurat_NoReject
+  colnames(Query_Seurat@meta.data)[which(colnames(Query_Seurat@meta.data) == "predicted.id")] <- "label_Seurat_NoReject"
 
   ## Mapping QC
   # 計算每個細胞的最大預測得分
   Query_Seurat$mapping.score <- apply(Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))], 1, max)
-  # FeaturePlot(Query_Seurat, features = "mapping.score")   # 可視化映射質量得分
 
+  # 新增 label_Seurat 欄位，以 label_Seurat_NoReject 為基礎，但將 mapping.score < 0.8 的細胞標記為 Unassign
+  Query_Seurat$label_Seurat <- ifelse(Query_Seurat$mapping.score < 0.8, "Unassign", Query_Seurat$label_Seurat_NoReject)
 
   return(Query_Seurat)
 }
+
 
 ## Test Function
 
