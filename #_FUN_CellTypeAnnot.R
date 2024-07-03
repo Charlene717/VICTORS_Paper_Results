@@ -311,3 +311,56 @@ Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
 # plot_seurat + plot_scClassify + plot_scClassify_All
 
 
+
+#### Seurat ####
+
+Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat){
+  # Mapping and annotating query datasets
+  # https://satijalab.org/seurat/articles/integration_mapping
+
+  #### Load Packages ####
+  if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
+  if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+  if(!require("caret")) install.packages("caret"); library(caret)
+
+
+  ## 找到轉移錨點並轉移數據
+  # 找到轉移錨點
+  anchors <- FindTransferAnchors(reference = Reference_Seurat, query = Query_Seurat, dims = 1:30)
+
+  # 轉移數據
+  predictions <- TransferData(anchorset = anchors, refdata = Reference_Seurat$Actual_Cell_Type, dims = 1:30)
+
+  # 將預測結果添加到待標註數據中
+  Query_Seurat <- AddMetaData(Query_Seurat, metadata = predictions)
+  # DimPlot(Query_Seurat, group.by = "predicted.id", label = FALSE, label.size = 3) # + NoLegend()
+
+  ## Mapping QC
+  # 計算每個細胞的最大預測得分
+  Query_Seurat$mapping.score <- apply(Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))], 1, max)
+  # FeaturePlot(Query_Seurat, features = "mapping.score")   # 可視化映射質量得分
+
+
+  return(Query_Seurat)
+}
+
+## Test Function
+
+seuratObject_Sample <- Run_Seurat_Annot(seuratObject_Sample, seuratObject_Ref)
+
+p1 <- DimPlot(seuratObject_Sample, group.by = "predicted.id", label = FALSE, label.size = 3) # + NoLegend()
+p2 <- DimPlot(seuratObject_Sample, group.by = "seurat_annotations")
+p1 + p2
+
+# 可視化映射質量得分
+FeaturePlot(seuratObject_Sample, features = "mapping.score")
+
+
+#### Seurat_Annot_Multimodal ####
+
+Run_Seurat_Annot_Multimodal <- function(seuratObject_Sample, seuratObject_Ref){
+  # Seurat v4 Reference Mapping
+  # https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
+
+}
+
