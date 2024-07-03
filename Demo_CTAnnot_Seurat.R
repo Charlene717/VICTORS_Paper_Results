@@ -123,12 +123,8 @@ confusionMatrix(data = seuratObject_Sample$predicted.celltype, reference = seura
 
 
 
-
-
-
-
-
-#######################################################
+#######################################################################################
+#######################################################################################
 # Mapping and annotating query datasets
 # https://satijalab.org/seurat/articles/integration_mapping
 
@@ -158,7 +154,10 @@ query_data <- AddMetaData(query_data, metadata = predictions)
 query_data <- RunUMAP(query_data, reduction = "pca", dims = 1:30)
 DimPlot(query_data, reduction = "umap", group.by = "predicted.id")
 
-#######################################################
+
+#######################################################################################
+#######################################################################################
+# Multimodal reference mapping
 # Seurat v4 Reference Mapping
 # https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
 
