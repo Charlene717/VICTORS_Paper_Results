@@ -1,8 +1,7 @@
-# Multimodal reference mapping
-
 # Mapping and annotating query datasets
 # https://satijalab.org/seurat/articles/integration_mapping
 
+# Multimodal reference mapping
 # Seurat v4 Reference Mapping
 # https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
 
@@ -85,31 +84,87 @@ confusionMatrix(data = seuratObject_Sample$predicted.celltype, reference = seura
 
 
 #######################################################
-# ## Error
-#
-# #### Load Data ####
-# load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
-#
-# seuratObject_Sample <- pbmc.rna
-# seuratObject_Ref <- pbmc.rna
-# seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
-#
-#
-# # Run Azimuth for cell type annotation
-# seuratObject_Sample <- RunAzimuth(
-#   query = seuratObject_Sample,
-#   reference = list(
-#     ref = seuratObject_Ref,
-#     celltype_column = "Actual_Cell_Type"
-#   ))
-#
-# seuratObject_Sample <- RunAzimuth(
-#   query = seuratObject_Sample,
-#   reference = seuratObject_Ref,
-#   normalization.method = "SCT",
-#   reference.assay = "refAssay",
-#   query.assay = "RNA",
-#   reduction = "spca",
-#   dims = 1:30
-# )
-#
+# Mapping and annotating query datasets
+# https://satijalab.org/seurat/articles/integration_mapping
+
+# 加載必要的包
+library(Seurat)
+
+# 假設參考數據集在 ref_data 中，查詢數據集在 query_data 中
+
+# 參考數據集準備
+ref_data <- NormalizeData(ref_data)
+ref_data <- FindVariableFeatures(ref_data)
+ref_data <- ScaleData(ref_data)
+ref_data <- RunPCA(ref_data)
+
+# 查詢數據集準備
+query_data <- NormalizeData(query_data)
+query_data <- FindVariableFeatures(query_data)
+query_data <- ScaleData(query_data)
+query_data <- RunPCA(query_data)
+
+# 查詢數據集映射
+anchors <- FindTransferAnchors(reference = ref_data, query = query_data, dims = 1:30)
+predictions <- TransferData(anchorset = anchors, refdata = ref_data$celltype, dims = 1:30)
+query_data <- AddMetaData(query_data, metadata = predictions)
+
+# 結果可視化
+query_data <- RunUMAP(query_data, reduction = "pca", dims = 1:30)
+DimPlot(query_data, reduction = "umap", group.by = "predicted.id")
+
+#######################################################
+# Seurat v4 Reference Mapping
+# https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
+
+# 安裝並加載必要的包
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
+if (!requireNamespace("Seurat", quietly = TRUE)) install.packages("Seurat")
+if (!requireNamespace("SeuratDisk", quietly = TRUE)) devtools::install_github("mojaveazure/seurat-disk")
+
+library(Seurat)
+library(SeuratDisk)
+
+# 假設參考數據在 seuratObject_Ref 中
+current_dir <- getwd()
+
+# 刪除已存在的 .h5seurat 文件
+if (file.exists(file.path(current_dir, "ref.h5seurat"))) {
+  file.remove(file.path(current_dir, "ref.h5seurat"))
+}
+
+# 保存 Seurat 對象為 .h5seurat 文件
+SaveH5Seurat(seuratObject_Ref, filename = file.path(current_dir, "ref.h5seurat"))
+
+# 加載查詢數據集
+# 假設查詢數據集在 seuratObject_Sample 中
+
+# 加載參考數據集
+reference <- LoadH5Seurat(file.path(current_dir, "ref.h5seurat"))
+
+# 使用 MapQuery 將查詢數據集映射到參考數據集
+query <- MapQuery(
+  anchorset = reference,
+  query = seuratObject_Sample,
+  reference = reference,
+  refdata = list(celltype = "celltype"),  # 假設 celltype 是我們要映射的註釋列
+  reduction.model = "pca"
+)
+
+# 整合嵌入
+query <- IntegrateEmbeddings(
+  anchorset = reference,
+  query = query,
+  new.reduction.name = "ref.pca"
+)
+
+# 投影 UMAP
+query <- ProjectUMAP(
+  query = query,
+  reference = reference,
+  reduction.model = "umap"
+)
+
+# 可視化結果
+DimPlot(query, reduction = "umap", group.by = "predicted.celltype")
