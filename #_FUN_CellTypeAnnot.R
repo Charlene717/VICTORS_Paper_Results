@@ -356,11 +356,11 @@ p1 + p2
 FeaturePlot(seuratObject_Sample, features = "mapping.score")
 
 
-#### Seurat_Annot_Multimodal ####
-
-Run_Seurat_Annot_Multimodal <- function(seuratObject_Sample, seuratObject_Ref){
-  # Seurat v4 Reference Mapping
-  # https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
-
-}
-
+# #### Seurat_Annot_Multimodal ####
+#
+# Run_Seurat_Annot_Multimodal <- function(seuratObject_Sample, seuratObject_Ref){
+#   # Seurat v4 Reference Mapping
+#   # https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
+#
+# }
+#
