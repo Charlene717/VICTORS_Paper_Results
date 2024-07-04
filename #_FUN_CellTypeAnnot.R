@@ -19,7 +19,8 @@ if(!require("scuttle")) BiocManager::install("scuttle"); library(scuttle)
 Run_singleR <- function(seuratObject_Sample, seuratObject_Ref) {
   if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if(!require("SingleR")) BiocManager::install("SingleR"); library(SingleR)
-  if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+
+   if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
   if(!require("scater")) BiocManager::install("scater") ; library(scater)
 
   ## Prepossessing
@@ -60,6 +61,7 @@ Run_singleR <- function(seuratObject_Sample, seuratObject_Ref) {
 Run_scmap <- function(seuratObject_Sample, seuratObject_Ref) {
   if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if(!require("scmap")) BiocManager::install("scmap"); library(scmap)
+
   if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
   if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 
@@ -119,6 +121,8 @@ Run_scmap <- function(seuratObject_Sample, seuratObject_Ref) {
 }
 
 
+
+#### SCINA ####
 Run_SCINA <- function(seuratObject_Sample, seuratObject_Ref, ExportFolder = getwd(), Export = "") {
   if(!require("SCINA")) install.packages("SCINA"); library(SCINA)
 
