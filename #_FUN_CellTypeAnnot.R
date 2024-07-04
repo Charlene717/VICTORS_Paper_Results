@@ -25,27 +25,27 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
 
 
   # Preprocess reference dataset
-  CTFeatures <- as.SingleCellExperiment(Reference_Seurat)
-  CTFeatures$label <- CTFeatures[[Set_RefAnnoCol]]
-  CTFeatures <- CTFeatures[, !is.na(CTFeatures$label)]
+  ref_sce <- as.SingleCellExperiment(Reference_Seurat)
+  ref_sce$label <- ref_sce[[Set_RefAnnoCol]]
+  ref_sce <- ref_sce[, !is.na(ref_sce$label)]
 
   # Log-normalize reference dataset if not already done
   if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) {
-    CTFeatures <- logNormCounts(CTFeatures)
+    ref_sce <- logNormCounts(ref_sce)
   }
 
   # Preprocess query dataset
-  scRNA_Tar <- as.SingleCellExperiment(Query_Seurat)
-  scRNA_Tar <- scRNA_Tar[, colSums(counts(scRNA_Tar)) > 0]
+  query_sce <- as.SingleCellExperiment(Query_Seurat)
+  query_sce <- query_sce[, colSums(counts(query_sce)) > 0]
 
   # Log-normalize query dataset if not already done
   if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) {
-    scRNA_Tar <- logNormCounts(scRNA_Tar)
+    query_sce <- logNormCounts(query_sce)
   }
 
   # Run SingleR
-  SingleR.lt <- SingleR(test = scRNA_Tar, ref = CTFeatures, assay.type.test = 1,
-                        labels = CTFeatures$label, de.method = "classic")
+  SingleR.lt <- SingleR(test = query_sce, ref = ref_sce, assay.type.test = 1,
+                        labels = ref_sce$label, de.method = "classic")
 
   Query_Seurat@meta.data$label_singleR_NoReject <- SingleR.lt$labels
 
