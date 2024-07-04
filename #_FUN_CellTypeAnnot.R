@@ -16,7 +16,8 @@ if(!require("scuttle")) BiocManager::install("scuttle"); library(scuttle)
 # # this might take long, though mostly because of the installation of Seurat.
 
 #### singleR ####
-Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual_Cell_Type") {
+Run_singleR <- function(Query_Seurat, Reference_Seurat,
+                        Set_RefAnnoCol = "Actual_Cell_Type", ...) {
   # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if (!require("SingleR", quietly = TRUE)) BiocManager::install("SingleR"); library(SingleR)
@@ -106,64 +107,53 @@ Run_scmap <- function(Query_Seurat, Reference_Seurat,
 
 
 #### SCINA ####
-Run_SCINA <- function(seuratObject_Sample, seuratObject_Ref, ExportFolder = getwd(), Export = "") {
-  if(!require("SCINA")) install.packages("SCINA"); library(SCINA)
+Run_SCINA <- function(Query_Seurat, Reference_Seurat,
+                      Set_RefAnnoCol = "Actual_Cell_Type",
+                      ExportFolder = getwd(), Export = "", ...) {
+  # Load necessary package
+  if (!requireNamespace("SCINA", quietly = TRUE)) install.packages("SCINA"); library(SCINA)
 
-  ## Extract representation matrix from Seurat objects
-  exp <- Seurat::GetAssayData(seuratObject_Sample, assay = "RNA", slot = "counts")
+  # Extract representation matrix from Seurat objects
+  exp <- Seurat::GetAssayData(Query_Seurat, assay = "RNA", slot = "counts")
 
-  # ## Set "Actual_Cell_Type" as active ident
-  # seuratObject_Sample <- SetIdent(seuratObject_Sample, value = "Actual_Cell_Type")
+  # Set cell type annotation column as active ident
+  Reference_Seurat <- Seurat::SetIdent(Reference_Seurat, value = Set_RefAnnoCol)
 
-  ## Find marker genes for each cell type
-  seuratObject_Ref <- SetIdent(seuratObject_Ref, value = "Actual_Cell_Type")
-  markers <- Seurat::FindAllMarkers(seuratObject_Ref, only.pos = TRUE,
-                                    min.pct = 0.25, logfc.threshold = 0.25)
-
+  # Find marker genes for each cell type
+  markers <- Seurat::FindAllMarkers(Reference_Seurat, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
   markers <- markers %>% dplyr::filter(p_val_adj < 0.01)
-  markers$avg_log2FC <- as.numeric(markers$avg_log2FC)
   top_markers <- markers %>%
     group_by(cluster) %>%
     top_n(50, wt = avg_log2FC) %>%
     ungroup()
-  top_markers$cluster <- as.character(top_markers$cluster)
 
-  ## Create a list containing marker genes for each cell type
-  cell_types <- unique(seuratObject_Ref@meta.data$Actual_Cell_Type)
+  # Create a list containing marker genes for each cell type
+  cell_types <- unique(Reference_Seurat@meta.data[[Set_RefAnnoCol]])
   signatures <- lapply(cell_types, function(ct) {
     top_markers[top_markers$cluster == ct,]$gene
   })
   names(signatures) <- cell_types
 
   try({
-    ## Cell type annotation with SCINA
-    results = SCINA(exp, signatures, max_iter = 100, convergence_n = 10,
-                    convergence_rate = 0.99, sensitivity_cutoff = 0.9,
-                    rm_overlap = TRUE, allow_unknown = TRUE,
-                    log_file = paste0(ExportFolder,"/",Export,"_SCINA.log"))
+    # Cell type annotation with SCINA
+    results <- SCINA(exp, signatures, max_iter = 100, convergence_n = 10,
+                     convergence_rate = 0.99, sensitivity_cutoff = 0.9,
+                     rm_overlap = TRUE, allow_unknown = TRUE,
+                     log_file = paste0(ExportFolder, "/", Export, "_SCINA.log"))
 
-    results_All = SCINA(exp, signatures, max_iter = 100, convergence_n = 10,
-                        convergence_rate = 0.99, sensitivity_cutoff = 0.9,
-                        rm_overlap = TRUE, allow_unknown = FALSE,
-                        log_file = paste0(ExportFolder,"/",Export,"_SCINA_All.log"))
+    results_All <- SCINA(exp, signatures, max_iter = 100, convergence_n = 10,
+                         convergence_rate = 0.99, sensitivity_cutoff = 0.9,
+                         rm_overlap = TRUE, allow_unknown = FALSE,
+                         log_file = paste0(ExportFolder, "/", Export, "_SCINA_All.log"))
 
-    # ## View Results
-    # View(results$cell_labels)
-    # View(results$probabilities)
-    #
-    # ## Draw heatmap (may cause crash)
-    # plotheat.SCINA(exp, results, signatures)
-
-    ## Save label_SCINA to metadata in seurat object
-    seuratObject_Sample@meta.data$label_SCINA <- results$cell_labels
-    seuratObject_Sample@meta.data$label_SCINA_NoReject <- results_All$cell_labels
-    seuratObject_Sample@meta.data <- seuratObject_Sample@meta.data %>%
+    # Add predicted cell types to original Seurat object
+    Query_Seurat$label_SCINA_NoReject <- results_All$cell_labels
+    Query_Seurat$label_SCINA <- results$cell_labels
+    Query_Seurat@meta.data <- Query_Seurat@meta.data %>%
       mutate(label_SCINA = if_else(label_SCINA == "unknown", "Unassign", label_SCINA))
-
   })
 
-
-  return(seuratObject_Sample)
+  return(Query_Seurat)
 }
 
 
