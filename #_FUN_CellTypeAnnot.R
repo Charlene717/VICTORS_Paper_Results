@@ -16,7 +16,8 @@ if(!require("scuttle")) BiocManager::install("scuttle"); library(scuttle)
 # # this might take long, though mostly because of the installation of Seurat.
 
 #### singleR ####
-Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual_Cell_Type") {
+Run_singleR <- function(Query_Seurat, Reference_Seurat,
+                        Set_RefAnnoCol = "Actual_Cell_Type", ...) {
   # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if (!require("SingleR", quietly = TRUE)) BiocManager::install("SingleR"); library(SingleR)
