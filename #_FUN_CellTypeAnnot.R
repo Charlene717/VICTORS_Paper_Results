@@ -39,7 +39,7 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
   scRNA_Tar <- scRNA_Tar[, colSums(counts(scRNA_Tar)) > 0]
 
   # Log-normalize query dataset if not already done
-  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) {
+  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) {
     scRNA_Tar <- logNormCounts(scRNA_Tar)
   }
 
@@ -47,7 +47,16 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
   SingleR.lt <- SingleR(test = scRNA_Tar, ref = CTFeatures, assay.type.test = 1,
                         labels = CTFeatures$label, de.method = "classic")
 
-  return(SingleR.lt)
+  Query_Seurat@meta.data$label_singleR_NoReject <- SingleR.lt$labels
+
+  ## Annotation diagnostics
+  Query_Seurat@meta.data[[paste0("label_singleR")]] <- SingleR.lt$pruned.labels
+  Query_Seurat@meta.data$label_singleR <- ifelse(is.na(Query_Seurat@meta.data$label_singleR), "Unassign", Query_Seurat@meta.data$label_singleR)
+
+  Query_Seurat@misc$CTAnnot$singleR_scores <-SingleR.lt@listData[["scores"]]
+  Query_Seurat@meta.data$singleR_delta <-SingleR.lt@listData[["delta.next"]]
+
+  return(Query_Seurat)
 }
 
 
