@@ -54,7 +54,7 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
   Query_Seurat@meta.data$label_singleR <- ifelse(is.na(Query_Seurat@meta.data$label_singleR), "Unassign", Query_Seurat@meta.data$label_singleR)
 
   Query_Seurat@misc$CTAnnot$singleR_scores <-SingleR.lt@listData[["scores"]]
-  Query_Seurat@meta.data$singleR_delta <-SingleR.lt@listData[["delta.next"]]
+  Query_Seurat@misc$CTAnnot$singleR_delta <-SingleR.lt@listData[["delta.next"]]
 
   return(Query_Seurat)
 }
