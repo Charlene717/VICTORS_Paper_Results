@@ -53,8 +53,8 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
   Query_Seurat@meta.data[[paste0("label_singleR")]] <- SingleR.lt$pruned.labels
   Query_Seurat@meta.data$label_singleR <- ifelse(is.na(Query_Seurat@meta.data$label_singleR), "Unassign", Query_Seurat@meta.data$label_singleR)
 
-  Query_Seurat@misc$CTAnnot$singleR_scores <-SingleR.lt@listData[["scores"]]
-  Query_Seurat@misc$CTAnnot$singleR_delta <-SingleR.lt@listData[["delta.next"]]
+  Query_Seurat@misc$CTAnnot$singleR_Scores <- SingleR.lt@listData[["scores"]]
+  Query_Seurat@misc$CTAnnot$singleR_Delta <- SingleR.lt@listData[["delta.next"]]
 
   return(Query_Seurat)
 }
@@ -91,7 +91,10 @@ Run_scmap <- function(Query_Seurat, Reference_Seurat,
   # Add predicted cell types to original Seurat object
   Query_Seurat$label_scmap_NoReject <- projection_result_All[["scmap_cluster_labs"]] %>% as.character()
   Query_Seurat$label_scmap <- projection_result[["scmap_cluster_labs"]] %>% as.character()
-  Query_Seurat$label_scmap_Score <- projection_result[["scmap_cluster_siml"]] %>% as.numeric()
+  Query_Seurat$label_scmap_Scores <- projection_result[["scmap_cluster_siml"]] %>% as.numeric()
+
+  Query_Seurat@misc$CTAnnot$scmap_Scores <- projection_result[["scmap_cluster_siml"]] %>% as.numeric()
+
 
   Query_Seurat@meta.data <- Query_Seurat@meta.data %>%
     mutate(label_scmap = if_else(label_scmap == "unassigned", "Unassign", label_scmap),
