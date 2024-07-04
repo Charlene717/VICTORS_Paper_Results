@@ -30,7 +30,7 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
   CTFeatures <- CTFeatures[, !is.na(CTFeatures$label)]
 
   # Log-normalize reference dataset if not already done
-  if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) {
+  if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) {
     CTFeatures <- logNormCounts(CTFeatures)
   }
 
@@ -39,7 +39,7 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
   scRNA_Tar <- scRNA_Tar[, colSums(counts(scRNA_Tar)) > 0]
 
   # Log-normalize query dataset if not already done
-  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) {
+  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) {
     scRNA_Tar <- logNormCounts(scRNA_Tar)
   }
 
