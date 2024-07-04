@@ -63,7 +63,7 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
 #### scmap ####
 Run_scmap <- function(Query_Seurat, Reference_Seurat,
                       Set_RefAnnoCol = "Actual_Cell_Type",
-                      Set_Threshold = 0.7, ...) {
+                      Set_Threshold = 0.7, Set_NumFeatures = 500, ...) {
   # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if (!require("scmap", quietly = TRUE)) BiocManager::install("scmap"); library(scmap)
@@ -76,7 +76,7 @@ Run_scmap <- function(Query_Seurat, Reference_Seurat,
   colData(ref_sce)$cluster <- Reference_Seurat@meta.data[[Set_RefAnnoCol]]
 
   # Perform feature selection and index clusters
-  ref_sce <- selectFeatures(ref_sce, n_features = 500)
+  ref_sce <- selectFeatures(ref_sce, n_features = Set_NumFeatures)
   ref_sce <- indexCluster(ref_sce, cluster_col = "cluster")
   index_list <- list(ref_sce = metadata(ref_sce)$scmap_cluster_index)
 
