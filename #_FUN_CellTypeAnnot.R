@@ -174,22 +174,22 @@ Run_CHETAH <- function(Query_Seurat, Reference_Seurat,
   ref_sce$celltypes <- Reference_Seurat@meta.data[[Set_RefAnnoCol]]
 
   # Run CHETAH classifier
-  sample_sce <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce)
   sample_sce_All <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce, thresh = 0)
+  sample_sce <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce)
 
   # Extract cell types
-  celltypes <- sample_sce$celltype_CHETAH
   celltypes_All <- sample_sce_All$celltype_CHETAH
+  celltypes <- sample_sce$celltype_CHETAH
 
   # Rename unassigned cell
-  celltypes <- ifelse(grepl("^Node", celltypes), "Unassign", celltypes)
-  celltypes <- ifelse(celltypes == "Unassigned", "Unassign", celltypes)
   celltypes_All <- ifelse(grepl("^Node", celltypes_All), "Unassign", celltypes_All)
   celltypes_All <- ifelse(celltypes_All == "Unassigned", "Unassign", celltypes_All)
+  celltypes <- ifelse(grepl("^Node", celltypes), "Unassign", celltypes)
+  celltypes <- ifelse(celltypes == "Unassigned", "Unassign", celltypes)
 
   # Update Seurat Object
-  Query_Seurat$label_CHETAH <- celltypes
   Query_Seurat$label_CHETAH_NoReject <- celltypes_All
+  Query_Seurat$label_CHETAH <- celltypes
 
   return(Query_Seurat)
 }
