@@ -16,44 +16,38 @@ if(!require("scuttle")) BiocManager::install("scuttle"); library(scuttle)
 # # this might take long, though mostly because of the installation of Seurat.
 
 #### singleR ####
-Run_singleR <- function(seuratObject_Sample, seuratObject_Ref) {
-  if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-  if(!require("SingleR")) BiocManager::install("SingleR"); library(SingleR)
+Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual_Cell_Type") {
+  # Load necessary packages
+  if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+  if (!require("SingleR", quietly = TRUE)) BiocManager::install("SingleR"); library(SingleR)
+  if (!require("SingleCellExperiment", quietly = TRUE)) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+  if (!require("scater", quietly = TRUE)) BiocManager::install("scater"); library(scater)
 
-   if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
-  if(!require("scater")) BiocManager::install("scater") ; library(scater)
 
-  ## Prepossessing
-  CTFeatures <- as.SingleCellExperiment(seuratObject_Ref)
-  CTFeatures$label <- CTFeatures@colData@listData[[Set_RefAnnoCol]]
-  # One should normally do cell-based quality control at this point, but for brevity's sake, we will just remove the unlabelled libraries here.
-  CTFeatures <- CTFeatures[,!is.na(CTFeatures$label)]
+  # Preprocess reference dataset
+  CTFeatures <- as.SingleCellExperiment(Reference_Seurat)
+  CTFeatures$label <- CTFeatures[[Set_RefAnnoCol]]
+  CTFeatures <- CTFeatures[, !is.na(CTFeatures$label)]
 
-  ## SingleR() expects reference scRNAdatasets.chr to be normalized and log-transformed.
-  # library(scuttle)
-
-  # Check if log normalization has been done
-  if (is.null(seuratObject_Ref@assays$RNA@counts) || is.null(seuratObject_Ref@assays$RNA@data)) {
+  # Log-normalize reference dataset if not already done
+  if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) {
     CTFeatures <- logNormCounts(CTFeatures)
   }
 
-  ## Set Target SeuObj
-  ## Prepossessing
-  scRNA_Tar <- as.SingleCellExperiment(seuratObject_Sample)
-  scRNA_Tar <- scRNA_Tar[,colSums(counts(scRNA_Tar)) > 0] # Remove libraries with no counts.
-  # Check if log normalization has been done
-  if (is.null(seuratObject_Sample@assays$RNA@counts) || is.null(seuratObject_Sample@assays$RNA@data)) {
+  # Preprocess query dataset
+  scRNA_Tar <- as.SingleCellExperiment(Query_Seurat)
+  scRNA_Tar <- scRNA_Tar[, colSums(counts(scRNA_Tar)) > 0]
+
+  # Log-normalize query dataset if not already done
+  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) {
     scRNA_Tar <- logNormCounts(scRNA_Tar)
   }
 
-
-  ## Run SingleR
-  library(SingleR)
-  SingleR.lt <- SingleR(test = scRNA_Tar, ref = CTFeatures, assay.type.test=1,
-                        labels = CTFeatures$label , de.method= "classic") # de.method = c("classic", "wilcox", "t")
+  # Run SingleR
+  SingleR.lt <- SingleR(test = scRNA_Tar, ref = CTFeatures, assay.type.test = 1,
+                        labels = CTFeatures$label, de.method = "classic")
 
   return(SingleR.lt)
-
 }
 
 
