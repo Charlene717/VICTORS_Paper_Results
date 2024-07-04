@@ -61,66 +61,43 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual
 
 
 #### scmap ####
-Run_scmap <- function(seuratObject_Sample, seuratObject_Ref) {
-  if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-  if(!require("scmap")) BiocManager::install("scmap"); library(scmap)
+Run_scmap <- function(Query_Seurat, Reference_Seurat,
+                      Set_RefAnnoCol = "Actual_Cell_Type",
+                      Set_Threshold = 0.7, ...) {
+  # Load necessary packages
+  if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+  if (!require("scmap", quietly = TRUE)) BiocManager::install("scmap"); library(scmap)
+  if (!require("SingleCellExperiment", quietly = TRUE)) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+  if (!require("Seurat", quietly = TRUE)) install.packages("Seurat");library(Seurat)
 
-  if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
-  if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
+  # Convert Seurat object to SingleCellExperiment
+  ref_sce <- as.SingleCellExperiment(Reference_Seurat)
+  rowData(ref_sce)$feature_symbol <- rownames(ref_sce)
+  colData(ref_sce)$cluster <- Reference_Seurat@meta.data[[Set_RefAnnoCol]]
 
-  ## Assume seuratObject_Ref is your Seurat object
+  # Perform feature selection and index clusters
+  ref_sce <- selectFeatures(ref_sce, n_features = 500)
+  ref_sce <- indexCluster(ref_sce, cluster_col = "cluster")
+  index_list <- list(ref_sce = metadata(ref_sce)$scmap_cluster_index)
 
-  ## Convert Seurat object to SingleCellExperiment
-  sce <- as.SingleCellExperiment(seuratObject_Ref)
+  # Convert unlabelled Seurat object to SingleCellExperiment
+  query_sce <- as.SingleCellExperiment(Query_Seurat)
+  rowData(query_sce)$feature_symbol <- rownames(query_sce)
 
-  ## Add gene names to rowData
-  rowData(sce)$feature_symbol <- rownames(sce)
-
-  ## Get cell type metadata
-  cell_types <- seuratObject_Ref@meta.data$Actual_Cell_Type
-
-  ## Perform feature selection
-  sce <- selectFeatures(sce, n_features = 500)
-
-  ## Add cell type labels to sce object
-  colData(sce)$cluster <- cell_types
-
-  ## Index clusters
-  sce <- indexCluster(sce, cluster_col = "cluster")
-
-  ## Create a list with index
-  index_list <- list(sce = metadata(sce)$scmap_cluster_index)
-
-
-  ## Assume seuratObject_Sample is your unlabelled Seurat object
-  ## Convert unlabelled Seurat object to SingleCellExperiment
-  sce_unlabelled <- as.SingleCellExperiment(seuratObject_Sample)
-
-  ## Add gene names to rowData
-  rowData(sce_unlabelled)$feature_symbol <- rownames(sce_unlabelled)
-
-  ## Perform projection
-  projection_result <- scmapCluster(projection = sce_unlabelled, index_list = index_list)
-  # sum(projection_result[["scmap_cluster_labs"]] == projection_result[["combined_labs"]])
-
-  projection_result_All <- scmapCluster(projection = sce_unlabelled, index_list = index_list,
-                                        threshold = 0)
-  # sum(projection_result[["scmap_cluster_siml"]] == projection_result_All[["scmap_cluster_siml"]])
-
+  # Perform projection
+  projection_result <- scmapCluster(projection = query_sce, index_list = index_list, threshold = Set_Threshold)
+  projection_result_All <- scmapCluster(projection = query_sce, index_list = index_list, threshold = 0)
 
   # Add predicted cell types to original Seurat object
-  seuratObject_Sample$label_scmap <- projection_result[["scmap_cluster_labs"]] %>% as.character()
-  seuratObject_Sample$label_scmap_Score <- projection_result[["scmap_cluster_siml"]] %>% as.numeric()
-  seuratObject_Sample$label_scmap_NoReject <- projection_result_All[["scmap_cluster_labs"]] %>% as.character()
+  Query_Seurat$label_scmap_NoReject <- projection_result_All[["scmap_cluster_labs"]] %>% as.character()
+  Query_Seurat$label_scmap <- projection_result[["scmap_cluster_labs"]] %>% as.character()
+  Query_Seurat$label_scmap_Score <- projection_result[["scmap_cluster_siml"]] %>% as.numeric()
 
-  # DimPlot(seuratObject_Sample, reduction = "umap", group.by ="label_scmap" ,label = TRUE, pt.size = 0.5)# + NoLegend()
-  # table(seuratObject_Sample$label_scmap)
+  Query_Seurat@meta.data <- Query_Seurat@meta.data %>%
+    mutate(label_scmap = if_else(label_scmap == "unassigned", "Unassign", label_scmap),
+           label_scmap_NoReject = if_else(label_scmap_NoReject == "unassigned", "Unassign", label_scmap_NoReject))
 
-  seuratObject_Sample@meta.data <- seuratObject_Sample@meta.data %>%
-    mutate(label_scmap = if_else(label_scmap == "unassigned", "Unassign", label_scmap))
-  seuratObject_Sample@meta.data <- seuratObject_Sample@meta.data %>%
-    mutate(label_scmap_NoReject = if_else(label_scmap_NoReject == "unassigned", "Unassign", label_scmap_NoReject))
-  return(seuratObject_Sample)
+  return(Query_Seurat)
 }
 
 
