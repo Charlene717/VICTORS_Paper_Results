@@ -252,37 +252,39 @@ Run_scClassify <- function(Query_Seurat, Reference_Seurat,
 
 
 #### Seurat ####
-Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat){
-  # Mapping and annotating query datasets
-  # https://satijalab.org/seurat/articles/integration_mapping
+Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
+                             Set_RefAnnoCol = "Actual_Cell_Type",
+                             Set_NumPC = 50, ...) {
+  # Load necessary packages
+  if (!requireNamespace("Seurat", quietly = TRUE)) install.packages("Seurat"); library(Seurat)
+  if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse"); library(tidyverse)
+  if (!requireNamespace("caret", quietly = TRUE)) install.packages("caret"); library(caret)
 
-  #### Load Packages ####
-  if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
-  if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
-  if(!require("caret")) install.packages("caret"); library(caret)
-
-  ## Find transfer anchors and transfer data
-  # Find transfer anchors
-  anchors <- FindTransferAnchors(reference = Reference_Seurat, query = Query_Seurat, dims = 1:30)
-
-  # Transfer data
-  predictions <- TransferData(anchorset = anchors, refdata = Reference_Seurat$Actual_Cell_Type, dims = 1:30)
-
-  # Add predicted results to the query dataset
+  # Find transfer anchors and transfer data
+  anchors <- FindTransferAnchors(reference = Reference_Seurat, query = Query_Seurat, dims = 1:Set_NumPC)
+  predictions <- TransferData(anchorset = anchors, refdata = Reference_Seurat@meta.data[[Set_RefAnnoCol]], dims = 1:Set_NumPC)
   Query_Seurat <- AddMetaData(Query_Seurat, metadata = predictions)
 
   # Rename the predicted.id column to label_Seurat_NoReject
   colnames(Query_Seurat@meta.data)[which(colnames(Query_Seurat@meta.data) == "predicted.id")] <- "label_Seurat_NoReject"
 
-  ## Mapping QC
-  # Calculate the maximum prediction score for each cell
-  Query_Seurat$mapping.score <- apply(Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))], 1, max)
+  # # Calculate the maximum prediction score for each cell
+  # Query_Seurat$mapping.score <- apply(Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))], 1, max)
+  Query_Seurat$mapping.score <- Query_Seurat$prediction.score.max
 
   # Add label_Seurat column based on label_Seurat_NoReject but mark cells with mapping.score < 0.8 as Unassign
   Query_Seurat$label_Seurat <- ifelse(Query_Seurat$mapping.score < 0.8, "Unassign", Query_Seurat$label_Seurat_NoReject)
 
+  # Save the Seurat cell type scores in misc slot
+  Query_Seurat@misc$CTAnnot$Seurat_Scores <- Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))]
+
+  # Remove prediction.score columns except prediction.score.max
+  score_columns <- grep("^prediction.score", colnames(Query_Seurat@meta.data), value = TRUE)
+  Query_Seurat@meta.data <- Query_Seurat@meta.data[, !colnames(Query_Seurat@meta.data) %in% score_columns]
+
   return(Query_Seurat)
 }
+
 
 
 # ## Test Function
