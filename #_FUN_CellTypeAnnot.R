@@ -136,15 +136,14 @@ Run_SCINA <- function(Query_Seurat, Reference_Seurat,
 
   try({
     # Cell type annotation with SCINA
-    results <- SCINA(exp, signatures, max_iter = 100, convergence_n = 10,
-                     convergence_rate = 0.99, sensitivity_cutoff = 0.9,
-                     rm_overlap = TRUE, allow_unknown = TRUE,
-                     log_file = paste0(ExportFolder, "/", Export, "_SCINA.log"))
-
     results_All <- SCINA(exp, signatures, max_iter = 100, convergence_n = 10,
                          convergence_rate = 0.99, sensitivity_cutoff = 0.9,
                          rm_overlap = TRUE, allow_unknown = FALSE,
                          log_file = paste0(ExportFolder, "/", Export, "_SCINA_All.log"))
+    results <- SCINA(exp, signatures, max_iter = 100, convergence_n = 10,
+                     convergence_rate = 0.99, sensitivity_cutoff = 0.9,
+                     rm_overlap = TRUE, allow_unknown = TRUE,
+                     log_file = paste0(ExportFolder, "/", Export, "_SCINA.log"))
 
     # Add predicted cell types to original Seurat object
     Query_Seurat$label_SCINA_NoReject <- results_All$cell_labels
@@ -168,18 +167,18 @@ Run_CHETAH <- function(Query_Seurat, Reference_Seurat,
 
   # Convert Seurat objects to SingleCellExperiment
   ref_sce <- as.SingleCellExperiment(Reference_Seurat)
-  sample_sce <- as.SingleCellExperiment(Query_Seurat)
+  query_sce <- as.SingleCellExperiment(Query_Seurat)
 
   # Prepare Reference Data
   ref_sce$celltypes <- Reference_Seurat@meta.data[[Set_RefAnnoCol]]
 
   # Run CHETAH classifier
-  sample_sce_All <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce, thresh = 0)
-  sample_sce <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce)
+  query_sce_All <- CHETAHclassifier(input = query_sce, ref_cells = ref_sce, thresh = 0)
+  query_sce <- CHETAHclassifier(input = query_sce, ref_cells = ref_sce)
 
   # Extract cell types
-  celltypes_All <- sample_sce_All$celltype_CHETAH
-  celltypes <- sample_sce$celltype_CHETAH
+  celltypes_All <- query_sce_All$celltype_CHETAH
+  celltypes <- query_sce$celltype_CHETAH
 
   # Rename unassigned cell
   celltypes_All <- ifelse(grepl("^Node", celltypes_All), "Unassign", celltypes_All)
@@ -195,64 +194,43 @@ Run_CHETAH <- function(Query_Seurat, Reference_Seurat,
 }
 
 
-
 #### scClassify ####
-Run_scClassify <- function(seuratObject_Sample, seuratObject_Ref){
-  # PMID32567229 scClassify
-  # https://sydneybiox.github.io/scClassify/articles/pretrainedModel.html
-  # https://www.embopress.org/doi/full/10.15252/msb.20199389
-
+Run_scClassify <- function(Query_Seurat, Reference_Seurat,
+                           Set_RefAnnoCol = "Actual_Cell_Type", ...) {
+  # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-  # BiocManager::install(c("S4Vectors", "hopach", "limma"))
-  # BiocManager::install(c("Rhdf5lib", "rhdf5filters", "rhdf5", "sparseMatrixStats", "graph", "HDF5Array", "DelayedMatrixStats", "GSEABase", "Cepo"))
-  if(!require("SingleCellExperiment")) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
-
-  if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-  if(!require("scClassify")) devtools::install_github("SydneyBioX/scClassify"); library(scClassify)
-
+  if (!require("SingleCellExperiment", quietly = TRUE)) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+  if (!require("devtools", quietly = TRUE)) install.packages("devtools")
+  if (!require("scClassify", quietly = TRUE)) devtools::install_github("SydneyBioX/scClassify"); library(scClassify)
 
 
   # Convert Seurat objects to SingleCellExperiment
-  ref_sce <- as.SingleCellExperiment(seuratObject_Ref)
-  sample_sce <- as.SingleCellExperiment(seuratObject_Sample)
-
+  ref_sce <- as.SingleCellExperiment(Reference_Seurat)
+  query_sce <- as.SingleCellExperiment(Query_Seurat)
 
   # Prepare Reference Data
-  ref_sce$celltypes <- seuratObject_Ref@meta.data[["Actual_Cell_Type"]]
-
+  ref_sce$celltypes <- Reference_Seurat@meta.data[[Set_RefAnnoCol]]
 
   # Run scClassify
-  result <- scClassify(
-    exprsMat_train = as.matrix(counts(ref_sce)),
-    cellTypes_train = ref_sce$celltypes,
-    exprsMat_test = as.matrix(counts(sample_sce))
+  result_All <- scClassify( exprsMat_train = as.matrix(counts(ref_sce)), cellTypes_train = ref_sce$celltypes,
+                            prob_threshold = 0, exprsMat_test = as.matrix(counts(query_sce))
   )
+  result_All.df <- as.data.frame(result_All[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]])
 
-  result.df <- result[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]] %>% as.data.frame()
-
-  result_All <- scClassify(
-    exprsMat_train = as.matrix(counts(ref_sce)),
-    cellTypes_train = ref_sce$celltypes,
-    prob_threshold = 0,
-    exprsMat_test = as.matrix(counts(sample_sce))
+  result <- scClassify( exprsMat_train = as.matrix(counts(ref_sce)), cellTypes_train = ref_sce$celltypes,
+                        exprsMat_test = as.matrix(counts(query_sce))
   )
-
-  result_All.df <- result_All[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]] %>% as.data.frame()
-
+  result.df <- as.data.frame(result[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]])
 
   # Add the predicted cell types to the Seurat object
-  sample_sce$label_scClassify <- result.df[,ncol(result.df)]
-  sample_sce$label_scClassify_NoReject <- result_All.df[,ncol(result_All.df)]
-
-  # Replace "unassigned" with "Unassign"
-  sample_sce$label_scClassify <- ifelse(sample_sce$label_scClassify == "unassigned", "Unassign", sample_sce$label_scClassify)
-  sample_sce$label_scClassify_NoReject <- ifelse(sample_sce$label_scClassify_NoReject == "unassigned", "Unassign", sample_sce$label_scClassify_NoReject)
+  query_sce$label_scClassify_NoReject <- ifelse(result_All.df[,ncol(result_All.df)] == "unassigned", "Unassign", result_All.df[,ncol(result_All.df)])
+  query_sce$label_scClassify <- ifelse(result.df[,ncol(result.df)] == "unassigned", "Unassign", result.df[,ncol(result.df)])
 
   # Update Seurat object
-  seuratObject_Sample$label_scClassify <- sample_sce$label_scClassify
-  seuratObject_Sample$label_scClassify_NoReject <- sample_sce$label_scClassify_NoReject
+  Query_Seurat$label_scClassify_NoReject <- query_sce$label_scClassify_NoReject
+  Query_Seurat$label_scClassify <- query_sce$label_scClassify
 
-  return(seuratObject_Sample)
+  return(Query_Seurat)
 }
 
 
