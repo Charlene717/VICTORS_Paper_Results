@@ -158,57 +158,41 @@ Run_SCINA <- function(Query_Seurat, Reference_Seurat,
 
 
 #### CHETAH ####
-Run_CHETAH <- function(seuratObject_Sample, seuratObject_Ref,...){
-  # PMID31226206 CHETAH
-  # https://www.bioconductor.org/packages/devel/bioc/vignettes/CHETAH/inst/doc/CHETAH_introduction.html
-
+Run_CHETAH <- function(Query_Seurat, Reference_Seurat,
+                       Set_RefAnnoCol = "Actual_Cell_Type", ...) {
+  # PMID31226206 CHETAH # https://www.bioconductor.org/packages/devel/bioc/vignettes/CHETAH/inst/doc/CHETAH_introduction.html
+  # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-  if(!require("SingleCellExperiment")) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
-  if(!require("CHETAH")) BiocManager::install("CHETAH"); library(CHETAH)
+  if (!require("SingleCellExperiment", quietly = TRUE)) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+  if (!require("CHETAH", quietly = TRUE)) BiocManager::install("CHETAH"); library(CHETAH)
 
   # Convert Seurat objects to SingleCellExperiment
-  ref_sce <- as.SingleCellExperiment(seuratObject_Ref)
-  sample_sce <- as.SingleCellExperiment(seuratObject_Sample)
-
+  ref_sce <- as.SingleCellExperiment(Reference_Seurat)
+  sample_sce <- as.SingleCellExperiment(Query_Seurat)
 
   # Prepare Reference Data
-  ref_sce$celltypes <- seuratObject_Ref@meta.data[["Actual_Cell_Type"]]
-
+  ref_sce$celltypes <- Reference_Seurat@meta.data[[Set_RefAnnoCol]]
 
   # Run CHETAH classifier
   sample_sce <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce)
   sample_sce_All <- CHETAHclassifier(input = sample_sce, ref_cells = ref_sce, thresh = 0)
 
-  # Plot classification
-  PlotCHETAH(sample_sce)
-
   # Extract cell types
   celltypes <- sample_sce$celltype_CHETAH
   celltypes_All <- sample_sce_All$celltype_CHETAH
 
-
   # Rename unassigned cell
   celltypes <- ifelse(grepl("^Node", celltypes), "Unassign", celltypes)
   celltypes <- ifelse(celltypes == "Unassigned", "Unassign", celltypes)
-
   celltypes_All <- ifelse(grepl("^Node", celltypes_All), "Unassign", celltypes_All)
   celltypes_All <- ifelse(celltypes_All == "Unassigned", "Unassign", celltypes_All)
 
   # Update Seurat Object
-  seuratObject_Sample$label_CHETAH <- celltypes
-  seuratObject_Sample$label_CHETAH_NoReject <- celltypes_All
+  Query_Seurat$label_CHETAH <- celltypes
+  Query_Seurat$label_CHETAH_NoReject <- celltypes_All
 
-  return(seuratObject_Sample)
+  return(Query_Seurat)
 }
-
-# ## Test function
-# seuratObject_Sample <- Run_CHETAH(seuratObject_Sample, seuratObject_Ref)
-#
-# plot_CHETAH <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH", reduction = "umap")
-# plot_seurat <- DimPlot(seuratObject_Sample,group.by = "seurat_annotations", reduction = "umap")
-# plot_CHETAH_All <- DimPlot(seuratObject_Sample,group.by = "label_CHETAH_NoReject", reduction = "umap")
-#
-# plot_seurat + plot_CHETAH + plot_CHETAH_All
 
 
 
