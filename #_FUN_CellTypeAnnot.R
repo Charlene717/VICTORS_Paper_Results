@@ -248,6 +248,7 @@ Run_CHETAH <- function(Query_Seurat, Reference_Seurat,
 #### scClassify ####
 Run_scClassify <- function(Query_Seurat, Reference_Seurat,
                            Set_RefAnnoCol = "Actual_Cell_Type", ...) {
+  # PMID32567229 scClassify  # https://sydneybiox.github.io/scClassify/articles/pretrainedModel.html
   # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if (!require("SingleCellExperiment", quietly = TRUE)) BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
@@ -290,9 +291,7 @@ Run_scClassify <- function(Query_Seurat, Reference_Seurat,
 Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
                              Set_RefAnnoCol = "Actual_Cell_Type",
                              Set_NumPC = 50, ...) {
-  # Mapping and annotating query datasets
-  # https://satijalab.org/seurat/articles/integration_mapping
-
+  # Mapping and annotating query datasets # https://satijalab.org/seurat/articles/integration_mapping
   # Load necessary packages
   if (!requireNamespace("Seurat", quietly = TRUE)) install.packages("Seurat"); library(Seurat)
   if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse"); library(tidyverse)
