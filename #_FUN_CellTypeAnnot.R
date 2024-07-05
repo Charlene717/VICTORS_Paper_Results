@@ -311,6 +311,8 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
 
   # Add label_Seurat column based on label_Seurat_NoReject but mark cells with mapping.score < 0.8 as Unassign
   Query_Seurat$label_Seurat <- ifelse(Query_Seurat$mapping.score < 0.8, "Unassign", Query_Seurat$label_Seurat_NoReject)
+  colnames(Query_Seurat@meta.data)[which(colnames(Query_Seurat@meta.data) == "mapping.score")] <- "label_Seurat_Scores"
+
 
   # Save the Seurat cell type scores in misc slot
   Query_Seurat@misc$CTAnnot$Seurat_Scores <- Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))]
