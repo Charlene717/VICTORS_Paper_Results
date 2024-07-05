@@ -349,3 +349,64 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
 #
 # }
 #
+
+
+
+
+
+
+################################################################################
+#### scReClassify ####
+Fun_scReClassify <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual_Cell_Type", classifier = "svm", percent = 1, L = 10, ...) {
+  # Load necessary packages
+  if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scReClassify)
+  if (!require("DT")) install.packages("DT"); library(DT)
+  if (!require("mclust")) install.packages("mclust"); library(mclust)
+
+  # # Ensure the default assay is set to RNA
+  # DefaultAssay(Query_Seurat) <- "RNA"
+  # DefaultAssay(Reference_Seurat) <- "RNA"
+
+  # Convert Seurat objects to SingleCellExperiment
+  ref_sce <- as.SingleCellExperiment(Reference_Seurat)
+  sample_sce <- as.SingleCellExperiment(Query_Seurat)
+
+  # Standardize the data and create 'logNorm' assay
+  # Log-normalize dataset if not already done
+  if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) { ref_sce <- logNormCounts(ref_sce)}
+  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce)}
+
+
+  # # Create 'logNorm' layer in assays
+  SummarizedExperiment::assay(ref_sce, "logNorm") <- SummarizedExperiment::assay(ref_sce, "logcounts")
+  SummarizedExperiment::assay(sample_sce, "logNorm") <- SummarizedExperiment::assay(sample_sce, "logcounts")
+
+  # Remove constant rows
+  remove_constant_rows <- function(mat) { mat[rowSums(mat != 0) > 0, ]}
+
+  logNorm_ref <- remove_constant_rows(assay(ref_sce, "logNorm"))
+  logNorm_sample <- remove_constant_rows(assay(sample_sce, "logNorm"))
+
+
+  # ## Dimension reduction
+  # reducedDim(ref_sce, "matPCs") <- matPCs(ref_sce, assay = "logNorm", 0.7)
+  # reducedDim(sample_sce, "matPCs") <- matPCs(sample_sce, assay = "logNorm", 0.7)
+  pca_ref <- stats::prcomp(t(logNorm_ref), center = TRUE, scale. = TRUE)
+  pca_sample <- stats::prcomp(t(logNorm_sample), center = TRUE, scale. = TRUE)
+
+  reducedDim(ref_sce, "matPCs") <- pca_ref$x
+  reducedDim(sample_sce, "matPCs") <- pca_sample$x
+
+  # Cell types
+  cellTypes <- ref_sce[[Set_RefAnnoCol]]
+
+  # Run scReClassify
+  set.seed(1)
+  cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName = "matPCs", classifier = classifier, percent = percent, L = L)
+
+  # Save the new annotations to meta.data
+  Query_Seurat$label_scReClassify <- cellTypes.reclassify$final
+
+
+  return(Query_Seurat)
+}
