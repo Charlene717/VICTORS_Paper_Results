@@ -312,6 +312,7 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
 
   # Save the Seurat cell type scores in misc slot
   Query_Seurat@misc$CTAnnot$Seurat_Scores <- Query_Seurat@meta.data[, grep("prediction.score", colnames(Query_Seurat@meta.data))]
+  Query_Seurat@misc$CTAnnot$Seurat_Scores <- Query_Seurat@misc$CTAnnot$Seurat_Scores[, !grepl("prediction.score.max", colnames(Query_Seurat@misc$CTAnnot$Seurat_Scores))]
   colnames(Query_Seurat@misc$CTAnnot$Seurat_Scores) <- gsub("^prediction\\.score\\.", "", colnames(Query_Seurat@misc$CTAnnot$Seurat_Scores))
   colnames(Query_Seurat@misc$CTAnnot$Seurat_Scores) <- gsub("\\.", " ", colnames(Query_Seurat@misc$CTAnnot$Seurat_Scores))
 
