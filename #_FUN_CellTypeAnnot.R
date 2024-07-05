@@ -155,6 +155,57 @@ Run_SCINA <- function(Query_Seurat, Reference_Seurat,
   return(Query_Seurat)
 }
 
+#### scPred ####
+Run_scPred <- function(Query_Seurat, Reference_Seurat,
+                       Set_RefAnnoCol = "Actual_Cell_Type", ...) {
+  # Load necessary packages
+  if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
+  # Ensure the default assay is set to RNA
+  DefaultAssay(Query_Seurat) <- "RNA"
+  DefaultAssay(Reference_Seurat) <- "RNA"
+
+  Reference_Seurat <- getFeatureSpace(Reference_Seurat, Set_RefAnnoCol)   ## Get the feature space to train the classifiers
+  Reference_Seurat <- trainModel(Reference_Seurat) ## Train the model
+
+  # trace("project_query", edit=TRUE) # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
+  Query_Seurat <- scPredict(Query_Seurat, Reference_Seurat) #, threshold = Set_scPredict_Thr)
+  # Reference_Seurat <- scPredict(Reference_Seurat, Reference_Seurat)
+
+  modify_colnames_scPred <- function(seuratObject, scPredType) {
+    colnames(seuratObject@meta.data) <- sapply(colnames(seuratObject@meta.data), function(colname) {
+      if (grepl("^sc[pP]red_", colname) && !grepl("_(max|label|no_rejection|prediction)$", colname)) {
+        modified_name <- gsub("sc[pP]red_", "", colname) %>% gsub("\\.", " ", .) %>% gsub("_plus", "+", .)
+        paste0(modified_name, " ", scPredType, "Score")
+      } else {colname}
+    })
+
+    label_scPred_col <- paste0("label_", scPredType)
+    colnames(seuratObject@meta.data) <- gsub("sc[pP]red_prediction", label_scPred_col, colnames(seuratObject@meta.data))
+    colnames(seuratObject@meta.data) <- gsub("sc[pP]red_no_rejection", paste0(label_scPred_col, "_NoReject"), colnames(seuratObject@meta.data))
+    colnames(seuratObject@meta.data) <- gsub("sc[pP]red_max", paste0(label_scPred_col, "_Score"), colnames(seuratObject@meta.data))
+
+    seuratObject@meta.data[[label_scPred_col]] <- ifelse( seuratObject@meta.data[[label_scPred_col]] == "unassigned", "Unassign", seuratObject@meta.data[[label_scPred_col]] )
+
+    return(seuratObject)
+  }
+
+
+  Query_Seurat <- modify_colnames_scPred(Query_Seurat,"scPred")
+  # Reference_Seurat <- modify_colnames_scPred(Reference_Seurat,"scPred")
+
+  ## Save the scPred cell type scores in misc slot
+  score_columns <- grep(" scPredScore$", colnames(Query_Seurat@meta.data), value = TRUE)
+  Query_Seurat@misc$CTAnnot$scPred_Scores <- Query_Seurat@meta.data[, score_columns, drop = FALSE]
+  ## Remove score_columns from meta.data
+  Query_Seurat@meta.data <- Query_Seurat@meta.data[, !colnames(Query_Seurat@meta.data) %in% score_columns]
+
+
+  return(Query_Seurat)
+}
+
+
+
+
 
 #### CHETAH ####
 Run_CHETAH <- function(Query_Seurat, Reference_Seurat,
