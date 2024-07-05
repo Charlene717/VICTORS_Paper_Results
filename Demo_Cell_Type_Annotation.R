@@ -21,33 +21,26 @@ seuratObject_Ref <- pbmc.rna
 seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
 
 
-#### singleR ####
+#### Run Cell Type Annotation ####
+## singleR
+seuratObject_Sample <- Run_singleR(seuratObject_Sample, seuratObject_Ref)
+
+## scmap
+seuratObject_Sample <- Run_scmap(seuratObject_Sample, seuratObject_Ref)
+
+## SCINA
+seuratObject_Sample <- Run_SCINA(seuratObject_Sample, seuratObject_Ref)
+
+## scPred
+seuratObject_Sample <- Run_scPred(seuratObject_Sample, seuratObject_Ref)
+
+## CHETAH
+seuratObject_Sample <- Run_CHETAH(seuratObject_Sample, seuratObject_Ref)
+
+## scClassify
+seuratObject_Sample <- Run_scClassify(seuratObject_Sample, seuratObject_Ref)
 
 
-
-#### scmap ####
-
-
-#### SCINA ####
-
-
-
-
-#### scPred ####
-
-
-
-
-#### CHETAH ####
-
-
-
-
-#### scClassify ####
-
-
-
-
-#### Seurat ####
-
+## Seurat
+seuratObject_Sample <- Run_Seurat_Annot(seuratObject_Sample, seuratObject_Ref)
 
