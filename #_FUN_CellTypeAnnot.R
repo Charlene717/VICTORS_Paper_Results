@@ -409,9 +409,10 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat,
 
   # Check for balanced classes and adjust if necessary
   cellType_counts <- table(cellTypes)
-  if (any(cellType_counts < 200)) {
-    warning("Some classes have fewer than 200 samples. This may cause issues with the classifier.")
-    min_class <- names(cellType_counts[cellType_counts < 200])
+  LimNum <- 200
+  if (any(cellType_counts < LimNum)) {
+    warning(paste0("Some classes have fewer than ",LimNum," samples. This may cause issues with the classifier."))
+    min_class <- names(cellType_counts[cellType_counts < LimNum])
     for (cls in min_class) {
       sample_sce <- sample_sce[, cellTypes != cls]
       cellTypes <- cellTypes[cellTypes != cls]
