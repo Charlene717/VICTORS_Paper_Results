@@ -15,6 +15,13 @@ if(!require("scuttle")) BiocManager::install("scuttle"); library(scuttle)
 # devtools::install_github('dviraran/SingleR'); library(SingleR)
 # # this might take long, though mostly because of the installation of Seurat.
 
+
+# # Ensure the default assay is set to RNA
+# DefaultAssay(Query_Seurat) <- "RNA"
+# DefaultAssay(Reference_Seurat) <- "RNA"
+
+
+
 #### singleR ####
 Run_singleR <- function(Query_Seurat, Reference_Seurat,
                         Set_RefAnnoCol = "Actual_Cell_Type", ...) {
@@ -155,6 +162,8 @@ Run_SCINA <- function(Query_Seurat, Reference_Seurat,
 Run_scPred <- function(Query_Seurat, Reference_Seurat,
                        Set_RefAnnoCol = "Actual_Cell_Type", ...) {
   # Load necessary packages
+  if(!require("devtools")) install.packages("devtools"); library(devtools)
+  # if(!require("harmony")) devtools::install_github("immunogenomics/harmony"); library(harmony)
   if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
   # Ensure the default assay is set to RNA
   DefaultAssay(Query_Seurat) <- "RNA"
@@ -361,14 +370,12 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat,
                              Set_RefAnnoCol = "Actual_Cell_Type",
                              Set_classifier = "svm", Set_percent = 1,
                              Set_L = 10, ...) {
+  # PMID31874628 scReClassify # https://bioconductor.org/packages/release/bioc/vignettes/scReClassify/inst/doc/scReClassify.html
+
   # Load necessary packages
   if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scReClassify)
   if (!require("DT")) install.packages("DT"); library(DT)
   if (!require("mclust")) install.packages("mclust"); library(mclust)
-
-  # # Ensure the default assay is set to RNA
-  # DefaultAssay(Query_Seurat) <- "RNA"
-  # DefaultAssay(Reference_Seurat) <- "RNA"
 
   # Convert Seurat objects to SingleCellExperiment
   ref_sce <- as.SingleCellExperiment(Reference_Seurat)
@@ -402,29 +409,31 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat,
   cellTypes <- ref_sce[[Set_RefAnnoCol]]
 
 
-  # Remove any NA values in cellTypes and sample_sce
+  # Check for NA values and remove them from ref_sce
   valid_cells <- !is.na(cellTypes) & complete.cases(reducedDim(sample_sce, "matPCs"))
   cellTypes <- cellTypes[valid_cells]
   sample_sce <- sample_sce[, valid_cells]
 
-  # Check for balanced classes and adjust if necessary
-  cellType_counts <- table(cellTypes)
-  LimNum <- 200
-  if (any(cellType_counts < LimNum)) {
-    warning(paste0("Some classes have fewer than ",LimNum," samples. This may cause issues with the classifier."))
-    min_class <- names(cellType_counts[cellType_counts < LimNum])
+  # Check for balanced classes and adjust if necessary in ref_sce
+  ref_cellType_counts <- table(cellTypes)
+  if (any(ref_cellType_counts < 5)) {
+    warning("Some classes in reference have fewer than 5 samples. This may cause issues with the classifier.")
+    min_class <- names(ref_cellType_counts[ref_cellType_counts < 5])
     for (cls in min_class) {
-      sample_sce <- sample_sce[, cellTypes != cls]
+      ref_sce <- ref_sce[, cellTypes != cls]
       cellTypes <- cellTypes[cellTypes != cls]
     }
   }
 
+  # Check for NA values and remove them from sample_sce
+  valid_sample_cells <- complete.cases(reducedDim(sample_sce, "matPCs"))
+  sample_sce <- sample_sce[, valid_sample_cells]
 
   # Run scReClassify
   set.seed(123)
   cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName = "matPCs",
-                                           classifier = Set_classifier,
-                                           percent = Set_percent, L = Set_L)
+                                           classifier = Set_classifier, percent = Set_percent, L = Set_L)
+
 
   # Save the new annotations to meta.data
   Query_Seurat$label_scReClassify <- cellTypes.reclassify$final
