@@ -357,7 +357,10 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
 
 ################################################################################
 #### scReClassify ####
-Fun_scReClassify <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "Actual_Cell_Type", classifier = "svm", percent = 1, L = 10, ...) {
+Fun_scReClassify <- function(Query_Seurat, Reference_Seurat,
+                             Set_RefAnnoCol = "Actual_Cell_Type",
+                             Set_classifier = "svm", Set_percent = 1,
+                             Set_L = 10, ...) {
   # Load necessary packages
   if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scReClassify)
   if (!require("DT")) install.packages("DT"); library(DT)
@@ -389,10 +392,8 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "A
 
 
   # ## Dimension reduction
-  # reducedDim(ref_sce, "matPCs") <- matPCs(ref_sce, assay = "logNorm", 0.7)
-  # reducedDim(sample_sce, "matPCs") <- matPCs(sample_sce, assay = "logNorm", 0.7)
-  pca_ref <- stats::prcomp(t(logNorm_ref), center = TRUE, scale. = TRUE)
-  pca_sample <- stats::prcomp(t(logNorm_sample), center = TRUE, scale. = TRUE)
+  pca_ref <- stats::prcomp(t(logNorm_ref), center = TRUE, scale. = TRUE) # reducedDim(ref_sce, "matPCs") <- matPCs(ref_sce, assay = "logNorm", 0.7)
+  pca_sample <- stats::prcomp(t(logNorm_sample), center = TRUE, scale. = TRUE) # reducedDim(sample_sce, "matPCs") <- matPCs(sample_sce, assay = "logNorm", 0.7)
 
   reducedDim(ref_sce, "matPCs") <- pca_ref$x
   reducedDim(sample_sce, "matPCs") <- pca_sample$x
@@ -400,9 +401,29 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "A
   # Cell types
   cellTypes <- ref_sce[[Set_RefAnnoCol]]
 
+
+  # Remove any NA values in cellTypes and sample_sce
+  valid_cells <- !is.na(cellTypes) & complete.cases(reducedDim(sample_sce, "matPCs"))
+  cellTypes <- cellTypes[valid_cells]
+  sample_sce <- sample_sce[, valid_cells]
+
+  # Check for balanced classes and adjust if necessary
+  cellType_counts <- table(cellTypes)
+  if (any(cellType_counts < 200)) {
+    warning("Some classes have fewer than 200 samples. This may cause issues with the classifier.")
+    min_class <- names(cellType_counts[cellType_counts < 200])
+    for (cls in min_class) {
+      sample_sce <- sample_sce[, cellTypes != cls]
+      cellTypes <- cellTypes[cellTypes != cls]
+    }
+  }
+
+
   # Run scReClassify
-  set.seed(1)
-  cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName = "matPCs", classifier = classifier, percent = percent, L = L)
+  set.seed(123)
+  cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName = "matPCs",
+                                           classifier = Set_classifier,
+                                           percent = Set_percent, L = Set_L)
 
   # Save the new annotations to meta.data
   Query_Seurat$label_scReClassify <- cellTypes.reclassify$final
@@ -410,3 +431,9 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat, Set_RefAnnoCol = "A
 
   return(Query_Seurat)
 }
+
+# # Example usage
+# # Query_Seurat <- seuratObject_Sample
+# # Reference_Seurat <- seuratObject_Ref
+# seuratObject_Sample_T <- Fun_scReClassify(seuratObject_Sample, seuratObject_Ref)
+#
