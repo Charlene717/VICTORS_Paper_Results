@@ -367,7 +367,6 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
 ################################################################################
 #### scReClassify ####
 Fun_scReClassify <- function(Query_Seurat, Reference_Seurat,
-                             Set_RefAnnoCol = "cellTypes",
                              Set_classifier = "svm", Set_percent = 1,
                              Set_L = 10, ...) {
   # PMID31874628 scReClassify # https://bioconductor.org/packages/release/bioc/vignettes/scReClassify/inst/doc/scReClassify.html
@@ -406,7 +405,7 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat,
   reducedDim(sample_sce, "matPCs") <- pca_sample$x
 
   # Cell types
-  cellTypes <- sample_sce[[Set_RefAnnoCol]]
+  cellTypes <- sample_sce[["cellTypes"]]
 
 
   # Check for NA values and remove them from ref_sce
