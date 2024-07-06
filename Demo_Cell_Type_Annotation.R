@@ -24,8 +24,11 @@ load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMulti
 # Randomly split cells into two halves
 set.seed(123) # for reproducibility
 cells <- colnames(pbmc.rna)
-sample_cells <- sample(cells, length(cells) / 2)
-ref_cells <- setdiff(cells, sample_cells)
+# sample_cells <- sample(cells, length(cells) / 2)
+# ref_cells <- setdiff(cells, sample_cells)
+
+sample_cells <- sample(cells, length(cells) / 10)
+ref_cells <- sample(cells, length(cells) / 10)
 
 # Create Seurat objects
 seuratObject_Sample <- subset(pbmc.rna, cells = sample_cells)
