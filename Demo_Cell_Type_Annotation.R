@@ -16,8 +16,22 @@ source("#_FUN_CellTypeAnnot.R")
 #### Load Data ####
 load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
 
-seuratObject_Sample <- pbmc.rna
-seuratObject_Ref <- pbmc.rna
+# seuratObject_Sample <- pbmc.rna
+# seuratObject_Ref <- pbmc.rna
+# seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+
+
+# Randomly split cells into two halves
+set.seed(123) # for reproducibility
+cells <- colnames(pbmc.rna)
+sample_cells <- sample(cells, length(cells) / 2)
+ref_cells <- setdiff(cells, sample_cells)
+
+# Create Seurat objects
+seuratObject_Sample <- subset(pbmc.rna, cells = sample_cells)
+seuratObject_Ref <- subset(pbmc.rna, cells = ref_cells)
+
+# Set Actual_Cell_Type in seuratObject_Ref
 seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
 
 
