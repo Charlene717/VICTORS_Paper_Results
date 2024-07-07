@@ -101,7 +101,6 @@ seuratObject_Sample <- FUN_DiagnosticMetrics(seuratObject_Sample, "Actual_Cell_T
                                              "label_CHETAH_NoReject", "label_CHETAH")
 seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_CHETAH_NoReject')
 
-
 ## scClassify
 seuratObject_Sample <- FUN_DiagnosticMetrics(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_scClassify_NoReject", "label_scClassify")
@@ -122,3 +121,67 @@ DimPlot(seuratObject_Sample, reduction = "umap", group.by = "label_scPred_DiagPa
 DimPlot(seuratObject_Sample, reduction = "umap", group.by = "label_CHETAH_DiagPara")
 DimPlot(seuratObject_Sample, reduction = "umap", group.by = "label_scClassify_DiagPara")
 DimPlot(seuratObject_Sample, reduction = "umap", group.by = "label_Seurat_DiagPara")
+
+source("Set_plot_color.R")
+source("PlotFun_Histogram.R")
+metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
+
+## singleR
+Plot_Hist_singleR_Count <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_singleR_DiagPara', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+Plot_Hist_singleR_Count
+
+Plot_Hist_singleR_Prop <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_singleR_DiagPara', Note_Title = "",
+                                   type = "proportion", color_vector = color_Class)
+Plot_Hist_singleR_Prop
+
+## scmap
+Plot_Hist_scmap_Count <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_scmap_DiagPara', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+Plot_Hist_scmap_Prop <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_scmap_DiagPara', Note_Title = "",
+                                         type = "proportion", color_vector = color_Class)
+
+## SCINA
+Plot_Hist_SCINA_Count <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_SCINA_DiagPara', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_SCINA_Prop <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_SCINA_DiagPara', Note_Title = "",
+                                         type = "proportion", color_vector = color_Class)
+
+## scPred
+Plot_Hist_scPred_Count <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_scPred_DiagPara', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_scPred_Prop <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_scPred_DiagPara', Note_Title = "",
+                                         type = "proportion", color_vector = color_Class)
+
+
+## CHETAH
+Plot_Hist_CHETAH_Count <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_CHETAH_DiagPara', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_CHETAH_Prop <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_CHETAH_DiagPara', Note_Title = "",
+                                         type = "proportion", color_vector = color_Class)
+
+## scClassify
+Plot_Hist_scClassify_Count <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_scClassify_DiagPara', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_scClassify_Prop <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_scClassify_DiagPara', Note_Title = "",
+                                         type = "proportion", color_vector = color_Class)
+
+## Seurat
+Plot_Hist_Seurat_Count <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_Seurat_DiagPara', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_Seurat_Prop <- plot_histogram(metadata, 'Actual_Cell_Type', 'label_Seurat_DiagPara', Note_Title = "",
+                                         type = "proportion", color_vector = color_Class)
+
+## Sum
+Plot_Hist_singleR_Count + Plot_Hist_scmap_Count + Plot_Hist_SCINA_Count +
+Plot_Hist_scPred_Count + Plot_Hist_CHETAH_Count +Plot_Hist_scClassify_Count +
+Plot_Hist_Seurat_Count
+
+Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
+Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop +Plot_Hist_scClassify_Prop +
+Plot_Hist_Seurat_Prop
