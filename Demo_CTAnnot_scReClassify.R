@@ -171,6 +171,8 @@ points(x=seq_len(5), y=c(
   col="red3", pch=c(2,3,4,5,6), cex=1)
 
 
+##########################################################################
+
 #### Part B. scReClassify (mislabeled cell type correction) ####
 # PCA procedure
 reducedDim(dat, "matPCs") <- matPCs(dat, assay = "logNorm", 0.7)
