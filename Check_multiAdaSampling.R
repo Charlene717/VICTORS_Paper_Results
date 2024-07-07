@@ -1,3 +1,15 @@
+
+data = sample_sce
+label = cellTypes
+reducedDimName = "matPCs"
+classifier = "svm"
+percent = 1
+L = 10
+prob = FALSE
+balance = TRUE
+iter = 3
+
+
 multiAdaSampling <- function(data, label, reducedDimName = NULL, classifier = "svm",
                              percent = 1, L = 10, prob = FALSE, balance = TRUE, iter = 3)
 {
