@@ -185,3 +185,19 @@ Plot_Hist_Seurat_Count
 Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
 Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop +Plot_Hist_scClassify_Prop +
 Plot_Hist_Seurat_Prop
+
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+
+# pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
+pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
+    width = 17, height = 17)
+
+print(Plot_Hist_singleR_Count + Plot_Hist_scmap_Count + Plot_Hist_SCINA_Count +
+        Plot_Hist_scPred_Count + Plot_Hist_CHETAH_Count +Plot_Hist_scClassify_Count +
+        Plot_Hist_Seurat_Count)
+
+print(Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
+        Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop +Plot_Hist_scClassify_Prop +
+        Plot_Hist_Seurat_Prop)
+
+dev.off()
