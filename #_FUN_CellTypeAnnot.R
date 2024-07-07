@@ -174,17 +174,6 @@ Run_scPred <- function(Query_Seurat, Reference_Seurat,
   Reference_Seurat <- trainModel(Reference_Seurat) ## Train the model
 
   # trace("project_query", edit=TRUE) # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
-  # Automatically modify the specified part in the project_query function
-  trace("project_query", edit = FALSE, tracer = quote({
-    body <- body(project_query)
-    old_line <- "    new_data <- GetAssayData(new, \"data\")[shared_features, "
-    new_line <- "    new_data <- GetAssayData(new, layer = \"data\")[shared_features, "
-    modified_body <- gsub(old_line, new_line, deparse(body))
-    eval(parse(text = paste("body(project_query) <- ", modified_body, sep = "")))
-  }))
-
-  untrace("project_query")
-
   Query_Seurat <- scPredict(Query_Seurat, Reference_Seurat) #, threshold = Set_scPredict_Thr)
   # Reference_Seurat <- scPredict(Reference_Seurat, Reference_Seurat)
 
