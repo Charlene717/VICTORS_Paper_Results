@@ -159,13 +159,36 @@ Run_SCINA <- function(Query_Seurat, Reference_Seurat,
 }
 
 #### scPred ####
+if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
+# # trace("project_query", edit=TRUE) # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
+# 提取 project_query 函数的原始代码
+project_query_code <- deparse(body(project_query))
+
+# 查找并替换目标行
+modified_project_query_code <- gsub(
+  'GetAssayData\\(new, "data"\\)',
+  'GetAssayData(new, layer = "data")',
+  project_query_code
+)
+
+# 将修改后的代码重新组合成一个函数体
+new_project_query_body <- paste(modified_project_query_code, collapse = "\n")
+
+# cat(new_project_query_body) # 打印新的函数体以供检查
+
+# 将修改后的函数体重新定义为 project_query 函数
+# project_query <- eval(parse(text = paste("function(new, reference, max.iter.harmony = 20, recompute_alignment = TRUE, seed = 66, ...) {", new_project_query_body, "}")))
+#NG# assign("project_query", new_project_query_body, envir = .GlobalEnv)
+eval(parse(text = paste("project_query <- function(new, reference, max.iter.harmony = 20, recompute_alignment = TRUE, seed = 66, ...) {", new_project_query_body, "}")))
+
+# trace("project_query", edit=TRUE)
+
 Run_scPred <- function(Query_Seurat, Reference_Seurat,
                        Set_RefAnnoCol = "Actual_Cell_Type", ...) {
   # Load necessary packages
   if(!require("devtools")) install.packages("devtools"); library(devtools)
   # if(!require("harmony")) devtools::install_github("immunogenomics/harmony"); library(harmony)
   if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
-  source("DebugFun_scPred_project_query.R")
   # Ensure the default assay is set to RNA
   DefaultAssay(Query_Seurat) <- "RNA"
   DefaultAssay(Reference_Seurat) <- "RNA"
