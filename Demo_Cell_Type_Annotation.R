@@ -197,7 +197,14 @@ print(Plot_Hist_singleR_Count + Plot_Hist_scmap_Count + Plot_Hist_SCINA_Count +
         Plot_Hist_Seurat_Count)
 
 print(Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
-        Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop +Plot_Hist_scClassify_Prop +
+        Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop + Plot_Hist_scClassify_Prop +
         Plot_Hist_Seurat_Prop)
 
 dev.off()
+
+
+#### To-do list ####
+## -[] Metric_Other
+## -[] VICTOR
+## -[] Fig Diag Accuracy
+## -[] UMAP
