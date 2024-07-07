@@ -207,4 +207,13 @@ dev.off()
 ## -[] Metric_Other
 ## -[] VICTOR
 ## -[] Fig Diag Accuracy
+
+## -[] ATAC-seq
+## -[] Sampling
+## -[] Old sample
+## -[] Big Data
+
 ## -[] UMAP
+
+## -[] Reference Setting
+## -[] Cell Type Name Function
