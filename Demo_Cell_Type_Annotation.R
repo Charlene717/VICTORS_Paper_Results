@@ -61,3 +61,7 @@ seuratObject_Sample <- Run_scClassify(seuratObject_Sample, seuratObject_Ref)
 ## Seurat
 seuratObject_Sample <- Run_Seurat_Annot(seuratObject_Sample, seuratObject_Ref)
 
+
+## Pending
+# ## scReClassify
+# cellTypes.reclassify <- Fun_scReClassify(seuratObject_Sample, seuratObject_Ref)
