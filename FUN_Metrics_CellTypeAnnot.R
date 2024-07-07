@@ -48,7 +48,7 @@ FUN_Accuracy <- function(seuratObject, actualCellTypeField, labelField) {
 
 ################################################################################
 FUN_DiagnosticMetrics <- function(seuratObject, actualCellTypeField,
-                                       originalLabelField, filteredLabelField) {
+                                  originalLabelField, filteredLabelField) {
 
   # 确认seuratObject是Seurat对象
   if (!inherits(seuratObject, "Seurat")) {
@@ -116,8 +116,8 @@ FUN_DiagnosticMetrics <- function(seuratObject, actualCellTypeField,
     )
 
   # 存储各个指标到misc槽
-  seuratObject@misc[[filteredLabelField]] <- list()
-  seuratObject@misc[[filteredLabelField]][["Per_Cell_Type"]] <- group_by_type
+  seuratObject@misc[[paste0(filteredLabelField,"_Diag")]] <- list()
+  seuratObject@misc[[paste0(filteredLabelField,"_Diag")]][["Per_Cell_Type"]] <- group_by_type
 
   # 计算总体指标
   overall_metrics <- group_by_type %>%
@@ -136,7 +136,7 @@ FUN_DiagnosticMetrics <- function(seuratObject, actualCellTypeField,
     )
 
   # 将总体指标也存入misc槽
-  seuratObject@misc[[filteredLabelField]][["Overall"]] <- overall_metrics
+  seuratObject@misc[[paste0(filteredLabelField,"_Diag")]][["Overall"]] <- overall_metrics
 
 
   # 定义一个函数来将dataframe中的NA和NaN替换为NaN
@@ -148,8 +148,8 @@ FUN_DiagnosticMetrics <- function(seuratObject, actualCellTypeField,
 
   seuratObject@meta.data$DiagPara <- NULL
 
-  seuratObject@misc[[filteredLabelField]][["Per_Cell_Type"]] <- replace_na_with_NaN_df(seuratObject@misc[[filteredLabelField]][["Per_Cell_Type"]])
-  seuratObject@misc[[filteredLabelField]][["Overall"]] <- replace_na_with_NaN_df(seuratObject@misc[[filteredLabelField]][["Overall"]])
+  seuratObject@misc[[paste0(filteredLabelField,"_Diag")]][["Per_Cell_Type"]] <- replace_na_with_NaN_df(seuratObject@misc[[paste0(filteredLabelField,"_Diag")]][["Per_Cell_Type"]])
+  seuratObject@misc[[paste0(filteredLabelField,"_Diag")]][["Overall"]] <- replace_na_with_NaN_df(seuratObject@misc[[paste0(filteredLabelField,"_Diag")]][["Overall"]])
 
 
   return(seuratObject)
@@ -157,6 +157,6 @@ FUN_DiagnosticMetrics <- function(seuratObject, actualCellTypeField,
 
 # ## Test Function
 # seuratObject_Sample <- FUN_DiagnosticMetrics(seuratObject_Sample, "Actual_Cell_Type",
-#                                                       "label_singleR_NoRejection", "label_singleR")
+#                                              "label_singleR_NoReject", "label_singleR")
 
 
