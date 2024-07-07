@@ -161,30 +161,30 @@ Run_SCINA <- function(Query_Seurat, Reference_Seurat,
 #### scPred ####
 # if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
 # # # trace("project_query", edit=TRUE) # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
-# # 提取 project_query 函数的原始代码
+# # Extract the original code of project_query function
 # project_query_code <- deparse(body(project_query))
 #
-# # 查找并替换目标行
+# # Find and replace the target line
 # modified_project_query_code <- gsub(
 #   'GetAssayData\\(new, "data"\\)',
 #   'GetAssayData(new, layer = "data")',
 #   project_query_code
 # )
 #
-# # 将修改后的代码重新组合成一个函数体
+# # Reassemble the modified code into a function body
 # new_project_query_body <- paste(modified_project_query_code, collapse = "\n")
 #
-# # cat(new_project_query_body) # 打印新的函数体以供检查
+# # cat(new_project_query_body) # Print the new function body for inspection
 #
-# # 将修改后的函数体重新定义为 project_query 函数
+# # Redefine the project_query function with the modified function body
 # # project_query <- eval(parse(text = paste("function(new, reference, max.iter.harmony = 20, recompute_alignment = TRUE, seed = 66, ...) {", new_project_query_body, "}")))
 # #NG# assign("project_query", new_project_query_body, envir = .GlobalEnv)
 # #NG# body(project_query) <- new_project_query_body
 # # eval(parse(text = paste("project_query <- function(new, reference, max.iter.harmony = 20, recompute_alignment = TRUE, seed = 66, ...) {", new_project_query_body, "}")))
 # eval(parse(text = paste0("project_query <- function(new, reference, max.iter.harmony = 20, recompute_alignment = TRUE, \n  seed = 66, ...) \n", new_project_query_body, "")))
 #
-#
 # # trace("project_query", edit=TRUE)
+
 
 # trace("project_query", edit=TRUE) # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
 Run_scPred <- function(Query_Seurat, Reference_Seurat,
