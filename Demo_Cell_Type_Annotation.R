@@ -10,6 +10,9 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require("caret")) install.packages("caret"); library(caret)
 
 #### Load Function ####
+if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
+trace("project_query", edit=TRUE) # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
+
 source("#_FUN_CellTypeAnnot.R")
 
 
@@ -27,8 +30,8 @@ cells <- colnames(pbmc.rna)
 # sample_cells <- sample(cells, length(cells) / 2)
 # ref_cells <- setdiff(cells, sample_cells)
 
-sample_cells <- sample(cells, length(cells) / 10)
-ref_cells <- sample(cells, length(cells) / 10)
+sample_cells <- sample(cells, length(cells) / 5)
+ref_cells <- sample(cells, length(cells) / 5)
 
 # Create Seurat objects
 seuratObject_Sample <- subset(pbmc.rna, cells = sample_cells)
@@ -57,7 +60,6 @@ seuratObject_Sample <- Run_CHETAH(seuratObject_Sample, seuratObject_Ref)
 ## scClassify
 seuratObject_Sample <- Run_scClassify(seuratObject_Sample, seuratObject_Ref)
 
-
 ## Seurat
 seuratObject_Sample <- Run_Seurat_Annot(seuratObject_Sample, seuratObject_Ref)
 
@@ -65,3 +67,9 @@ seuratObject_Sample <- Run_Seurat_Annot(seuratObject_Sample, seuratObject_Ref)
 ## Pending
 # ## scReClassify
 # cellTypes.reclassify <- Fun_scReClassify(seuratObject_Sample, seuratObject_Ref)
+
+
+#### Run Cell Type Annotation ####
+
+
+
