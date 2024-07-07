@@ -442,6 +442,8 @@ Fun_scReClassify <- function(Query_Seurat, Reference_Seurat,
 # # Example usage
 # Query_Seurat <- seuratObject_Sample
 # Query_Seurat@meta.data$cellTypes <- Query_Seurat@meta.data$seurat_annotations
+# # Query_Seurat@meta.data$cellTypes <- gsub("_", "  ", Query_Seurat@meta.data$cellTypes)
+#
 # Reference_Seurat <- seuratObject_Ref
 # seuratObject_Sample_T <- Fun_scReClassify(seuratObject_Sample, seuratObject_Ref)
 #
