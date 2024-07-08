@@ -193,21 +193,6 @@ Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
 Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop +Plot_Hist_scClassify_Prop +
 Plot_Hist_Seurat_Prop
 
-Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
-
-# pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
-pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
-    width = 17, height = 17)
-
-print(Plot_Hist_singleR_Count + Plot_Hist_scmap_Count + Plot_Hist_SCINA_Count +
-        Plot_Hist_scPred_Count + Plot_Hist_CHETAH_Count +Plot_Hist_scClassify_Count +
-        Plot_Hist_Seurat_Count)
-
-print(Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
-        Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop + Plot_Hist_scClassify_Prop +
-        Plot_Hist_Seurat_Prop)
-
-dev.off()
 
 ################################################################################
 #### VICTOR ####
@@ -303,7 +288,98 @@ seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Di
 
 
 ################################################################################
+metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
 
+## singleR
+Plot_Hist_singleR_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_singleR_NoReject', Note_Title = "",
+                                          position_type = "stack", color_vector = color_Class)
+Plot_Hist_singleR_Count_V
+
+Plot_Hist_singleR_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_singleR_NoReject', Note_Title = "",
+                                         type = "proportion", color_vector = color_Class)
+Plot_Hist_singleR_Prop_V
+
+## scmap
+Plot_Hist_scmap_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scmap_NoReject', Note_Title = "",
+                                        position_type = "stack", color_vector = color_Class)
+Plot_Hist_scmap_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scmap_NoReject', Note_Title = "",
+                                       type = "proportion", color_vector = color_Class)
+
+## SCINA
+Plot_Hist_SCINA_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_SCINA_NoReject', Note_Title = "",
+                                        position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_SCINA_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_SCINA_NoReject', Note_Title = "",
+                                       type = "proportion", color_vector = color_Class)
+
+## scPred
+Plot_Hist_scPred_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scPred_NoReject', Note_Title = "",
+                                         position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_scPred_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scPred_NoReject', Note_Title = "",
+                                        type = "proportion", color_vector = color_Class)
+
+
+## CHETAH
+Plot_Hist_CHETAH_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_CHETAH_NoReject', Note_Title = "",
+                                         position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_CHETAH_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_CHETAH_NoReject', Note_Title = "",
+                                        type = "proportion", color_vector = color_Class)
+
+## scClassify
+Plot_Hist_scClassify_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scClassify_NoReject', Note_Title = "",
+                                             position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_scClassify_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scClassify_NoReject', Note_Title = "",
+                                            type = "proportion", color_vector = color_Class)
+
+## Seurat
+Plot_Hist_Seurat_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_Seurat_NoReject', Note_Title = "",
+                                         position_type = "stack", color_vector = color_Class)
+
+Plot_Hist_Seurat_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_Seurat_NoReject', Note_Title = "",
+                                        type = "proportion", color_vector = color_Class)
+
+## Sum
+Plot_Hist_singleR_Count_V + Plot_Hist_scmap_Count_V + Plot_Hist_SCINA_Count_V +
+  Plot_Hist_scPred_Count_V + Plot_Hist_CHETAH_Count_V +Plot_Hist_scClassify_Count_V +
+  Plot_Hist_Seurat_Count_V
+
+Plot_Hist_singleR_Prop_V + Plot_Hist_scmap_Prop_V + Plot_Hist_SCINA_Prop_V +
+  Plot_Hist_scPred_Prop_V + Plot_Hist_CHETAH_Prop_V +Plot_Hist_scClassify_Prop_V +
+  Plot_Hist_Seurat_Prop_V
+
+################################################################################
+
+
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+
+# pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
+pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
+    width = 17, height = 17)
+
+print(Plot_Hist_singleR_Count + Plot_Hist_scmap_Count + Plot_Hist_SCINA_Count +
+        Plot_Hist_scPred_Count + Plot_Hist_CHETAH_Count +Plot_Hist_scClassify_Count +
+        Plot_Hist_Seurat_Count)
+
+print(Plot_Hist_singleR_Count_V + Plot_Hist_scmap_Count_V + Plot_Hist_SCINA_Count_V +
+        Plot_Hist_scPred_Count_V + Plot_Hist_CHETAH_Count_V +Plot_Hist_scClassify_Count_V +
+        Plot_Hist_Seurat_Count_V)
+
+print(Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
+        Plot_Hist_scPred_Prop + Plot_Hist_CHETAH_Prop + Plot_Hist_scClassify_Prop +
+        Plot_Hist_Seurat_Prop)
+
+print(Plot_Hist_singleR_Prop_V + Plot_Hist_scmap_Prop_V + Plot_Hist_SCINA_Prop_V +
+        Plot_Hist_scPred_Prop_V + Plot_Hist_CHETAH_Prop_V +Plot_Hist_scClassify_Prop_V +
+        Plot_Hist_Seurat_Prop_V)
+
+dev.off()
+
+
+
+################################################################################
 ## singleR
 
 ## scmap
