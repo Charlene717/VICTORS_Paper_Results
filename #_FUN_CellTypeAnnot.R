@@ -298,7 +298,8 @@ Run_scClassify <- function(Query_Seurat, Reference_Seurat,
 
   # Run scClassify
   result_All <- scClassify( exprsMat_train = as.matrix(counts(ref_sce)), cellTypes_train = ref_sce$celltypes,
-                            prob_threshold = 0, exprsMat_test = as.matrix(counts(query_sce))
+                            prob_threshold = 0, cor_threshold_static =0 , pSig = 0.1, # pSig = 0.05,
+                            exprsMat_test = as.matrix(counts(query_sce))
   )
   result_All.df <- as.data.frame(result_All[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]])
 
