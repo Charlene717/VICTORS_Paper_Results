@@ -10,8 +10,12 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require("caret")) install.packages("caret"); library(caret)
 
 #### Load Function ####
+if(!require("devtools")) install.packages("devtools"); library(devtools)
 if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
-trace("project_query", edit=TRUE) # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
+trace("project_query", edit=TRUE) # layer = "data"
+if(!require("VICTOR")) devtools::install_github("Charlene717/VICTOR"); library(VICTOR)
+
+# new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
 
 source("#_FUN_CellTypeAnnot.R")
 
@@ -202,10 +206,57 @@ print(Plot_Hist_singleR_Prop + Plot_Hist_scmap_Prop + Plot_Hist_SCINA_Prop +
 
 dev.off()
 
+################################################################################
+#### VICTOR ####
+# if(!require("devtools")) install.packages("devtools"); library(devtools)
+# if(!require("VICTOR")) install_github("Charlene717/VICTOR"); library(VICTOR)
+
+## singleR
+VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+                    ActualCellTypeColumn = "Actual_Cell_Type",
+                    AnnotCellTypeColumn = "label_singleR_NoReject")
+
+
+## scmap
+
+## SCINA
+
+## scPred
+
+
+## CHETAH
+
+## scClassify
+
+## Seurat
+
+
+################################################################################
+
+## singleR
+
+## scmap
+
+## SCINA
+
+## scPred
+
+
+## CHETAH
+
+## scClassify
+
+## Seurat
+
+################################################################################
 
 #### To-do list ####
 ## -[] Metric_Other
+
 ## -[] VICTOR
+## -[] VICTOR_glmnet
+## -[V] VICTOR_SeuratV5_SeuratV4
+
 ## -[] Fig Diag Accuracy
 
 ## -[] ATAC-seq
