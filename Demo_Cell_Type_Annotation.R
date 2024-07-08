@@ -45,10 +45,11 @@ rm(pbmc.rna, pbmc.atac)
 
 # Set Actual_Cell_Type in seuratObject_Sample
 seuratObject_Sample@meta.data[["Actual_Cell_Type"]] <- seuratObject_Sample@meta.data[["seurat_annotations"]]
-
+seuratObject_Sample@meta.data$Actual_Cell_Type <- gsub("_", "  ", seuratObject_Sample@meta.data$Actual_Cell_Type)
 
 # Set Actual_Cell_Type in seuratObject_Ref
 seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+seuratObject_Ref@meta.data$Actual_Cell_Type <- gsub("_", "  ", seuratObject_Ref@meta.data$Actual_Cell_Type)
 
 
 #### Run Cell Type Annotation ####
@@ -226,9 +227,19 @@ seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Di
                                                  annotation_col = "label_singleR_NoReject")
 
 
-
-
 ## scmap
+VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+                    ActualCellTypeColumn = "Actual_Cell_Type",
+                    AnnotCellTypeColumn = "label_scmap_NoReject")
+
+seuratObject_Sample <- VICTOR.lt$Query
+seuratObject_Ref <- VICTOR.lt$Reference
+
+seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_scmap_NoReject"),
+                                                 paste0("DiagPara_VICTOR_label_scmap_NoReject"),
+                                                 annotation_col = "label_scmap_NoReject")
+
+
 
 ## SCINA
 
@@ -264,11 +275,14 @@ seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Di
 #### To-do list ####
 ## -[] Metric_Other
 
+## -[] Function name
+## -[] F1、Recall
+
 ## -[] VICTOR
 ## -[] VICTOR_glmnet
-## -[] VICTOR_StatROC
+## -[V] VICTOR_StatROC
 ## -[] VICTOR_misc
-## -[] VICTOR_Prediction
+## -[L] VICTOR_Prediction
 ## -[V] VICTOR_SeuratV5_SeuratV4
 
 ## -[] Fig Diag Accuracy
@@ -282,3 +296,4 @@ seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Di
 
 ## -[] Reference Setting
 ## -[] Cell Type Name Function
+## -[] Cell Type Name WO _
