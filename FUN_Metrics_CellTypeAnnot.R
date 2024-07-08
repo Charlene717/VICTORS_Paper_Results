@@ -4,43 +4,40 @@ if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 
 # 定義函數以計算各細胞類型的Accuracy並更新Seurat物件
 FUN_Accuracy <- function(seuratObject, actualCellTypeField, labelField) {
-  # 確認seuratObject是Seurat物件
-  if (!inherits(seuratObject, "Seurat")) {
-    stop("The input is not a valid Seurat object.")
-  }
+  if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+  if (!inherits(seuratObject, "Seurat")) { stop("The input is not a valid Seurat object.") }
 
   # 從meta.data中提取實際細胞類型和註釋結果
-  actual_types <- seuratObject@meta.data[[actualCellTypeField]]
-  predicted_types <- seuratObject@meta.data[[labelField]]
+  meta_data <- seuratObject@meta.data
+  actual_types <- meta_data[[actualCellTypeField]]
+  predicted_types <- meta_data[[labelField]]
 
-  # 計算總體Accuracy
-  overall_accuracy <- sum(actual_types == predicted_types) / length(actual_types)
+  # 計算總體和各細胞類型的Accuracy
+  accuracy_data <- meta_data %>%
+    transmute(
+      Actual = actual_types,
+      Predicted = predicted_types,
+      Is_Correct = Actual == Predicted
+    )
 
-  # 計算每種細胞類型的Accuracy
-  accuracy_per_type <- actual_types %>%
-    as.factor() %>%
-    levels() %>%
-    setNames(nm = .) %>%
-    lapply(function(cell_type) {
-      actual <- actual_types[actual_types == cell_type]
-      predicted <- predicted_types[actual_types == cell_type]
-      sum(actual == predicted) / length(actual)
-    }) %>%
-    unlist() %>%
-    as.data.frame()
-  colnames(accuracy_per_type) <- "Accuracy"
+  overall_accuracy <- mean(accuracy_data$Is_Correct)
+
+  accuracy_per_type <- accuracy_data %>%
+    group_by(Actual) %>%
+    summarise(
+      Per_Type_Accuracy = mean(Is_Correct),
+      .groups = 'drop'
+    )
 
   # 創建或更新misc槽位中的對應列表
-  labelField_M <- paste0(labelField,"_Accuracy")
-  if (!labelField_M %in% names(seuratObject@misc)) {
-    seuratObject@misc[[labelField_M]] <- list()
-  }
+  accuracy_list <- list(
+    Per_Cell_Type = accuracy_per_type$Per_Type_Accuracy,
+    Overall = overall_accuracy
+  )
 
-  # 將總體Accuracy和每種細胞類型的Accuracy存入misc槽
-  seuratObject@misc[[labelField_M]][["Per_Cell_Type"]] <- accuracy_per_type
-  seuratObject@misc[[labelField_M]][["Overall"]] <- overall_accuracy
+  labelField_M <- paste0(labelField, "_Accuracy")
+  seuratObject@misc[[labelField_M]] <- accuracy_list
 
-  # 返回更新後的Seurat物件
   return(seuratObject)
 }
 
@@ -86,7 +83,7 @@ FUN_Confusion_Matrix <- function(seuratObject, actualCellTypeField,
       "FN"  # False Negative
     } else if (actual != original && (filtered == "Unassign" || filtered == actual)) {
       "TN"  # True Negative
-    } else if (actual != original && filtered == original) {
+    } else if (actual != original && filtered == original  && original != "Unassign" ) {
       "FP"  # False Positive
     } else {"Other"}
   }, actual_types, original_labels, filtered_labels)
