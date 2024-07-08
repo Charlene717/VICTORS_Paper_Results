@@ -255,6 +255,9 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 
 ## -[] VICTOR
 ## -[] VICTOR_glmnet
+## -[] VICTOR_StatROC
+## -[] VICTOR_misc
+## -[] VICTOR_Prediction
 ## -[V] VICTOR_SeuratV5_SeuratV4
 
 ## -[] Fig Diag Accuracy
