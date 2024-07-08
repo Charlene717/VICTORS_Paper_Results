@@ -48,7 +48,7 @@ FUN_Accuracy <- function(seuratObject, actualCellTypeField, labelField) {
 # seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_singleR_NoRejection')
 
 ################################################################################
-FUN_DiagnosticMetrics <- function(seuratObject, actualCellTypeField,
+FUN_Confusion_Matrix <- function(seuratObject, actualCellTypeField,
                                   originalLabelField, filteredLabelField) {
 
   # 确认seuratObject是Seurat对象
@@ -157,7 +157,31 @@ FUN_DiagnosticMetrics <- function(seuratObject, actualCellTypeField,
 }
 
 # ## Test Function
-# seuratObject_Sample <- FUN_DiagnosticMetrics(seuratObject_Sample, "Actual_Cell_Type",
+# seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
 #                                              "label_singleR_NoReject", "label_singleR")
 
 
+################################################################################
+
+FUN_Confusion_Matrix_Diag <- function(seurat_obj, stat_var, Diagnosis,
+                                      annotation_col = "Annotation",
+                                      actual_col = "Actual_Cell_Type") {
+  if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
+  if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+  seurat_obj@meta.data <- seurat_obj@meta.data %>%
+    mutate(
+      !!Diagnosis := case_when(
+        !!sym(annotation_col) == !!sym(actual_col) & !!sym(stat_var) == "T" ~ "TP",
+        !!sym(annotation_col) != !!sym(actual_col) & !!sym(stat_var) == "F" ~ "TN",
+        !!sym(annotation_col) == !!sym(actual_col) & !!sym(stat_var) == "F" ~ "FN",
+        !!sym(annotation_col) != !!sym(actual_col) & !!sym(stat_var) == "T" ~ "FP",
+        TRUE ~ NA_character_
+      )
+    )
+  return(seurat_obj)
+}
+
+# ## Test Function
+# seuratObject_Sample <- AnnotMetric_DiagPara(seuratObject_Sample, paste0("Diag_",score_type,"_Stat"),
+#                                             paste0("DiagPara_", score_type),
+#                                             annotation_col = "Annotation")
