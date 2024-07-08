@@ -239,18 +239,67 @@ seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Di
                                                  paste0("DiagPara_VICTOR_label_scmap_NoReject"),
                                                  annotation_col = "label_scmap_NoReject")
 
-
-
 ## SCINA
+VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+                    ActualCellTypeColumn = "Actual_Cell_Type",
+                    AnnotCellTypeColumn = "label_SCINA_NoReject")
+
+seuratObject_Sample <- VICTOR.lt$Query
+seuratObject_Ref <- VICTOR.lt$Reference
+
+seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_SCINA_NoReject"),
+                                                 paste0("DiagPara_VICTOR_label_SCINA_NoReject"),
+                                                 annotation_col = "label_SCINA_NoReject")
 
 ## scPred
+VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+                    ActualCellTypeColumn = "Actual_Cell_Type",
+                    AnnotCellTypeColumn = "label_scPred_NoReject")
+
+seuratObject_Sample <- VICTOR.lt$Query
+seuratObject_Ref <- VICTOR.lt$Reference
+
+seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_scPred_NoReject"),
+                                                 paste0("DiagPara_VICTOR_label_scPred_NoReject"),
+                                                 annotation_col = "label_scPred_NoReject")
 
 
 ## CHETAH
+VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+                    ActualCellTypeColumn = "Actual_Cell_Type",
+                    AnnotCellTypeColumn = "label_CHETAH_NoReject")
+
+seuratObject_Sample <- VICTOR.lt$Query
+seuratObject_Ref <- VICTOR.lt$Reference
+
+seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_CHETAH_NoReject"),
+                                                 paste0("DiagPara_VICTOR_label_CHETAH_NoReject"),
+                                                 annotation_col = "label_CHETAH_NoReject")
 
 ## scClassify
+VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+                    ActualCellTypeColumn = "Actual_Cell_Type",
+                    AnnotCellTypeColumn = "label_scClassify_NoReject")
+
+seuratObject_Sample <- VICTOR.lt$Query
+seuratObject_Ref <- VICTOR.lt$Reference
+
+seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_scClassify_NoReject"),
+                                                 paste0("DiagPara_VICTOR_label_scClassify_NoReject"),
+                                                 annotation_col = "label_scClassify_NoReject")
+
 
 ## Seurat
+VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+                    ActualCellTypeColumn = "Actual_Cell_Type",
+                    AnnotCellTypeColumn = "label_Seurat_NoReject")
+
+seuratObject_Sample <- VICTOR.lt$Query
+seuratObject_Ref <- VICTOR.lt$Reference
+
+seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_Seurat_NoReject"),
+                                                 paste0("DiagPara_VICTOR_label_Seurat_NoReject"),
+                                                 annotation_col = "label_Seurat_NoReject")
 
 
 ################################################################################
