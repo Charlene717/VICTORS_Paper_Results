@@ -41,6 +41,8 @@ ref_cells <- sample(cells, length(cells) / 5)
 seuratObject_Sample <- subset(pbmc.rna, cells = sample_cells)
 seuratObject_Ref <- subset(pbmc.rna, cells = ref_cells)
 
+rm(pbmc.rna, pbmc.atac)
+
 # Set Actual_Cell_Type in seuratObject_Sample
 seuratObject_Sample@meta.data[["Actual_Cell_Type"]] <- seuratObject_Sample@meta.data[["seurat_annotations"]]
 
