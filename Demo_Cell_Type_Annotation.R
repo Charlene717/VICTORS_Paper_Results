@@ -207,9 +207,9 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
 
-seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_singleR_NoReject"),
-                                                 paste0("DiagPara_VICTOR_label_singleR_NoReject"),
-                                                 annotation_col = "label_singleR_NoReject")
+seuratObject_Sample <- FUN_Confusion_Matrix_DiagToolsTools(seuratObject_Sample, paste0("Diag_VICTOR_label_singleR_NoReject"),
+                                                           paste0("ConfStat_VICTOR_label_singleR_NoReject"),
+                                                           annotation_col = "label_singleR_NoReject")
 
 
 ## scmap
@@ -220,9 +220,9 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
 
-seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_scmap_NoReject"),
-                                                 paste0("DiagPara_VICTOR_label_scmap_NoReject"),
-                                                 annotation_col = "label_scmap_NoReject")
+seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_VICTOR_label_scmap_NoReject"),
+                                                      paste0("ConfStat_VICTOR_label_scmap_NoReject"),
+                                                      annotation_col = "label_scmap_NoReject")
 
 ## SCINA
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
@@ -232,9 +232,9 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
 
-seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_SCINA_NoReject"),
-                                                 paste0("DiagPara_VICTOR_label_SCINA_NoReject"),
-                                                 annotation_col = "label_SCINA_NoReject")
+seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_VICTOR_label_SCINA_NoReject"),
+                                                      paste0("ConfStat_VICTOR_label_SCINA_NoReject"),
+                                                      annotation_col = "label_SCINA_NoReject")
 
 ## scPred
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
@@ -244,9 +244,9 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
 
-seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_scPred_NoReject"),
-                                                 paste0("DiagPara_VICTOR_label_scPred_NoReject"),
-                                                 annotation_col = "label_scPred_NoReject")
+seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_VICTOR_label_scPred_NoReject"),
+                                                      paste0("ConfStat_VICTOR_label_scPred_NoReject"),
+                                                      annotation_col = "label_scPred_NoReject")
 
 
 ## CHETAH
@@ -257,9 +257,9 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
 
-seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_CHETAH_NoReject"),
-                                                 paste0("DiagPara_VICTOR_label_CHETAH_NoReject"),
-                                                 annotation_col = "label_CHETAH_NoReject")
+seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_VICTOR_label_CHETAH_NoReject"),
+                                                      paste0("ConfStat_VICTOR_label_CHETAH_NoReject"),
+                                                      annotation_col = "label_CHETAH_NoReject")
 
 ## scClassify
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
@@ -269,9 +269,9 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
 
-seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_scClassify_NoReject"),
-                                                 paste0("DiagPara_VICTOR_label_scClassify_NoReject"),
-                                                 annotation_col = "label_scClassify_NoReject")
+seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_VICTOR_label_scClassify_NoReject"),
+                                                      paste0("ConfStat_VICTOR_label_scClassify_NoReject"),
+                                                      annotation_col = "label_scClassify_NoReject")
 
 
 ## Seurat
@@ -282,63 +282,63 @@ VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
 
-seuratObject_Sample <- FUN_Confusion_Matrix_Diag(seuratObject_Sample, paste0("Diag_VICTOR_label_Seurat_NoReject"),
-                                                 paste0("DiagPara_VICTOR_label_Seurat_NoReject"),
-                                                 annotation_col = "label_Seurat_NoReject")
+seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_VICTOR_label_Seurat_NoReject"),
+                                                      paste0("ConfStat_VICTOR_label_Seurat_NoReject"),
+                                                      annotation_col = "label_Seurat_NoReject")
 
 
 ################################################################################
 metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
 
 ## singleR
-Plot_Hist_singleR_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_singleR_NoReject', Note_Title = "",
+Plot_Hist_singleR_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_singleR_NoReject', Note_Title = "",
                                           position_type = "stack", color_vector = color_Class)
 Plot_Hist_singleR_Count_V
 
-Plot_Hist_singleR_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_singleR_NoReject', Note_Title = "",
+Plot_Hist_singleR_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_singleR_NoReject', Note_Title = "",
                                          type = "proportion", color_vector = color_Class)
 Plot_Hist_singleR_Prop_V
 
 ## scmap
-Plot_Hist_scmap_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scmap_NoReject', Note_Title = "",
+Plot_Hist_scmap_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_scmap_NoReject', Note_Title = "",
                                         position_type = "stack", color_vector = color_Class)
-Plot_Hist_scmap_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scmap_NoReject', Note_Title = "",
+Plot_Hist_scmap_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_scmap_NoReject', Note_Title = "",
                                        type = "proportion", color_vector = color_Class)
 
 ## SCINA
-Plot_Hist_SCINA_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_SCINA_NoReject', Note_Title = "",
+Plot_Hist_SCINA_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_SCINA_NoReject', Note_Title = "",
                                         position_type = "stack", color_vector = color_Class)
 
-Plot_Hist_SCINA_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_SCINA_NoReject', Note_Title = "",
+Plot_Hist_SCINA_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_SCINA_NoReject', Note_Title = "",
                                        type = "proportion", color_vector = color_Class)
 
 ## scPred
-Plot_Hist_scPred_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scPred_NoReject', Note_Title = "",
+Plot_Hist_scPred_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_scPred_NoReject', Note_Title = "",
                                          position_type = "stack", color_vector = color_Class)
 
-Plot_Hist_scPred_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scPred_NoReject', Note_Title = "",
+Plot_Hist_scPred_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_scPred_NoReject', Note_Title = "",
                                         type = "proportion", color_vector = color_Class)
 
 
 ## CHETAH
-Plot_Hist_CHETAH_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_CHETAH_NoReject', Note_Title = "",
+Plot_Hist_CHETAH_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_CHETAH_NoReject', Note_Title = "",
                                          position_type = "stack", color_vector = color_Class)
 
-Plot_Hist_CHETAH_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_CHETAH_NoReject', Note_Title = "",
+Plot_Hist_CHETAH_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_CHETAH_NoReject', Note_Title = "",
                                         type = "proportion", color_vector = color_Class)
 
 ## scClassify
-Plot_Hist_scClassify_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scClassify_NoReject', Note_Title = "",
+Plot_Hist_scClassify_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_scClassify_NoReject', Note_Title = "",
                                              position_type = "stack", color_vector = color_Class)
 
-Plot_Hist_scClassify_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_scClassify_NoReject', Note_Title = "",
+Plot_Hist_scClassify_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_scClassify_NoReject', Note_Title = "",
                                             type = "proportion", color_vector = color_Class)
 
 ## Seurat
-Plot_Hist_Seurat_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_Seurat_NoReject', Note_Title = "",
+Plot_Hist_Seurat_Count_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_Seurat_NoReject', Note_Title = "",
                                          position_type = "stack", color_vector = color_Class)
 
-Plot_Hist_Seurat_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'DiagPara_VICTOR_label_Seurat_NoReject', Note_Title = "",
+Plot_Hist_Seurat_Prop_V <- plot_histogram(metadata, 'Actual_Cell_Type', 'ConfStat_VICTOR_label_Seurat_NoReject', Note_Title = "",
                                         type = "proportion", color_vector = color_Class)
 
 ## Sum
