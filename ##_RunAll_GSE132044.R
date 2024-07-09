@@ -2,10 +2,21 @@
 rm(list = ls()) # Clean variable
 memory.limit(150000)
 
-# Check for required packages and load them
-if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+#### Load Packages ####
+## Load packages by CRAN
 if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
+if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
+if(!require("caret")) install.packages("caret"); library(caret)
 
+#### Load Function ####
+if(!require("devtools")) install.packages("devtools"); library(devtools)
+if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
+trace("project_query", edit=TRUE) # layer = "data"
+if(!require("VICTOR")) devtools::install_github("Charlene717/VICTOR"); library(VICTOR)
+
+
+
+#### Load Data Path ####
 # Load a specific .RData file to get Actual_Cell_Type
 load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GSE132044/GSE132044_Read_All_Processed_Sample/GSE132044_10xV2_Sample_CellNum1663_Seed123_Processed.RData")
 Actual_Cell_Type <- seuratObject@meta.data$Actual_Cell_Type %>% unique()
@@ -20,6 +31,9 @@ Path_Ref_Folder <- "D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GS
 files_Sample <- list.files(Path_Sample_Folder, pattern = "\\.RData$", full.names = TRUE)
 files_Ref <- list.files(Path_Ref_Folder, pattern = "\\.RData$", full.names = TRUE)
 
+
+
+#### Run Main Code ####
 # Helper function to extract Set_Sample and Set_Reference from file names
 getSetName <- function(file_path) {
   parts <- unlist(strsplit(basename(file_path), "_", fixed = TRUE))
@@ -48,7 +62,8 @@ for (Cell_Type in Actual_Cell_Type) {
 
       # Source the R script
       try({
-        source("##_RunAll_CTAEvaluator_Main.R")
+        # source("##_RunAll_CTAEvaluator_Main.R")
+        source("#_RUN_CellTypeAnnot_ConfStat_VICTOR.R")
       })
 
       # Clearing the variables except the ones needed for the next iteration
