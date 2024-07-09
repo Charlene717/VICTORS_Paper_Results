@@ -1,6 +1,10 @@
 #### Run Cell Type Annotation ####
 source("#_FUN_CellTypeAnnot.R")
 
+# ## Example of singleR
+# seuratObject_Sample <- Run_singleR(seuratObject_Sample, seuratObject_Ref)
+
+
 # 定義標註函數列表
 annotation_functions <- list(
   Run_singleR,
@@ -18,12 +22,16 @@ for (func in annotation_functions) {
 }
 
 
-# ## singleR
-# seuratObject_Sample <- Run_singleR(seuratObject_Sample, seuratObject_Ref)
 
 ################################################################################
 #### DiagnosticMetrics ####
 source("FUN_Metrics_CellTypeAnnot.R")
+
+# ## Example of singleR
+# seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
+#                                             "label_singleR_NoReject", "label_singleR")
+# seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_singleR_NoReject')
+
 
 # 定義標籤名稱列表
 label_pairs <- list(
@@ -49,10 +57,6 @@ for (labels in label_pairs) {
 }
 
 
-# ## singleR
-# seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
-#                                             "label_singleR_NoReject", "label_singleR")
-# seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_singleR_NoReject')
 
 ################################################################################
 #### Visualization ####
@@ -103,6 +107,18 @@ if(!require("devtools")) install.packages("devtools"); library(devtools)
 if(!require("VICTOR")) install_github("Charlene717/VICTOR"); library(VICTOR)
 if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+
+# ## Example of singleR
+# VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
+#                     ActualCellTypeColumn = "Actual_Cell_Type",
+#                     AnnotCellTypeColumn = "label_singleR_NoReject")
+#
+# seuratObject_Sample <- VICTOR.lt$Query
+# seuratObject_Ref <- VICTOR.lt$Reference
+#
+# seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_VICTOR_label_singleR_NoReject"),
+#                                                       paste0("ConfStat_VICTOR_label_singleR_NoReject"),
+#                                                       annotation_col = "label_singleR_NoReject")
 
 
 # 定義標籤和診斷參數
