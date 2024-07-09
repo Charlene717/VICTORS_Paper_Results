@@ -398,10 +398,9 @@ dev.off()
 ################################################################################
 
 #### To-do list ####
-## -[] Metric_Other
+## -[V] Metric_Other
 
 ## -[] Function name
-## -[] F1、Recall
 
 ## -[] VICTOR
 ## -[] VICTOR_glmnet
