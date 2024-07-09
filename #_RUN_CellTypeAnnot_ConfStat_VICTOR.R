@@ -25,7 +25,7 @@ for (func in annotation_functions) {
 
 ################################################################################
 #### DiagnosticMetrics ####
-source("FUN_Metrics_CellTypeAnnot.R")
+source("#_FUN_Metrics_CellTypeAnnot.R")
 
 # ## Example of singleR
 # seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
