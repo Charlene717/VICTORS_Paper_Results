@@ -5,7 +5,7 @@ source("##_RunAll_Set_Parameter.R")
 writeLines(readLines("##_RunAll_CTAEvaluator_Set_Parameter.R"),
            con = paste0(Name_ExportFolder,"/",Name_Export,"_Parameter_Settings_Record.txt"))
 
-##### Load data* #####
+##### Load data #####
 ## Load sample
 load(Path_Sample) #; rm(Name_Export_o,Name_ExportFolder_o)
 
@@ -33,7 +33,6 @@ if(Set_Ref_Delet_Unknown){ seuratObject_Ref <- subset(seuratObject_Ref, subset =
 if(Set_Ref_Delet_CTMetric){
   seuratObject_Ref <- subset(seuratObject_Ref, subset = Actual_Cell_Type != Set_Ref_Delet)
 }
-
 
 ## SetIdent for seuratObject_Ref
 seuratObject_Ref <- seuratObject_Ref %>% SetIdent(value = "Actual_Cell_Type")
@@ -223,11 +222,11 @@ gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
 gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 
 #### Export ####
-Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+# Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 
 ## Export PDF
-# pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
-pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
+pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
+# pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
     width = 17, height = 17)
 
 # 绘制并输出图像
@@ -240,20 +239,20 @@ dev.off()
 
 ## Export MetaData
 write.table(data.frame(ID=rownames(seuratObject_Sample@meta.data), seuratObject_Sample@meta.data),
-            # file=paste0(Name_ExportFolder,"/",Name_Export,"_metadataSamp.tsv"),
-            file=paste0(Name_time_wo_micro,"_metadataSamp.tsv"),
+            file=paste0(Name_ExportFolder,"/",Name_Export,"_metadataSamp.tsv"),
+            # file=paste0(Name_time_wo_micro,"_metadataSamp.tsv"),
             quote = FALSE,row.names = FALSE,col.names = TRUE, na = "",sep = '\t')
 write.table(data.frame(ID=rownames(seuratObject_Ref@meta.data), seuratObject_Ref@meta.data),
-            # file=paste0(Name_ExportFolder,"/",Name_Export,"_metadataRef.tsv"),
-            file=paste0(Name_time_wo_micro,"_metadataRef.tsv"),
+            file=paste0(Name_ExportFolder,"/",Name_Export,"_metadataRef.tsv"),
+            # file=paste0(Name_time_wo_micro,"_metadataRef.tsv"),
             quote = FALSE,row.names = FALSE,col.names = TRUE, na = "",sep = '\t')
 
 # Remove Plot Object
 plot_objs <- grep("^[Pp]lot", ls(), value = TRUE)
 rm(list = plot_objs[sapply(plot_objs, function(obj) !is.function(get(obj)))])
 
-# save.image(paste0(Name_ExportFolder,"/",Name_Export,".RData"))
-save.image(paste0(Name_time_wo_micro,".RData"))
+save.image(paste0(Name_ExportFolder,"/",Name_Export,".RData"))
+# save.image(paste0(Name_time_wo_micro,".RData"))
 
 # # Save small RData
 # save(seuratObject_Sample, seuratObject_Ref, ROC_Summarize.lt,
