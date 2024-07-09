@@ -117,15 +117,14 @@ FUN_Confusion_Matrix <- function(seuratObject, actualCellTypeField, originalLabe
 
 
 ################################################################################
+FUN_Confusion_Matrix_DiagTools <- function(seurat_obj, stat_var, diagnosis_col,
+                                           annotation_col = "Annotation",
+                                           actual_col = "Actual_Cell_Type") {
 
-FUN_Confusion_Matrix_Diag <- function(seurat_obj, stat_var, Diagnosis,
-                                      annotation_col = "Annotation",
-                                      actual_col = "Actual_Cell_Type") {
-  if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
-  if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+  # 添加診斷列
   seurat_obj@meta.data <- seurat_obj@meta.data %>%
     mutate(
-      !!Diagnosis := case_when(
+      !!diagnosis_col := case_when(
         !!sym(annotation_col) == !!sym(actual_col) & !!sym(stat_var) == "T" ~ "TP",
         !!sym(annotation_col) != !!sym(actual_col) & !!sym(stat_var) == "F" ~ "TN",
         !!sym(annotation_col) == !!sym(actual_col) & !!sym(stat_var) == "F" ~ "FN",
@@ -133,10 +132,53 @@ FUN_Confusion_Matrix_Diag <- function(seurat_obj, stat_var, Diagnosis,
         TRUE ~ NA_character_
       )
     )
+
+  # 使用基礎R函數來計算混淆矩陣
+  confusion_matrix <- table(seurat_obj@meta.data[[diagnosis_col]])
+
+  # 確認混淆矩陣包含所有需要的列
+  all_labels <- c("TP", "TN", "FP", "FN")
+  for (label in all_labels) {
+    if (!(label %in% names(confusion_matrix))) {
+      confusion_matrix[label] <- 0
+    }
+  }
+  confusion_matrix <- as.data.frame(confusion_matrix)
+
+  # 獲取性能指標
+  TP <- confusion_matrix[confusion_matrix$diagnosis_vec == "TP", "Freq"]
+  TN <- confusion_matrix[confusion_matrix$diagnosis_vec == "TN", "Freq"]
+  FP <- confusion_matrix[confusion_matrix$diagnosis_vec == "FP", "Freq"]
+  FN <- confusion_matrix[confusion_matrix$diagnosis_vec == "FN", "Freq"]
+
+  overall_metrics <- list(
+    Accuracy = (TP + TN) / (TP + TN + FP + FN),
+    Precision = TP / (TP + FP),
+    Recall = TP / (TP + FN),
+    F1_Score = 2 * (TP / (TP + FP)) * (TP / (TP + FN)) / ((TP / (TP + FP)) + (TP / (TP + FN)))
+  )
+
+  # 計算每個細胞類型的性能指標
+  per_cell_type_metrics <- seurat_obj@meta.data %>%
+    group_by(!!sym(actual_col)) %>%
+    summarise(
+      Accuracy = sum(!!sym(diagnosis_col) == "TP" | !!sym(diagnosis_col) == "TN") / n(),
+      Precision = sum(!!sym(diagnosis_col) == "TP") / sum(!!sym(diagnosis_col) == "TP" | !!sym(diagnosis_col) == "FP"),
+      Recall = sum(!!sym(diagnosis_col) == "TP") / sum(!!sym(diagnosis_col) == "TP" | !!sym(diagnosis_col) == "FN"),
+      F1_Score = 2 * Precision * Recall / (Precision + Recall)
+    )
+
+  # 儲存性能指標到 misc 槽
+  seurat_obj@misc[[paste0(diagnosis_col, "_Metrics")]] <- list(
+    Per_Cell_Type = per_cell_type_metrics,
+    Overall = overall_metrics
+  )
+
   return(seurat_obj)
 }
 
 # ## Test Function
-# seuratObject_Sample <- AnnotMetric_DiagPara(seuratObject_Sample, paste0("Diag_",score_type,"_Stat"),
-#                                             paste0("DiagPara_", score_type),
-#                                             annotation_col = "Annotation")
+# score_type <- "VICTOR"
+# seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste0("Diag_",score_type,"_Stat"),
+#                                                       paste0("DiagPara_", score_type),
+#                                                       annotation_col = "Annotation")
