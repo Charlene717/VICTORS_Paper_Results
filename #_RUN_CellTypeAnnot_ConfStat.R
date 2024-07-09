@@ -84,26 +84,23 @@ plot_histograms <- function(metadata, actual, label, color_vector) {
   )
 }
 
-# 使用 lapply 來依次處理每個標籤對
+# 使用 lapply 来依次处理每个标签对
 plots <- lapply(labels_diag_para, function(label) plot_histograms(metadata, 'Actual_Cell_Type', label, color_Class))
 
-# 提取並合併所有 Count 圖
+# 提取所有 Count 图
 count_plots <- lapply(plots, `[[`, "Count")
-Plots_His_ConfStat_count_CTAnnot <- do.call(gridExtra::grid.arrange, count_plots)
-Plots_His_ConfStat_count_CTAnnot
+gridExtra::grid.arrange(grobs = count_plots, ncol = 3)
 
-# 提取並合併所有 Prop 圖
+# 提取所有 Prop 图
 prop_plots <- lapply(plots, `[[`, "Prop")
-Plots_His_ConfStat_prop_CTAnnot <- do.call(gridExtra::grid.arrange, prop_plots)
-Plots_His_ConfStat_prop_CTAnnot
-
+gridExtra::grid.arrange(grobs = prop_plots, ncol = 3)
 
 ################################################################################
 ################################################################################
 
 #### VICTOR ####
-# if(!require("devtools")) install.packages("devtools"); library(devtools)
-# if(!require("VICTOR")) install_github("Charlene717/VICTOR"); library(VICTOR)
+if(!require("devtools")) install.packages("devtools"); library(devtools)
+if(!require("VICTOR")) install_github("Charlene717/VICTOR"); library(VICTOR)
 if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 
@@ -143,32 +140,20 @@ for (label in labels) {
   seuratObject_Ref <- result[[2]]
 }
 
-# 繪圖函數
-plot_histograms <- function(metadata, actual_col, conf_stat_label, color_vector) {
-  plot_hist_count <- plot_histogram(metadata, actual_col, conf_stat_label, Note_Title = "", position_type = "stack", color_vector = color_vector)
-  plot_hist_prop <- plot_histogram(metadata, actual_col, conf_stat_label, Note_Title = "", type = "proportion", color_vector = color_vector)
-
-  return(list(plot_hist_count, plot_hist_prop))
-}
-
-# 迭代繪圖
-plots_count <- list()
-plots_prop <- list()
+# 迭代绘图
+plots_count_victor <- list()
+plots_prop_victor <- list()
 metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
 
 for (label in labels) {
   conf_stat_label <- paste0("ConfStat_VICTOR_", label)
   plots <- plot_histograms(metadata, "Actual_Cell_Type", conf_stat_label, color_Class)
-  plots_count <- c(plots_count, list(plots[[1]]))
-  plots_prop <- c(plots_prop, list(plots[[2]]))
+  plots_count_victor <- c(plots_count_victor, list(plots[[1]]))
+  plots_prop_victor <- c(plots_prop_victor, list(plots[[2]]))
 }
 
-# 合併所有的計數和比例圖
-Plots_His_ConfStat_count_VICTOR <- do.call(gridExtra::grid.arrange, plots_count)
-Plots_His_ConfStat_count_VICTOR
-Plots_His_ConfStat_prop_VICTOR <- do.call(gridExtra::grid.arrange, plots_prop)
-Plots_His_ConfStat_prop_VICTOR
-
+gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
+gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 
 #### Export ####
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
@@ -177,10 +162,11 @@ Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
     width = 17, height = 17)
 
-print(Plots_His_ConfStat_count_CTAnnot)
-print(Plots_His_ConfStat_prop_CTAnnot)
-print(Plots_His_ConfStat_count_VICTOR)
-print(Plots_His_ConfStat_prop_VICTOR)
+# 绘制并输出图像
+gridExtra::grid.arrange(grobs = count_plots, ncol = 3)
+gridExtra::grid.arrange(grobs = prop_plots, ncol = 3)
+gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
+gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 
 dev.off()
 
