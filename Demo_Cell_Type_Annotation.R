@@ -400,12 +400,12 @@ dev.off()
 #### To-do list ####
 ## -[V] Metric_Other
 
-## -[] Function name
+## -[V] Function name
 
-## -[] VICTOR
-## -[] VICTOR_glmnet
+## -[L] VICTOR
+## -[L] VICTOR_glmnet
 ## -[V] VICTOR_StatROC
-## -[] VICTOR_misc
+## -[V] VICTOR_misc
 ## -[L] VICTOR_Prediction
 ## -[V] VICTOR_SeuratV5_SeuratV4
 
@@ -417,6 +417,8 @@ dev.off()
 ## -[] Big Data
 
 ## -[] UMAP
+
+## -[] scPred_SeuratV5
 
 ## -[] Reference Setting
 ## -[] Cell Type Name Function
