@@ -1,5 +1,5 @@
 ### Parameter ###
-source("##_RunAll_CTAEvaluator_Set_Parameter.R")
+source("##_RunAll_Set_Parameter.R")
 
 ## Export parameter information to txt file
 writeLines(readLines("##_RunAll_CTAEvaluator_Set_Parameter.R"),
