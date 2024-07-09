@@ -89,13 +89,13 @@ plots <- lapply(labels_diag_para, function(label) plot_histograms(metadata, 'Act
 
 # 提取並合併所有 Count 圖
 count_plots <- lapply(plots, `[[`, "Count")
-Plots_His_count_CTAnnot <- do.call(gridExtra::grid.arrange, count_plots)
-Plots_His_count_CTAnnot
+Plots_His_ConfStat_count_CTAnnot <- do.call(gridExtra::grid.arrange, count_plots)
+Plots_His_ConfStat_count_CTAnnot
 
 # 提取並合併所有 Prop 圖
 prop_plots <- lapply(plots, `[[`, "Prop")
-Plots_His_prop_CTAnnot <- do.call(gridExtra::grid.arrange, prop_plots)
-Plots_His_prop_CTAnnot
+Plots_His_ConfStat_prop_CTAnnot <- do.call(gridExtra::grid.arrange, prop_plots)
+Plots_His_ConfStat_prop_CTAnnot
 
 
 ################################################################################
@@ -164,10 +164,25 @@ for (label in labels) {
 }
 
 # 合併所有的計數和比例圖
-do.call(gridExtra::grid.arrange, plots_count)
-do.call(gridExtra::grid.arrange, plots_prop)
+Plots_His_ConfStat_count_VICTOR <- do.call(gridExtra::grid.arrange, plots_count)
+Plots_His_ConfStat_count_VICTOR
+Plots_His_ConfStat_prop_VICTOR <- do.call(gridExtra::grid.arrange, plots_prop)
+Plots_His_ConfStat_prop_VICTOR
 
 
+#### Export ####
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+
+# pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
+pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
+    width = 17, height = 17)
+
+print(Plots_His_ConfStat_count_CTAnnot)
+print(Plots_His_ConfStat_prop_CTAnnot)
+print(Plots_His_ConfStat_count_VICTOR)
+print(Plots_His_ConfStat_prop_VICTOR)
+
+dev.off()
 
 
 
