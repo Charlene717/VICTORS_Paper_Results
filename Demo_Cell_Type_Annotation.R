@@ -86,37 +86,37 @@ source("FUN_Metrics_CellTypeAnnot.R")
 ## singleR
 seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_singleR_NoReject", "label_singleR")
-seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_singleR_NoReject')
+seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_singleR_NoReject')
 
 ## scmap
 seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_scmap_NoReject", "label_scmap")
-seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_scmap_NoReject')
+seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_scmap_NoReject')
 
 ## SCINA
 seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_SCINA_NoReject", "label_SCINA")
-seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_SCINA_NoReject')
+seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_SCINA_NoReject')
 
 ## scPred
 seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_scPred_NoReject", "label_scPred")
-seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_scPred_NoReject')
+seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_scPred_NoReject')
 
 ## CHETAH
 seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_CHETAH_NoReject", "label_CHETAH")
-seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_CHETAH_NoReject')
+seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_CHETAH_NoReject')
 
 ## scClassify
 seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_scClassify_NoReject", "label_scClassify")
-seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_scClassify_NoReject')
+seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_scClassify_NoReject')
 
 ## Seurat
 seuratObject_Sample <- FUN_Confusion_Matrix(seuratObject_Sample, "Actual_Cell_Type",
                                              "label_Seurat_NoReject", "label_Seurat")
-seuratObject_Sample <- FUN_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_Seurat_NoReject')
+seuratObject_Sample <- FUN_CTAnnot_Accuracy(seuratObject_Sample, 'Actual_Cell_Type', 'label_Seurat_NoReject')
 
 #### Visualization ####
 DimPlot(seuratObject_Sample, reduction = "umap", group.by = "label_singleR_NoReject")

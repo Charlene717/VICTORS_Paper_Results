@@ -3,7 +3,7 @@ if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 
 
 # 定義函數以計算各細胞類型的Accuracy並更新Seurat物件
-FUN_Accuracy <- function(seuratObject, actualCellTypeField, labelField) {
+FUN_CTAnnot_Accuracy <- function(seuratObject, actualCellTypeField, labelField) {
   if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
   if (!inherits(seuratObject, "Seurat")) { stop("The input is not a valid Seurat object.") }
 
