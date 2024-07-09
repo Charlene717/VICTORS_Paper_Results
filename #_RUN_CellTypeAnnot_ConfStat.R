@@ -88,12 +88,12 @@ plot_histograms <- function(metadata, actual, label, color_vector) {
 plots <- lapply(labels_diag_para, function(label) plot_histograms(metadata, 'Actual_Cell_Type', label, color_Class))
 
 # 提取所有 Count 图
-count_plots <- lapply(plots, `[[`, "Count")
-gridExtra::grid.arrange(grobs = count_plots, ncol = 3)
+plots_count <- lapply(plots, `[[`, "Count")
+gridExtra::grid.arrange(grobs = plots_count, ncol = 3)
 
 # 提取所有 Prop 图
-prop_plots <- lapply(plots, `[[`, "Prop")
-gridExtra::grid.arrange(grobs = prop_plots, ncol = 3)
+plots_prop <- lapply(plots, `[[`, "Prop")
+gridExtra::grid.arrange(grobs = plots_prop, ncol = 3)
 
 ################################################################################
 ################################################################################
@@ -158,17 +158,38 @@ gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 #### Export ####
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 
+## Export PDF
 # pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
 pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
     width = 17, height = 17)
 
 # 绘制并输出图像
-gridExtra::grid.arrange(grobs = count_plots, ncol = 3)
-gridExtra::grid.arrange(grobs = prop_plots, ncol = 3)
+gridExtra::grid.arrange(grobs = plots_count, ncol = 3)
+gridExtra::grid.arrange(grobs = plots_prop, ncol = 3)
 gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
 gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 
 dev.off()
 
+## Export MetaData
+write.table(data.frame(ID=rownames(seuratObject_Sample@meta.data), seuratObject_Sample@meta.data),
+            # file=paste0(Name_ExportFolder,"/",Name_Export,"_metadataSamp.tsv"),
+            file=paste0(Name_time_wo_micro,"_metadataSamp.tsv"),
+            quote = FALSE,row.names = FALSE,col.names = TRUE, na = "",sep = '\t')
+write.table(data.frame(ID=rownames(seuratObject_Ref@meta.data), seuratObject_Ref@meta.data),
+            # file=paste0(Name_ExportFolder,"/",Name_Export,"_metadataRef.tsv"),
+            file=paste0(Name_time_wo_micro,"_metadataRef.tsv"),
+            quote = FALSE,row.names = FALSE,col.names = TRUE, na = "",sep = '\t')
+
+# Remove Plot Object
+plot_objs <- grep("^[Pp]lot", ls(), value = TRUE)
+rm(list = plot_objs[sapply(plot_objs, function(obj) !is.function(get(obj)))])
+
+# save.image(paste0(Name_ExportFolder,"/",Name_Export,".RData"))
+save.image(paste0(Name_time_wo_micro,".RData"))
+
+# # Save small RData
+# save(seuratObject_Sample, seuratObject_Ref, ROC_Summarize.lt,
+#      file = paste0(Name_ExportFolder, "/", Name_Export, "_S.RData"))
 
 
