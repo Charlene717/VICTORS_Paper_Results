@@ -17,7 +17,7 @@ if(!require("VICTOR")) devtools::install_github("Charlene717/VICTOR"); library(V
 
 # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
 
-source("#_FUN_CellTypeAnnot.R")
+
 
 
 #### Load Data ####
@@ -53,6 +53,8 @@ seuratObject_Ref@meta.data$Actual_Cell_Type <- gsub("_", "  ", seuratObject_Ref@
 
 
 #### Run Cell Type Annotation ####
+source("#_FUN_CellTypeAnnot.R")
+
 ## singleR
 seuratObject_Sample <- Run_singleR(seuratObject_Sample, seuratObject_Ref)
 
