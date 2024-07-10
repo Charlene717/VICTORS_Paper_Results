@@ -40,6 +40,21 @@ DimPlot(seuratObject_Ref, label = TRUE, repel = TRUE) + NoLegend()
 # DimPlot(seuratObject_Ref, reduction = "umap", group.by = "Actual_Cell_Type")
 
 
+#### Save information to seuratObject ####
+## Save information to metadata
+seuratObject_Sample@meta.data$Sample_Platform <- seuratObject_Sample@misc[["BasicInfo"]][["Platform"]]
+seuratObject_Sample@meta.data$Sample_DataID <- seuratObject_Sample@misc[["BasicInfo"]][["DataID"]]
+seuratObject_Sample@meta.data$Ref_Platform <- seuratObject_Ref@misc[["BasicInfo"]][["Platform"]]
+seuratObject_Sample@meta.data$Ref_DataID <- seuratObject_Ref@misc[["BasicInfo"]][["DataID"]]
+
+seuratObject_Sample@meta.data$Mislabel_CellType <- Set_Ref_Delet
+
+## Save information to misc
+seuratObject_Sample@misc[["CTAnnot"]][["Ref_Platform"]] <- seuratObject_Ref@misc[["BasicInfo"]][["Platform"]]
+seuratObject_Sample@misc[["CTAnnot"]][["Ref_DataID"]] <- seuratObject_Ref@misc[["BasicInfo"]][["DataID"]]
+seuratObject_Sample@misc[["CTAnnot"]][["Ref_PMID"]] <- seuratObject_Ref@misc[["BasicInfo"]][["PMID"]]
+
+
 ##### Data Preprocessing #####
 ## Seurat object Prepocessing
 source("FUN_Seurat_Prepocessing.R")
