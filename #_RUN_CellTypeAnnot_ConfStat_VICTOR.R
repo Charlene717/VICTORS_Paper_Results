@@ -140,7 +140,8 @@ labels <- c(
 run_victor_and_diagnose <- function(seurat_obj_sample, seurat_obj_ref, actual_col, annot_col) {
   VICTOR.lt <- VICTOR(seurat_obj_sample, seurat_obj_ref,
                       ActualCellTypeColumn = actual_col,
-                      AnnotCellTypeColumn = annot_col)
+                      AnnotCellTypeColumn = annot_col,
+                      seurat_version = "V5")
 
   seurat_obj_sample <- VICTOR.lt$Query
   seurat_obj_ref <- VICTOR.lt$Reference
@@ -180,7 +181,7 @@ gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 # Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 
 ## Export PDF
-pdf(paste0(Name_ExportFolder,"/",Name_Export,"_",Set_AnnotM,"_",Set_ScoreM,"_AnnoDiagnosis_Hist.pdf"),
+pdf(paste0(Name_ExportFolder,"/",Name_Export,"_AnnoDiagnosis_Hist.pdf"),
 # pdf(paste0(Name_time_wo_micro,"_AnnoDiagnosis_Hist.pdf"),
     width = 17, height = 17)
 
