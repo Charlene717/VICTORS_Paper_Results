@@ -99,9 +99,6 @@ Name_ExportFolder <- paste0("Export","_",Name_Dataset, Note_ExportFolder,"_",Set
 
 # Name_ExportFolder <- paste0("Export_",Name_Dataset,"_Ref",seuratObject@misc[["CellTypeAnnot_Para"]][["Set_Ref_Delet_Name"]])
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
-if (length(Set_Score) == 1) {
-  Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID, "_", Set_Score)
-} else {
-  Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID, "_Multi")
-}
+
+Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID)
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
