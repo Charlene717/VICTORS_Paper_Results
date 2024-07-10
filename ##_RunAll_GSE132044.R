@@ -11,7 +11,8 @@ if(!require("caret")) install.packages("caret"); library(caret)
 #### Load Function ####
 if(!require("devtools")) install.packages("devtools"); library(devtools)
 if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
-trace("project_query", edit=TRUE) # layer = "data"
+#open for Seurat Mult # trace("project_query", edit=TRUE) # layer = "data"
+trace("project_query", edit=TRUE) # GetAssayData(new, "data") -> # GetAssayData(new, "RNA")
 if(!require("VICTOR")) devtools::install_github("Charlene717/VICTOR"); library(VICTOR)
 
 #### Set Parameter ####
@@ -53,7 +54,7 @@ for (Cell_Type in Actual_Cell_Type) {
 
     # Iterate through each reference file
     for (ref_file in files_Ref) {
-      try({ detach("package:scPred", unload = TRUE) })
+      # try({ detach("package:scPred", unload = TRUE) })
       # Extract Set_Reference from reference file name
       Set_Reference <- getSetName(ref_file)
 
@@ -68,7 +69,7 @@ for (Cell_Type in Actual_Cell_Type) {
       })
 
       # Clearing the variables except the ones needed for the next iteration
-      rm(list = setdiff(ls(), c("ref_file", "sample_file", "Cell_Type",
+      rm(list = setdiff(ls(), c("GSE_Name","ref_file", "sample_file", "Cell_Type",
                                 "Set_Sample", "Set_Reference",
                                 "files_Sample", "files_Ref", "Path_Sample_Folder", "Path_Ref_Folder",
                                 "getSetName", "Actual_Cell_Type","Set_Ref_Delet")), envir = .GlobalEnv)
