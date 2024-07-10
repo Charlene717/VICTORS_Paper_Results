@@ -56,6 +56,13 @@ seuratObject_Sample@misc[["CTAnnot"]][["Ref_DataID"]] <- seuratObject_Ref@misc[[
 seuratObject_Sample@misc[["CTAnnot"]][["Ref_PMID"]] <- seuratObject_Ref@misc[["BasicInfo"]][["PMID"]]
 
 
+## Create sub folder
+Name_PlatForm <- paste0("Qry_", seuratObject_Sample@misc[["BasicInfo"]][["Platform"]],
+                        "_Ref_",seuratObject_Ref@misc[["BasicInfo"]][["Platform"]])
+Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID,"_",Set_Ref_Delet_Mislabel_Name,"_",Name_PlatForm)
+if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+
+
 ##### Data Preprocessing #####
 ## Seurat object Prepocessing
 source("FUN_Seurat_Prepocessing.R")
