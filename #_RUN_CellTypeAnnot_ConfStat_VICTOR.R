@@ -187,8 +187,8 @@ pdf(paste0(Name_ExportFolder,"/",Name_Export,"_AnnoDiagnosis_Hist.pdf"),
 
 # 绘制并输出图像
 gridExtra::grid.arrange(grobs = plots_count, ncol = 3)
-gridExtra::grid.arrange(grobs = plots_prop, ncol = 3)
 gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
+gridExtra::grid.arrange(grobs = plots_prop, ncol = 3)
 gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 
 dev.off()
