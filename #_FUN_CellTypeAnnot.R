@@ -24,7 +24,7 @@ if(!require("scuttle")) BiocManager::install("scuttle"); library(scuttle)
 
 #### singleR ####
 Run_singleR <- function(Query_Seurat, Reference_Seurat,
-                        Set_RefAnnoCol = "Actual_Cell_Type", ...) {
+                        Set_RefAnnoCol = "Actual_Cell_Type", seurat_version = "V4", ...) {
   # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
   if (!require("SingleR", quietly = TRUE)) BiocManager::install("SingleR"); library(SingleR)
@@ -38,14 +38,23 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat,
   ref_sce <- ref_sce[, !is.na(ref_sce$label)]
 
   # Log-normalize reference dataset if not already done
-  if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) { ref_sce <- logNormCounts(ref_sce) }
+  if(seurat_version == "V5"){
+    if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) { ref_sce <- logNormCounts(ref_sce) }
+  }else{
+    if (is.null(Reference_Seurat@assays[["RNA"]]@data)) { ref_sce <- logNormCounts(ref_sce) }
+  }
+
 
   # Preprocess query dataset
   query_sce <- as.SingleCellExperiment(Query_Seurat)
   query_sce <- query_sce[, colSums(counts(query_sce)) > 0]
 
   # Log-normalize query dataset if not already done
-  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- logNormCounts(query_sce) }
+  if(seurat_version == "V5"){
+    if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- logNormCounts(query_sce) }
+  }else{
+    if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- logNormCounts(query_sce) }
+  }
 
   # Run SingleR
   SingleR.lt <- SingleR(test = query_sce, ref = ref_sce, assay.type.test = 1,
