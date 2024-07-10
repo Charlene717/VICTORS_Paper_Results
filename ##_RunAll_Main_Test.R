@@ -1,10 +1,6 @@
 ### Parameter ###
 source("##_RunAll_Set_Parameter.R")
 
-## Export parameter information to txt file
-writeLines(readLines("##_RunAll_Set_Parameter.R"),
-           con = paste0(Name_ExportFolder,"/",Name_Export,"_Parameter_Settings_Record.txt"))
-
 ##### Load data #####
 ## Load sample
 load(Path_Sample) #; rm(Name_Export_o,Name_ExportFolder_o)
@@ -61,6 +57,10 @@ Name_PlatForm <- paste0("Qry_", seuratObject_Sample@misc[["BasicInfo"]][["Platfo
                         "_Ref_",seuratObject_Ref@misc[["BasicInfo"]][["Platform"]])
 Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID,"_",Set_Ref_Delet_Mislabel_Name,"_",Name_PlatForm)
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+
+## Export parameter information to txt file
+writeLines(readLines("##_RunAll_Set_Parameter.R"),
+           con = paste0(Name_ExportFolder,"/",Name_Export,"_Parameter_Settings_Record.txt"))
 
 
 ##### Data Preprocessing #####
