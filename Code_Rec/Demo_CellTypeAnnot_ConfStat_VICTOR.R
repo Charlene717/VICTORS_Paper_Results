@@ -202,7 +202,8 @@ Plot_Hist_Seurat_Prop
 ## singleR
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
                     ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_singleR_NoReject")
+                    AnnotCellTypeColumn = "label_singleR_NoReject",
+                    seurat_version = "V5")
 
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
@@ -215,7 +216,8 @@ seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste
 ## scmap
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
                     ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_scmap_NoReject")
+                    AnnotCellTypeColumn = "label_scmap_NoReject",
+                    seurat_version = "V5")
 
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
@@ -227,7 +229,8 @@ seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste
 ## SCINA
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
                     ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_SCINA_NoReject")
+                    AnnotCellTypeColumn = "label_SCINA_NoReject",
+                    seurat_version = "V5")
 
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
@@ -239,7 +242,8 @@ seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste
 ## scPred
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
                     ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_scPred_NoReject")
+                    AnnotCellTypeColumn = "label_scPred_NoReject",
+                    seurat_version = "V5")
 
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
@@ -252,7 +256,8 @@ seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste
 ## CHETAH
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
                     ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_CHETAH_NoReject")
+                    AnnotCellTypeColumn = "label_CHETAH_NoReject",
+                    seurat_version = "V5")
 
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
@@ -264,7 +269,8 @@ seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste
 ## scClassify
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
                     ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_scClassify_NoReject")
+                    AnnotCellTypeColumn = "label_scClassify_NoReject",
+                    seurat_version = "V5")
 
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
@@ -277,7 +283,8 @@ seuratObject_Sample <- FUN_Confusion_Matrix_DiagTools(seuratObject_Sample, paste
 ## Seurat
 VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
                     ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_Seurat_NoReject")
+                    AnnotCellTypeColumn = "label_Seurat_NoReject",
+                    seurat_version = "V5")
 
 seuratObject_Sample <- VICTOR.lt$Query
 seuratObject_Ref <- VICTOR.lt$Reference
