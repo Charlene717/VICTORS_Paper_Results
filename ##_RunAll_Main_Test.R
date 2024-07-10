@@ -2,7 +2,7 @@
 source("##_RunAll_Set_Parameter.R")
 
 ## Export parameter information to txt file
-writeLines(readLines("##_RunAll_CTAEvaluator_Set_Parameter.R"),
+writeLines(readLines("##_RunAll_Set_Parameter.R"),
            con = paste0(Name_ExportFolder,"/",Name_Export,"_Parameter_Settings_Record.txt"))
 
 ##### Load data #####
@@ -12,7 +12,7 @@ load(Path_Sample) #; rm(Name_Export_o,Name_ExportFolder_o)
 if(is.null(seuratObject@meta.data$`Actual_Cell_Type`)){
   seuratObject@meta.data$`Actual_Cell_Type` <- seuratObject@meta.data$`Cell_Type`
 }
-
+seuratObject <- UpdateSeuratObject(seuratObject)
 seuratObject_Sample <- seuratObject; rm(seuratObject)
 if(Set_Sam_Delet_Unknown){
   seuratObject_Sample <- subset(seuratObject_Sample, subset = Actual_Cell_Type != "Unknown")
@@ -26,6 +26,7 @@ DimPlot(seuratObject_Sample, label = TRUE, repel = TRUE) + NoLegend()
 
 ## Load reference
 load(Path_Ref) #; rm(Name_Export_o,Name_ExportFolder_o)
+seuratObject <- UpdateSeuratObject(seuratObject)
 seuratObject_Ref <- seuratObject; rm(seuratObject)
 if(Set_Ref_Delet_Unknown){ seuratObject_Ref <- subset(seuratObject_Ref, subset = Actual_Cell_Type != "Unknown") }
 
