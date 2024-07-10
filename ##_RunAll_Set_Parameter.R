@@ -67,6 +67,7 @@ Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 6), collapse = 
 Name_time_day <- gsub("-", "_",Sys.Date())
 Name_Dataset <- GSE_Name
 
+
 if(Set_Refer_Sam){
   Name_Ref <- paste0("_RefSam", Set_Refer_Sam, "_RefSeed",Set_Seed, "_RefNum",Set_RefNum)
 }else{
@@ -95,10 +96,14 @@ Name_Export <- paste0(Name_FileID)
 # Name_ExportFolder <- "Export"
 Note_ExportFolder <- "" # Note_ExportFolder <- paste0("_",Set_Fin_Anno)
 Name_ExportFolder <- paste0("Export","_",Name_Dataset, Note_ExportFolder,"_",Set_Ref_Delet_Mislabel_Name)
-
-
 # Name_ExportFolder <- paste0("Export_",Name_Dataset,"_Ref",seuratObject@misc[["CellTypeAnnot_Para"]][["Set_Ref_Delet_Name"]])
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 
-Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID)
-if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+
+# Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID,"_",Set_Ref_Delet_Mislabel_Name)
+# if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+#
+# # Name_PlatForm <- paste0("Qry_", seuratObject_Sample@misc[["BasicInfo"]][["Platform"]],
+# #                         "_Ref_",seuratObject_Ref@misc[["BasicInfo"]][["Platform"]])
+# # Name_ExportFolder <- paste0(Name_ExportFolder, "/", Name_FileID,"_",Set_Ref_Delet_Mislabel_Name,"_",Name_PlatForm)
+# # if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
