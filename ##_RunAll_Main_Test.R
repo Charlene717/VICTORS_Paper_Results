@@ -39,6 +39,8 @@ DimPlot(seuratObject_Ref, label = TRUE, repel = TRUE) + NoLegend()
 
 #### Save information to seuratObject ####
 ## Save information to metadata
+seuratObject_Sample@meta.data$FileID <- Name_FileID
+
 seuratObject_Sample@meta.data$Sample_Platform <- seuratObject_Sample@misc[["BasicInfo"]][["Platform"]]
 seuratObject_Sample@meta.data$Sample_DataID <- seuratObject_Sample@misc[["BasicInfo"]][["DataID"]]
 seuratObject_Sample@meta.data$Ref_Platform <- seuratObject_Ref@misc[["BasicInfo"]][["Platform"]]
