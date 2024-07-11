@@ -14,88 +14,135 @@ if(!require("devtools")) install.packages("devtools"); library(devtools)
 if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
 trace("project_query", edit=TRUE) # layer = "data"
 if(!require("VICTOR")) devtools::install_github("Charlene717/VICTOR"); library(VICTOR)
-
 # new_data <- GetAssayData(new, "data")[shared_features, ] # new_data <- GetAssayData(new, layer = "data")[shared_features, ]
+
+if(!require("Rsamtools")) BiocManager::install("Rsamtools"); library(Rsamtools)
+if(!require("Signac")) install.packages("Signac"); library(Signac)
 
 
 #### Load Data ####
-load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
+# load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
+#
+# # seuratObject_Sample <- pbmc.rna
+# # seuratObject_Ref <- pbmc.rna
+# # seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+#
+#
+# # Randomly split cells into two halves
+# set.seed(123) # for reproducibility
+# cells <- colnames(pbmc.rna)
+# # sample_cells <- sample(cells, length(cells) / 2)
+# # ref_cells <- setdiff(cells, sample_cells)
+#
+# sample_cells <- sample(cells, length(cells) / 5)
+# ref_cells <- sample(cells, length(cells) / 5)
+#
+# # Create Seurat objects
+# ## Qry
+# if (!require("Signac")) install.packages("Signac")
+# if (!require("EnsDb.Hsapiens.v86")) BiocManager::install("EnsDb.Hsapiens.v86")
+# library(Signac)
+# library(EnsDb.Hsapiens.v86)
+#
+# # 假设 pbmc.atac 是您的 ATAC Seurat 对象
+# # 提取 ATAC 计数数据并获取基因组注释
+# atac_counts <- GetAssayData(pbmc.atac, slot = "counts", assay = "ATAC")
+# annotations <- GetGRangesFromEnsDb(ensdb = EnsDb.Hsapiens.v86)
+# seqlevelsStyle(annotations) <- "UCSC"
+# genome(annotations) <- "hg38"
+#
+# # 找到 ATAC 峰值的基因组位置对应的基因符号
+# peaks <- StringToGRanges(rownames(atac_counts), sep = c("-", "-"))
+# annotation_overlap <- findOverlaps(peaks, annotations)
+#
+# # 创建基因符号列表并移除 NA 值的行
+# gene_names <- rep(NA, length(peaks))
+# gene_names[queryHits(annotation_overlap)] <- annotations$gene_name[subjectHits(annotation_overlap)]
+# valid_genes <- !is.na(gene_names)
+# atac_counts <- atac_counts[valid_genes, ]
+# rownames(atac_counts) <- make.unique(gene_names[valid_genes])
+#
+# # 创建一个新的 Seurat 对象，指定 assay 为 "RNA"，并保留原有的 Metadata
+# seuratObject_Sample <- CreateSeuratObject(counts = atac_counts, assay = "RNA")
+# seuratObject_Sample@meta.data <- pbmc.atac@meta.data
+#
+#
+# ## Ref
+# seuratObject_Ref <- subset(pbmc.rna, cells = ref_cells)
 
-# seuratObject_Sample <- pbmc.rna
-# seuratObject_Ref <- pbmc.rna
-# seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
+##
+load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing_Integ.RData")
 
-
-# Randomly split cells into two halves
-set.seed(123) # for reproducibility
-cells <- colnames(pbmc.rna)
-# sample_cells <- sample(cells, length(cells) / 2)
-# ref_cells <- setdiff(cells, sample_cells)
-
-sample_cells <- sample(cells, length(cells) / 5)
-ref_cells <- sample(cells, length(cells) / 5)
-
-# Create Seurat objects
 ## Qry
-if (!require("Signac")) install.packages("Signac")
-if (!require("EnsDb.Hsapiens.v86")) BiocManager::install("EnsDb.Hsapiens.v86")
-library(Signac)
-library(EnsDb.Hsapiens.v86)
-
-# 假设 pbmc.atac 是您的 ATAC Seurat 对象
-# 提取 ATAC 计数数据并获取基因组注释
-atac_counts <- GetAssayData(pbmc.atac, slot = "counts", assay = "ATAC")
-annotations <- GetGRangesFromEnsDb(ensdb = EnsDb.Hsapiens.v86)
-seqlevelsStyle(annotations) <- "UCSC"
-genome(annotations) <- "hg38"
-
-# 找到 ATAC 峰值的基因组位置对应的基因符号
-peaks <- StringToGRanges(rownames(atac_counts), sep = c("-", "-"))
-annotation_overlap <- findOverlaps(peaks, annotations)
-
-# 创建基因符号列表并移除 NA 值的行
-gene_names <- rep(NA, length(peaks))
-gene_names[queryHits(annotation_overlap)] <- annotations$gene_name[subjectHits(annotation_overlap)]
-valid_genes <- !is.na(gene_names)
-atac_counts <- atac_counts[valid_genes, ]
-rownames(atac_counts) <- make.unique(gene_names[valid_genes])
-
-# 创建一个新的 Seurat 对象，指定 assay 为 "RNA"，并保留原有的 Metadata
-seuratObject_Sample <- CreateSeuratObject(counts = atac_counts, assay = "RNA")
-seuratObject_Sample@meta.data <- pbmc.atac@meta.data
-
+seuratObject_Sample <- pbmc.integ.atac
 
 ## Ref
-seuratObject_Ref <- subset(pbmc.rna, cells = ref_cells)
+seuratObject_Ref <- pbmc.integ.rna
 
-rm(pbmc.rna, pbmc.atac)
+rm(pbmc.rna, pbmc.atac, pbmc.integ.rna, pbmc.integ.atac)
 
 # Set Actual_Cell_Type in seuratObject_Sample
 seuratObject_Sample@meta.data[["Actual_Cell_Type"]] <- seuratObject_Sample@meta.data[["seurat_annotations"]]
 seuratObject_Sample@meta.data$Actual_Cell_Type <- gsub("_", "  ", seuratObject_Sample@meta.data$Actual_Cell_Type)
 
+names(seuratObject_Sample@assays[["RNA"]]@layers)[names(seuratObject_Sample@assays[["RNA"]]@layers) == "data.ATAC"] <- "data"
+# seuratObject_Sample@assays[["RNA"]]@layers[["counts"]] <- seuratObject_Sample@assays[["RNA"]]@layers[["data"]]
+seuratObject_Sample@active.ident <- factor(seuratObject_Sample@active.ident, levels = "ATAC")
+levels(seuratObject_Sample@active.ident) <- "RNA"
+
+
+seuratObject_Sample@assays[["ATAC"]] <- NULL
+seuratObject_Sample@assays[["ACTIVITY"]]  <- NULL
+
+# 修改 @cells 中的 dimnames
+dimnames(seuratObject_Sample@assays[["RNA"]]@cells) <- list(dimnames(seuratObject_Sample@assays[["RNA"]]@cells)[[1]], c("data.RNA", "scale.data.RNA"))
+# 修改 @features 中的 dimnames
+dimnames(seuratObject_Sample@assays[["RNA"]]@features) <- list(dimnames(seuratObject_Sample@assays[["RNA"]]@features)[[1]], c("data.RNA", "scale.data.RNA"))
+
+
+
+
+
+
+# # 将 layers 中的每一项移动到 assays[["RNA"]] 下
+# seuratObject_Sample@assays[["RNA"]]@counts <- seuratObject_Sample@assays[["RNA"]]@layers[["counts"]]
+# seuratObject_Sample@assays[["RNA"]]@data <- seuratObject_Sample@assays[["RNA"]]@layers[["data"]]
+# seuratObject_Sample@assays[["RNA"]]@scale.data <- seuratObject_Sample@assays[["RNA"]]@layers[["scale.data"]]
+# seuratObject_Sample@assays[["RNA"]]@layers <- NULL
+
+DimPlot(seuratObject_Sample, group.by = c("orig.ident", "seurat_annotations"))
+
 # Set Actual_Cell_Type in seuratObject_Ref
 seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
 seuratObject_Ref@meta.data$Actual_Cell_Type <- gsub("_", "  ", seuratObject_Ref@meta.data$Actual_Cell_Type)
 
-##### Data Preprocessing #####
-Seurat_Prepocessing <- function(seurat_obj, Num_PCA = 50 ,Set_nfeatures = 2000 ) {
+names(seuratObject_Ref@assays[["RNA"]]@layers)[names(seuratObject_Ref@assays[["RNA"]]@layers) == "counts.RNA"] <- "counts"
+names(seuratObject_Ref@assays[["RNA"]]@layers)[names(seuratObject_Ref@assays[["RNA"]]@layers) == "data.RNA"] <- "data"
 
-  seurat_obj <- seurat_obj  %>%
-    NormalizeData() %>%
-    FindVariableFeatures(nfeatures = Set_nfeatures) %>%
-    ScaleData() %>%
-    RunPCA(npcs = Num_PCA) %>%
-    FindNeighbors(dims = 1:Num_PCA) %>%
-    FindClusters() %>% # resolution = 0.5
-    # RunTSNE(dims = 1:Num_PCA) %>%
-    RunUMAP(dims = 1:Num_PCA)
-}
+DimPlot(seuratObject_Ref, group.by = c("orig.ident", "seurat_annotations"))
 
-seuratObject_Sample <- Seurat_Prepocessing(seuratObject_Sample)
+# ##### Data Preprocessing #####
+# Seurat_Prepocessing <- function(seurat_obj, Num_PCA = 50 ,Set_nfeatures = 2000 ) {
+#
+#   seurat_obj <- seurat_obj  %>%
+#     NormalizeData() %>%
+#     FindVariableFeatures(nfeatures = Set_nfeatures) %>%
+#     ScaleData() %>%
+#     RunPCA(npcs = Num_PCA) %>%
+#     FindNeighbors(dims = 1:Num_PCA) %>%
+#     FindClusters() %>% # resolution = 0.5
+#     # RunTSNE(dims = 1:Num_PCA) %>%
+#     RunUMAP(dims = 1:Num_PCA)
+# }
+#
+# seuratObject_Sample <- Seurat_Prepocessing(seuratObject_Sample)
+#
+# source("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Code_Rec/Run_harmony.R")
 
 #### Run Cell Type Annotation ####
 source("#_FUN_CellTypeAnnot.R")
+DefaultAssay(seuratObject_Sample) <- "RNA"
+DefaultAssay(seuratObject_Ref) <- "RNA"
 
 ## singleR
 seuratObject_Sample <- Run_singleR(seuratObject_Sample, seuratObject_Ref,
