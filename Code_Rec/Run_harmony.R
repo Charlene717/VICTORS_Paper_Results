@@ -2,8 +2,11 @@ library(Seurat)
 library(harmony)
 
 # 假设 seuratObject_Sample 和 seuratObject_Ref 已经存在
-# 合并 Seurat 对象
-combined <- merge(seuratObject_Sample, y = seuratObject_Ref, add.cell.ids = c("Sample", "Ref"))
+# 合并 Seurat 对象，并为它们添加前缀
+seuratObject_Sample <- RenameCells(seuratObject_Sample, add.cell.id = "Sample")
+seuratObject_Ref <- RenameCells(seuratObject_Ref, add.cell.id = "Ref")
+
+combined <- merge(seuratObject_Sample, y = seuratObject_Ref)
 
 # 标准化数据
 combined <- NormalizeData(combined)
@@ -29,13 +32,18 @@ cell_ids_ref <- colnames(combined)[grepl("^Ref_", colnames(combined))]
 seuratObject_Sample_harmony <- subset(combined, cells = cell_ids_sample)
 seuratObject_Ref_harmony <- subset(combined, cells = cell_ids_ref)
 
-# 确认新对象的结构
-print(seuratObject_Sample_harmony)
-print(seuratObject_Ref_harmony)
+# 创建新的 Seurat 对象并保留原有的 Metadata
+seuratObject_Sample_harmony <- subset(combined, cells = cell_ids_sample)
+seuratObject_Ref_harmony <- subset(combined, cells = cell_ids_ref)
+
+# # 确认新对象的结构
+# print(seuratObject_Sample_harmony)
+# print(seuratObject_Ref_harmony)
 
 DimPlot(seuratObject_Sample_harmony, reduction = "umap")
 DimPlot(seuratObject_Ref_harmony, reduction = "umap")
-
+DimPlot(combined, reduction = "umap")
+DimPlot(combined, reduction = "umap",group.by = "orig.ident" )
 
 seuratObject_Sample <- seuratObject_Sample_harmony ;rm(seuratObject_Sample_harmony)
 seuratObject_Ref <- seuratObject_Ref_harmony ; rm(seuratObject_Ref_harmony)
