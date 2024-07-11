@@ -26,7 +26,7 @@ Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 Name_ExportFolder <- "Export_SeuratPBMC_ATAC"
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 
-Name_Export <- paste0(Name_ExportFolder,"/",Name_time_wo_micro)
+Name_Export <- paste0(Name_ExportFolder,Name_time_wo_micro)
 
 
 
