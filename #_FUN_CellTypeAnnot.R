@@ -49,13 +49,14 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat,
 
   # Preprocess query dataset
   query_sce <- as.SingleCellExperiment(Query_Seurat)
-  query_sce <- query_sce[, colSums(counts(query_sce)) > 0]
+  try(query_sce <- query_sce[, colSums(counts(query_sce)) > 0])
 
   # Log-normalize query dataset if not already done
   if(seurat_version == "V5"){
     if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- logNormCounts(query_sce) }
   }else if(seurat_version == "V5M"){
-    if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- logNormCounts(query_sce) }
+    # try( if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- logNormCounts(query_sce) } )
+    if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- logNormCounts(query_sce) }
   }else{
     if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- logNormCounts(query_sce) }
   }
@@ -204,8 +205,9 @@ Run_scPred <- function(Query_Seurat, Reference_Seurat,
                        Set_RefAnnoCol = "Actual_Cell_Type", ...) {
   # # Load necessary packages
   # if(!require("devtools")) install.packages("devtools"); library(devtools)
-  # # if(!require("harmony")) devtools::install_github("immunogenomics/harmony"); library(harmony)
+  # if(!require("harmony")) devtools::install_github("immunogenomics/harmony"); library(harmony)
   # if(!require("scPred")) devtools::install_github("powellgenomicslab/scPred"); library(scPred)
+
   # Ensure the default assay is set to RNA
   DefaultAssay(Query_Seurat) <- "RNA"
   DefaultAssay(Reference_Seurat) <- "RNA"
