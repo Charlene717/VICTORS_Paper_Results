@@ -126,12 +126,17 @@ Run_scmap <- function(Query_Seurat, Reference_Seurat,
 #### SCINA ####
 Run_SCINA <- function(Query_Seurat, Reference_Seurat,
                       Set_RefAnnoCol = "Actual_Cell_Type",
-                      ExportFolder = getwd(), Export = "", ...) {
+                      ExportFolder = getwd(), Export = "",seurat_version = "V5", ...) {
   # Load necessary package
   if (!requireNamespace("SCINA", quietly = TRUE)) install.packages("SCINA"); library(SCINA)
 
   # Extract representation matrix from Seurat objects
-  exp <- Seurat::GetAssayData(Query_Seurat, assay = "RNA", slot = "counts")
+  if(seurat_version == "V5M"){
+    exp <- Seurat::GetAssayData(Query_Seurat, assay = "RNA", slot = "data")
+  }else{
+    exp <- Seurat::GetAssayData(Query_Seurat, assay = "RNA", slot = "counts")
+  }
+
 
   # Set cell type annotation column as active ident
   Reference_Seurat <- Seurat::SetIdent(Reference_Seurat, value = Set_RefAnnoCol)
@@ -295,7 +300,7 @@ Run_CHETAH <- function(Query_Seurat, Reference_Seurat,
 
 #### scClassify ####
 Run_scClassify <- function(Query_Seurat, Reference_Seurat,
-                           Set_RefAnnoCol = "Actual_Cell_Type", ...) {
+                           Set_RefAnnoCol = "Actual_Cell_Type", seurat_version = "V5", ...) {
   # PMID32567229 scClassify  # https://sydneybiox.github.io/scClassify/articles/pretrainedModel.html
   # Load necessary packages
   if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
@@ -311,16 +316,24 @@ Run_scClassify <- function(Query_Seurat, Reference_Seurat,
   # Prepare Reference Data
   ref_sce$celltypes <- Reference_Seurat@meta.data[[Set_RefAnnoCol]]
 
+
   # Run scClassify
-  result_All <- scClassify( exprsMat_train = as.matrix(counts(ref_sce)), cellTypes_train = ref_sce$celltypes,
+  if(seurat_version == "V5M"){
+    exprsMat_Qry <- as.matrix(query_sce@assays@data@listData[["logcounts"]])
+    exprsMat_Ref <- as.matrix(counts(ref_sce))
+
+  }else{
+    exprsMat_Qry <- as.matrix(counts(query_sce))
+    exprsMat_Ref <- as.matrix(counts(ref_sce))
+  }
+
+  result_All <- scClassify( exprsMat_train = exprsMat_Ref, cellTypes_train = ref_sce$celltypes,
                             prob_threshold = 0, cor_threshold_static =0 , pSig = 0.1, # pSig = 0.05,
-                            exprsMat_test = as.matrix(counts(query_sce))
-  )
+                            exprsMat_test = exprsMat_Qry)
   result_All.df <- as.data.frame(result_All[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]])
 
-  result <- scClassify( exprsMat_train = as.matrix(counts(ref_sce)), cellTypes_train = ref_sce$celltypes,
-                        exprsMat_test = as.matrix(counts(query_sce))
-  )
+  result <- scClassify( exprsMat_train = exprsMat_Ref, cellTypes_train = ref_sce$celltypes,
+                        exprsMat_test = exprsMat_Qry)
   result.df <- as.data.frame(result[["testRes"]][["test"]][["pearson_WKNN_limma"]][["predLabelMat"]])
 
   # Add the predicted cell types to the Seurat object
