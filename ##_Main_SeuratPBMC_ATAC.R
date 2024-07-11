@@ -31,55 +31,6 @@ Name_Export <- paste0(Name_ExportFolder,Name_time_wo_micro)
 
 
 #### Load Data ####
-# load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing.RData")
-#
-# # seuratObject_Sample <- pbmc.rna
-# # seuratObject_Ref <- pbmc.rna
-# # seuratObject_Ref@meta.data[["Actual_Cell_Type"]] <- seuratObject_Ref@meta.data[["seurat_annotations"]]
-#
-#
-# # Randomly split cells into two halves
-# set.seed(123) # for reproducibility
-# cells <- colnames(pbmc.rna)
-# # sample_cells <- sample(cells, length(cells) / 2)
-# # ref_cells <- setdiff(cells, sample_cells)
-#
-# sample_cells <- sample(cells, length(cells) / 5)
-# ref_cells <- sample(cells, length(cells) / 5)
-#
-# # Create Seurat objects
-# ## Qry
-# if (!require("Signac")) install.packages("Signac")
-# if (!require("EnsDb.Hsapiens.v86")) BiocManager::install("EnsDb.Hsapiens.v86")
-# library(Signac)
-# library(EnsDb.Hsapiens.v86)
-#
-# # 假设 pbmc.atac 是您的 ATAC Seurat 对象
-# # 提取 ATAC 计数数据并获取基因组注释
-# atac_counts <- GetAssayData(pbmc.atac, slot = "counts", assay = "ATAC")
-# annotations <- GetGRangesFromEnsDb(ensdb = EnsDb.Hsapiens.v86)
-# seqlevelsStyle(annotations) <- "UCSC"
-# genome(annotations) <- "hg38"
-#
-# # 找到 ATAC 峰值的基因组位置对应的基因符号
-# peaks <- StringToGRanges(rownames(atac_counts), sep = c("-", "-"))
-# annotation_overlap <- findOverlaps(peaks, annotations)
-#
-# # 创建基因符号列表并移除 NA 值的行
-# gene_names <- rep(NA, length(peaks))
-# gene_names[queryHits(annotation_overlap)] <- annotations$gene_name[subjectHits(annotation_overlap)]
-# valid_genes <- !is.na(gene_names)
-# atac_counts <- atac_counts[valid_genes, ]
-# rownames(atac_counts) <- make.unique(gene_names[valid_genes])
-#
-# # 创建一个新的 Seurat 对象，指定 assay 为 "RNA"，并保留原有的 Metadata
-# seuratObject_Sample <- CreateSeuratObject(counts = atac_counts, assay = "RNA")
-# seuratObject_Sample@meta.data <- pbmc.atac@meta.data
-#
-#
-# ## Ref
-# seuratObject_Ref <- subset(pbmc.rna, cells = ref_cells)
-
 ##
 load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/Seurat_pbmcMultiome/Seurat_pbmcMultiome_Preprocessing_Integ.RData")
 
