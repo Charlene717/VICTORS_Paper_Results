@@ -21,7 +21,7 @@ annotation_functions <- list(
 
 # 依次執行每個標註函數
 for (func in annotation_functions) {
-  seuratObject_Sample <- func(seuratObject_Sample, seuratObject_Ref)
+  try({ seuratObject_Sample <- func(seuratObject_Sample, seuratObject_Ref) })
 }
 
 
@@ -56,7 +56,7 @@ process_labels <- function(seuratObject, actual, no_reject, label) {
 
 # 依次處理每個標籤對
 for (labels in label_pairs) {
-  seuratObject_Sample <- process_labels(seuratObject_Sample, "Actual_Cell_Type", labels[1], labels[2])
+  try({ seuratObject_Sample <- process_labels(seuratObject_Sample, "Actual_Cell_Type", labels[1], labels[2]) })
 }
 
 
@@ -76,7 +76,7 @@ labels_diag_para <- c(
 
 # 繪製 UMAP 圖
 for (label in labels_diag_para) {
-  DimPlot(seuratObject_Sample, reduction = "umap", group.by = label)
+  try({ DimPlot(seuratObject_Sample, reduction = "umap", group.by = label) })
 }
 
 source("Set_plot_color.R")
@@ -92,7 +92,13 @@ plot_histograms <- function(metadata, actual, label, color_vector) {
 }
 
 # 使用 lapply 来依次处理每个标签对
-plots <- lapply(labels_diag_para, function(label) plot_histograms(metadata, 'Actual_Cell_Type', label, color_Class))
+plots <- lapply(labels_diag_para, function(label) {
+  try({
+    plot_histograms(metadata, 'Actual_Cell_Type', label, color_Class)
+  })
+})
+
+# plots <- lapply(labels_diag_para, function(label) plot_histograms(metadata, 'Actual_Cell_Type', label, color_Class))
 
 # 提取所有 Count 图
 plots_count <- lapply(plots, `[[`, "Count")
@@ -156,9 +162,11 @@ run_victor_and_diagnose <- function(seurat_obj_sample, seurat_obj_ref, actual_co
 
 # 迭代執行VICTOR和診斷處理
 for (label in labels) {
-  result <- run_victor_and_diagnose(seuratObject_Sample, seuratObject_Ref, "Actual_Cell_Type", label)
-  seuratObject_Sample <- result[[1]]
-  seuratObject_Ref <- result[[2]]
+  try({
+    result <- run_victor_and_diagnose(seuratObject_Sample, seuratObject_Ref, "Actual_Cell_Type", label)
+    seuratObject_Sample <- result[[1]]
+    seuratObject_Ref <- result[[2]]
+  })
 }
 
 # 迭代绘图
@@ -167,10 +175,12 @@ plots_prop_victor <- list()
 metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
 
 for (label in labels) {
-  conf_stat_label <- paste0("ConfStat_VICTOR_", label)
-  plots <- plot_histograms(metadata, "Actual_Cell_Type", conf_stat_label, color_Class)
-  plots_count_victor <- c(plots_count_victor, list(plots[[1]]))
-  plots_prop_victor <- c(plots_prop_victor, list(plots[[2]]))
+  try({
+    conf_stat_label <- paste0("ConfStat_VICTOR_", label)
+    plots <- plot_histograms(metadata, "Actual_Cell_Type", conf_stat_label, color_Class)
+    plots_count_victor <- c(plots_count_victor, list(plots[[1]]))
+    plots_prop_victor <- c(plots_prop_victor, list(plots[[2]]))
+  })
 }
 
 gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
