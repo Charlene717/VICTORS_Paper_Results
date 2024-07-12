@@ -13,7 +13,7 @@ if(!require("readr")) install.packages("readr"); library(readr)
 
 #### Set Loading ###
 # 設定主目錄
-main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240710_S"
+main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240710"
 # main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_scRNAseqPanc_20240711"
 
 # 獲取所有子目錄
