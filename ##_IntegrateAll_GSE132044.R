@@ -69,8 +69,7 @@ add_performance_metrics <- function(data, group_vars, target_var) {
     ) %>%
     dplyr::select(-TP, -TN, -FP, -FN)  # 移除临时列
 
-  # 调试信息：查看 metrics 数据框
-  print(metrics)
+  # print(metrics) # 调试信息：查看 metrics 数据框
 
   # 将计算后的指标合并回原始数据框
   data_with_metrics <- left_join(data, metrics, by = group_vars)
@@ -84,79 +83,43 @@ add_performance_metrics <- function(data, group_vars, target_var) {
 #                                             "label_singleR_ConfStat")
 
 
-## singleR
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "label_singleR_ConfStat")
+if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 
-## scmap
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "label_scmap_ConfStat")
+# 定义一个函数来批量处理所有目标变量
+process_performance_metrics <- function(data, group_vars, target_vars) {
+  for (target_var in target_vars) {
+    data <- add_performance_metrics(data, group_vars, target_var)
+  }
+  return(data)
+}
 
-## SCINA
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "label_SCINA_ConfStat")
-## scPred
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "label_scPred_ConfStat")
-## CHETAH
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "label_CHETAH_ConfStat")
-## scClassify
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "label_scClassify_ConfStat")
+# 定义所有目标变量
+target_vars <- c("label_singleR_ConfStat", "label_scmap_ConfStat", "label_SCINA_ConfStat",
+                 "label_scPred_ConfStat", "label_CHETAH_ConfStat", "label_scClassify_ConfStat",
+                 "label_Seurat_ConfStat",
+                 "ConfStat_VICTOR_label_singleR_NoReject", "ConfStat_VICTOR_label_scmap_NoReject",
+                 "ConfStat_VICTOR_label_SCINA_NoReject", "ConfStat_VICTOR_label_scPred_NoReject",
+                 "ConfStat_VICTOR_label_CHETAH_NoReject", "ConfStat_VICTOR_label_scClassify_NoReject",
+                 "ConfStat_VICTOR_label_Seurat_NoReject")
 
-## Seurat
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "label_Seurat_ConfStat")
+# 执行批量处理
+combined_data <- process_performance_metrics(combined_data, c("FileID"), target_vars)
 
-## VICTOR
-## singleR
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "Diag_VICTOR_label_singleR_NoReject")
+# head(combined_data)
 
-## scmap
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "Diag_VICTOR_label_scmap_NoReject")
 
-## SCINA
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "Diag_VICTOR_label_SCINA_NoReject")
-## scPred
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "Diag_VICTOR_label_scPred_NoReject")
-## CHETAH
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "Diag_VICTOR_label_CHETAH_NoReject")
-## scClassify
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "Diag_VICTOR_label_scClassify_NoReject")
+## Within-platform
+combined_data_SamePlatform <- combined_data[combined_data$Sample_Platform == combined_data$Ref_Platform, ]
 
-## Seurat
-combined_data <- add_performance_metrics(combined_data,
-                                         c("FileID"), #c("FileID", "Mislabel_CellType", "Actual_Cell_Type"),
-                                         "Diag_VICTOR_label_Seurat_NoReject")
+## Cross-platform
+combined_data_CrossPlatform <- combined_data[combined_data$Sample_Platform != combined_data$Ref_Platform, ]
 
 
 
-## 同平台
-
-## 不同平台
-
-
+################################################################################
 #### Visualization ####
+source("###_IntegAll_CTAEvaluator_SetPlot.R")
+
 
 
 
