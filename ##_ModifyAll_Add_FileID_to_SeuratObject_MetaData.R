@@ -45,11 +45,14 @@ for (subdir in subdirectories) {
 }
 
 # 顯示整合後的dataframe
+print(combined_data)
 
 
 
 
 #### Visualization ####
+
+
 
 
 
