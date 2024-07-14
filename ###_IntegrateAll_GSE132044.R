@@ -121,5 +121,190 @@ combined_data_CrossPlatform <- combined_data[combined_data$Sample_Platform != co
 source("###_IntegAll_Visualization.R")
 
 
+## long_data for all metrics # 将数据重塑为长格式，包括所有的指标
+long_data <- selected_data %>%
+  pivot_longer(
+    cols = ends_with(c("Accuracy", "Precision", "Recall", "F1", "Specificity")),
+    names_to = "Metric_Method",
+    values_to = "Value"
+  ) %>%
+  # Extract 'Metric' using regex
+  mutate(Metric = str_extract(Metric_Method, "Accuracy|Precision|Recall|F1|Specificity")) %>%
+  # Extract 'Method' using regex, remove all known prefixes and suffixes
+  mutate(Method = str_remove(Metric_Method, "(_DiagPara)?_(Accuracy|Precision|Recall|F1|Specificity)$"),
+         Method = str_replace(Method, "label_", ""),
+         Method = str_replace(Method, "_NoReject", ""),
+         Method = str_replace(Method, "_Annot", ""),
+         Method = str_replace(Method, "_DiagPara", ""),
+         Method = str_replace(Method, "DiagPara_", ""),
+         Method = str_replace_all(Method, "_+", "_"),
+         Method = str_remove(Method, "_$")) %>%
+  # Convert 'Value' to numeric
+  mutate(Value = as.numeric(Value)) %>%
+  # Filter out rows where Metric is NA
+  filter(!is.na(Metric)) %>%
+  # Drop the original 'Metric_Method' column
+  dplyr::select(-Metric_Method)
+
+if(Set_VICTORS_Score == "SVDLRglmnet_ROC"){
+  # Remove rows with 'Method' containing 'EnsembleE2' or 'scPred' (except 'scPred' and 'scPred_SVGLRglmnet')
+  long_data <- long_data %>%
+    filter(!(grepl("EnsembleE2", Method) | (grepl("scPred", Method) & !Method %in% c("scPred", "scPred_SVGLRglmnet_ROC"))))
+
+  long_data <- long_data %>%
+    filter(!grepl("^[^_]*_[^_]*$", Method), # Removes rows with methods containing exactly one underscore
+           Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
+
+  # 修改 long_data$Method 列，将包含 SVGLRglmnet_ROC 的方法名改为 VICTORS
+  long_data <- long_data %>%
+    mutate(Method = str_replace(Method, "SVGLRglmnet_ROC", "VICTORS"))
+
+}else if(Set_VICTORS_Score == "scPred_ROC"){
+  long_data <- long_data %>%
+    filter(Method %in% c("singleR", "scmap", "SCINA", "scPred", "singleR_scPred_ROC", "scmap_scPred_ROC", "SCINA_scPred_ROC", "scPred_scPred_ROC"))
+  long_data <- long_data %>%
+    filter(Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
+  long_data <- long_data %>%
+    mutate(Method = str_replace(Method, "scPred_ROC", "VICTORS"))
+
+}else if(Set_VICTORS_Score =="EnsembleE2_ROC"){
+  long_data <- long_data %>%
+    filter(Method %in% c("singleR", "scmap", "SCINA", "scPred", "singleR_EnsembleE2_ROC", "scmap_EnsembleE2_ROC", "SCINA_EnsembleE2_ROC", "scPred_EnsembleE2_ROC"))
+  long_data <- long_data %>%
+    filter(Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
+  long_data <- long_data %>%
+    mutate(Method = str_replace(Method, "EnsembleE2_ROC", "VICTORS"))
+}
+
+
+long_data <- long_data %>%
+  dplyr::select(FileID, Sample_DataID, Ref_DataID, Sample_DataID, Ref_DataID,
+                Actual_Cell_Type, Metric, Method,Value) %>%
+  distinct()
+
+long_data$Value <- as.numeric(long_data$Value)
+
+if (grepl("Baron", Set_load) && Set_Mislabel == "NoneMislabel") {
+  long_data <- long_data %>%
+    filter(!Actual_Cell_Type %in% c("Fibroblast cell","B cell","Endocrine cell"))
+}
+
+
+# 绘制 boxplot
+ggplot(long_data, aes(x = Actual_Cell_Type, y = Value, fill = Method)) +
+  geom_boxplot() +
+  facet_wrap(~ Metric, scales = "free_y") + # 为不同的性能指标创建分面
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + # 倾斜X轴标签以更好地显示
+  labs(x = "Actual Cell Type", y = "Value", fill = "Annotation Method") +
+  # scale_fill_brewer(palette = "Set1") # 使用色彩鲜明的调色板
+  scale_fill_manual(values = color_Method) -> Plot_Box_All
+
+Plot_Box_All
+
+# plot_accuracy <- ggplot(long_data %>% filter(Metric == "Accuracy"),
+#                         aes(x = Actual_Cell_Type, y = Value, fill = Method)) +
+#   geom_boxplot() +
+#   theme_bw() +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+#   labs(x = "Actual Cell Type", y = "Accuracy", fill = "Annotation Method") +
+#   scale_fill_brewer(palette = "Set1")
+#
+# plot_accuracy
+
+custom_order <- c("singleR", "singleR_VICTORS", "scmap", "scmap_VICTORS",
+                  "SCINA", "SCINA_VICTORS", "scPred","scPred_VICTORS" )
+long_data$Method <- factor(long_data$Method, levels = custom_order)
+
+custom_order2 <- long_data$Actual_Cell_Type %>% unique() %>% sort()
+custom_order2 <- custom_order2[custom_order2 !="None"]
+custom_order2 <- c("None", custom_order2)
+long_data$Actual_Cell_Type <- factor(long_data$Actual_Cell_Type, levels = custom_order2)
+
+
+
+################################################################################
+# 將long_data篩選出不同組合的dataframe，Same_DataID、 Cross_DataID
+# Same_DataID
+
+# 將long_data篩選出不同組合的dataframe，Same_DataID、 Cross_DataID
+# Same_DataID
+data_same_DataID <- long_data %>%
+  filter((Sample_DataID == Ref_DataID))
+
+# Cross_DataID
+data_cross_platform <- long_data %>%
+  filter(!(Sample_DataID == Ref_DataID))
+
+
+## Boxplot
+source("PlotFun_SetColor.R")
+if (!exists("color_Method")) {color_Method <- setNames(character(0), character(0))}
+color_Method <- update_color(c(data_same_DataID$Method,"VICTORS"), color_Method)
+if (!exists("color_legend")) {color_legend <- setNames(character(0), character(0))}
+color_legend <- update_color(c(gsub(".*_VICTORS$", "VICTORS", as.character(data_same_DataID$Method)),"VICTORS"), color_legend)
+
+methods <- c("singleR", "scmap", "SCINA", "scPred")
+legend_set <- c(gsub(".*_VICTORS$", "VICTORS", as.character(long_data$Method))) %>% unique()
+
+# Creating plots for different metrics and DataID
+plot_accuracy_combined <- create_metric_plot(data_same_DataID, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Same DataID"), color_Method) /
+  create_metric_plot(data_cross_platform, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Cross DataID"), color_Method)
+
+plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same DataID", 2, legend_set, color_legend)
+plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross DataID", 2, legend_set, color_legend)
+
+
+plot_Recall_combined <- create_metric_plot(data_same_DataID, "Recall", paste0(Figure_Note, " Recall Across Actual Cell Types - Same DataID"), color_Method) /
+  create_metric_plot(data_cross_platform, "Recall",  paste0(Figure_Note, " Recall Across Actual Cell Types - Cross DataID"), color_Method)
+
+plots_final_Recall_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Recall", "Same DataID", 2, legend_set, color_legend)
+plots_final_Recall_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Recall", "Cross DataID", 2, legend_set, color_legend)
+
+
+plot_Specificity_combined <- create_metric_plot(data_same_DataID, "Specificity", paste0(Figure_Note, " Specificity Across Actual Cell Types - Same DataID"), color_Method) /
+  create_metric_plot(data_cross_platform, "Specificity",  paste0(Figure_Note, " Specificity Across Actual Cell Types - Cross DataID"), color_Method)
+
+plots_final_Specificity_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Specificity", "Same DataID", 2, legend_set, color_legend)
+plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Specificity", "Cross DataID", 2, legend_set, color_legend)
+
+
+
+pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult.pdf"),
+    width = 10, height = 10)
+
+print(plots_final_Accuracy_data_SamePlat)
+print(plots_final_Accuracy_data_CrossPlat)
+
+print(plots_final_Recall_data_SamePlat)
+print(plots_final_Recall_data_CrossPlat)
+
+
+print(plots_final_Specificity_data_SamePlat)
+print(plots_final_Specificity_data_CrossPlat)
+
+dev.off()
+
+
+pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_Com.pdf"),
+    width = 17, height = 17) #  width = 17, height = 17)
+print(plot_accuracy_combined)
+if(Set_Mislabel == "NoneMislabel"){
+  print(plot_Recall_combined)
+}else{
+  print(plot_Specificity_combined)
+}
+print(Plot_Box_All)
+dev.off()
+
+
+# Remove Plot Object
+plot_objs <- grep("^[Pp]lot", ls(), value = TRUE)
+rm(list = plot_objs[sapply(plot_objs, function(obj) !is.function(get(obj)))])
+
+# Export RData
+save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
+
+
 
 
