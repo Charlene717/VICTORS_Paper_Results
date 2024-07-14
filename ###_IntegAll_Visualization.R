@@ -3,6 +3,9 @@ if(!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
 if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("patchwork")) install.packages("patchwork"); library(patchwork)
 
+## Set Para
+Set_boxplot_fill <- TRUE
+
 
 ## Functions of plot
 my_ggplot_theme <- function() {
@@ -69,17 +72,26 @@ color_Method <- list(
   "VICTORS" =  "#32383b", # "#044a63", # "#2c7856",
 
   "singleR" = "#2862bf",   # "#884db8" , # "#b853b1", # "#2c7856",
-  "singleR_VICTORS" = "#32383b", # "#2c7856",
+  "VICTOR_singleR" = "#32383b", # "#2c7856",
   # "singleR_VICTORS" = "#c4126a", # "#2c7856",
 
   "scPred" = "#368a5b", # "#13c274",
-  "scPred_VICTORS" = "#32383b", # "#2c7856",
+  "VICTOR_scPred" = "#32383b", # "#2c7856",
 
   "SCINA" = "#e0385d", # "#8f174d",
-  "SCINA_VICTORS" = "#32383b", # "#2c7856",
+  "VICTOR_SCINA" = "#32383b", # "#2c7856",
 
   "scmap" = "#ad772f", # "#3e75bd" # "#696866" # "#d94185"
-  "scmap_VICTORS" = "#32383b" # "#2c7856"
+  "VICTOR_scmap" = "#32383b", # "#2c7856",
+
+  "CHETAH" = "#51b555", # "#3e75bd" # "#696866" # "#d94185"
+  "VICTOR_CHETAH" = "#32383b", # "#2c7856",
+
+  "scClassify" = "#8d389c", # "#3e75bd" # "#696866" # "#d94185"
+  "VICTOR_scClassify" = "#32383b", # "#2c7856",
+
+  "Seurat" = "#2c6f9e", # "#3e75bd" # "#696866" # "#d94185"
+  "VICTOR_Seurat" = "#32383b" # "#2c7856"
 )
 
 # source("PlotFun_SetColor.R")
@@ -156,7 +168,8 @@ create_combind_plot <- function(plots, ncol, title_data_10x, legend_data, color_
 
   # Create a dummy data frame for the legend with a single point
   legend_data <- data.frame(Method = names(color_legend), x = 1, y = 1)
-  custom_order <- c("singleR",  "scmap", "SCINA", "scPred","VICTORS" )
+  custom_order <- c("singleR",  "scmap", "SCINA", "scPred",
+                    "CHETAH","scClassify","Seurat","VICTORS" )
   legend_data$Method <- factor(legend_data$Method, levels = custom_order)
 
   # Create a ggplot object for the legend without actual points
@@ -185,7 +198,10 @@ color_legend <- c(
   "singleR" = "#2862bf",   # "#884db8"
   "scPred" = "#368a5b",
   "SCINA" = "#e0385d",
-  "scmap" = "#ad772f"
+  "scmap" = "#ad772f",
+  "CHETAH" = "#51b555",
+  "scClassify" = "#8d389c",
+  "Seurat" = "#2c6f9e"
 )
 
 # source("PlotFun_SetColor.R")
