@@ -117,6 +117,10 @@ selected_data <- combined_data %>%
 source("###_IntegAll_Visualization.R")
 
 ## long_data for all metrics # 将数据重塑为长格式，包括所有的指标
+library(dplyr)
+library(tidyr)
+library(stringr)
+
 long_data <- selected_data %>%
   pivot_longer(
     cols = ends_with(c("Accuracy", "Precision", "Recall", "F1", "Specificity")),
@@ -125,15 +129,16 @@ long_data <- selected_data %>%
   ) %>%
   # Extract 'Metric' using regex
   mutate(Metric = str_extract(Metric_Method, "Accuracy|Precision|Recall|F1|Specificity")) %>%
-  # Extract 'Method' using regex, remove all known prefixes and suffixes
-  mutate(Method = str_remove(Metric_Method, "(_DiagPara)?_(Accuracy|Precision|Recall|F1|Specificity)$"),
-         Method = str_replace(Method, "label_", ""),
+  # Extract 'Method' using regex
+  mutate(Method = str_remove(Metric_Method, "_?(Accuracy|Precision|Recall|F1|Specificity)$"),
+         Method = str_replace(Method, "^ConfStat_VICTOR_label_", "VICTOR_"),
+         Method = str_replace(Method, "^label_", ""),
+         Method = str_replace(Method, "_ConfStat", ""),
          Method = str_replace(Method, "_NoReject", ""),
-         Method = str_replace(Method, "_Annot", ""),
-         Method = str_replace(Method, "_DiagPara", ""),
-         Method = str_replace(Method, "DiagPara_", ""),
          Method = str_replace_all(Method, "_+", "_"),
          Method = str_remove(Method, "_$")) %>%
+  # Reformat 'Metric_Method' to 'Metric_Method'
+  mutate(Metric_Method = paste0(Metric, "_", Method)) %>%
   # Convert 'Value' to numeric
   mutate(Value = as.numeric(Value)) %>%
   # Filter out rows where Metric is NA
@@ -141,35 +146,37 @@ long_data <- selected_data %>%
   # Drop the original 'Metric_Method' column
   dplyr::select(-Metric_Method)
 
-if(Set_VICTORS_Score == "SVDLRglmnet_ROC"){
-  # Remove rows with 'Method' containing 'EnsembleE2' or 'scPred' (except 'scPred' and 'scPred_SVGLRglmnet')
-  long_data <- long_data %>%
-    filter(!(grepl("EnsembleE2", Method) | (grepl("scPred", Method) & !Method %in% c("scPred", "scPred_SVGLRglmnet_ROC"))))
+head(long_data) # Display the transformed data
 
-  long_data <- long_data %>%
-    filter(!grepl("^[^_]*_[^_]*$", Method), # Removes rows with methods containing exactly one underscore
-           Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
-
-  # 修改 long_data$Method 列，将包含 SVGLRglmnet_ROC 的方法名改为 VICTORS
-  long_data <- long_data %>%
-    mutate(Method = str_replace(Method, "SVGLRglmnet_ROC", "VICTORS"))
-
-}else if(Set_VICTORS_Score == "scPred_ROC"){
-  long_data <- long_data %>%
-    filter(Method %in% c("singleR", "scmap", "SCINA", "scPred", "singleR_scPred_ROC", "scmap_scPred_ROC", "SCINA_scPred_ROC", "scPred_scPred_ROC"))
-  long_data <- long_data %>%
-    filter(Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
-  long_data <- long_data %>%
-    mutate(Method = str_replace(Method, "scPred_ROC", "VICTORS"))
-
-}else if(Set_VICTORS_Score =="EnsembleE2_ROC"){
-  long_data <- long_data %>%
-    filter(Method %in% c("singleR", "scmap", "SCINA", "scPred", "singleR_EnsembleE2_ROC", "scmap_EnsembleE2_ROC", "SCINA_EnsembleE2_ROC", "scPred_EnsembleE2_ROC"))
-  long_data <- long_data %>%
-    filter(Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
-  long_data <- long_data %>%
-    mutate(Method = str_replace(Method, "EnsembleE2_ROC", "VICTORS"))
-}
+# if(Set_VICTORS_Score == "SVDLRglmnet_ROC"){
+#   # Remove rows with 'Method' containing 'EnsembleE2' or 'scPred' (except 'scPred' and 'scPred_SVGLRglmnet')
+#   long_data <- long_data %>%
+#     filter(!(grepl("EnsembleE2", Method) | (grepl("scPred", Method) & !Method %in% c("scPred", "scPred_SVGLRglmnet_ROC"))))
+#
+#   long_data <- long_data %>%
+#     filter(!grepl("^[^_]*_[^_]*$", Method), # Removes rows with methods containing exactly one underscore
+#            Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
+#
+#   # 修改 long_data$Method 列，将包含 SVGLRglmnet_ROC 的方法名改为 VICTORS
+#   long_data <- long_data %>%
+#     mutate(Method = str_replace(Method, "SVGLRglmnet_ROC", "VICTORS"))
+#
+# }else if(Set_VICTORS_Score == "scPred_ROC"){
+#   long_data <- long_data %>%
+#     filter(Method %in% c("singleR", "scmap", "SCINA", "scPred", "singleR_scPred_ROC", "scmap_scPred_ROC", "SCINA_scPred_ROC", "scPred_scPred_ROC"))
+#   long_data <- long_data %>%
+#     filter(Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
+#   long_data <- long_data %>%
+#     mutate(Method = str_replace(Method, "scPred_ROC", "VICTORS"))
+#
+# }else if(Set_VICTORS_Score =="EnsembleE2_ROC"){
+#   long_data <- long_data %>%
+#     filter(Method %in% c("singleR", "scmap", "SCINA", "scPred", "singleR_EnsembleE2_ROC", "scmap_EnsembleE2_ROC", "SCINA_EnsembleE2_ROC", "scPred_EnsembleE2_ROC"))
+#   long_data <- long_data %>%
+#     filter(Actual_Cell_Type != "Unassigned") # Removes rows where Actual_Cell_Type is "Unassigned"
+#   long_data <- long_data %>%
+#     mutate(Method = str_replace(Method, "EnsembleE2_ROC", "VICTORS"))
+# }
 
 
 long_data <- long_data %>%
@@ -179,10 +186,10 @@ long_data <- long_data %>%
 
 long_data$Value <- as.numeric(long_data$Value)
 
-if (grepl("Baron", Set_load) && Set_Mislabel == "NoneMislabel") {
-  long_data <- long_data %>%
-    filter(!Actual_Cell_Type %in% c("Fibroblast cell","B cell","Endocrine cell"))
-}
+# if (grepl("Baron", Set_load) && Set_Mislabel == "NoneMislabel") {
+#   long_data <- long_data %>%
+#     filter(!Actual_Cell_Type %in% c("Fibroblast cell","B cell","Endocrine cell"))
+# }
 
 
 # 绘制 boxplot
