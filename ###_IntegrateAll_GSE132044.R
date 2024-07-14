@@ -118,7 +118,7 @@ combined_data_CrossPlatform <- combined_data[combined_data$Sample_Platform != co
 
 ################################################################################
 #### Visualization ####
-source("###_IntegAll_CTAEvaluator_SetPlot.R")
+source("###_IntegAll_Visualization.R")
 
 
 
