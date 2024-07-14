@@ -72,26 +72,26 @@ color_Method <- list(
   "VICTORS" =  "#32383b", # "#044a63", # "#2c7856",
 
   "singleR" = "#2862bf",   # "#884db8" , # "#b853b1", # "#2c7856",
-  "VICTOR_singleR" = "#32383b", # "#2c7856",
+  "singleR_VICTOR" = "#32383b", # "#2c7856",
   # "singleR_VICTORS" = "#c4126a", # "#2c7856",
 
   "scPred" = "#368a5b", # "#13c274",
-  "VICTOR_scPred" = "#32383b", # "#2c7856",
+  "scPred_VICTOR" = "#32383b", # "#2c7856",
 
   "SCINA" = "#e0385d", # "#8f174d",
-  "VICTOR_SCINA" = "#32383b", # "#2c7856",
+  "SCINA_VICTOR" = "#32383b", # "#2c7856",
 
   "scmap" = "#ad772f", # "#3e75bd" # "#696866" # "#d94185"
-  "VICTOR_scmap" = "#32383b", # "#2c7856",
+  "scmap_VICTOR" = "#32383b", # "#2c7856",
 
   "CHETAH" = "#51b555", # "#3e75bd" # "#696866" # "#d94185"
-  "VICTOR_CHETAH" = "#32383b", # "#2c7856",
+  "CHETAH_VICTOR" = "#32383b", # "#2c7856",
 
   "scClassify" = "#8d389c", # "#3e75bd" # "#696866" # "#d94185"
-  "VICTOR_scClassify" = "#32383b", # "#2c7856",
+  "scClassify_VICTOR" = "#32383b", # "#2c7856",
 
   "Seurat" = "#2c6f9e", # "#3e75bd" # "#696866" # "#d94185"
-  "VICTOR_Seurat" = "#32383b" # "#2c7856"
+  "Seurat_VICTOR" = "#32383b" # "#2c7856"
 )
 
 # source("PlotFun_SetColor.R")

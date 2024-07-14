@@ -121,6 +121,10 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 
+library(dplyr)
+library(tidyr)
+library(stringr)
+
 long_data <- selected_data %>%
   pivot_longer(
     cols = ends_with(c("Accuracy", "Precision", "Recall", "F1", "Specificity")),
@@ -129,14 +133,15 @@ long_data <- selected_data %>%
   ) %>%
   # Extract 'Metric' using regex
   mutate(Metric = str_extract(Metric_Method, "Accuracy|Precision|Recall|F1|Specificity")) %>%
-  # Extract 'Method' using regex
+  # Extract 'Method' using regex and remove unnecessary parts
   mutate(Method = str_remove(Metric_Method, "_?(Accuracy|Precision|Recall|F1|Specificity)$"),
-         Method = str_replace(Method, "^ConfStat_VICTOR_label_", "VICTOR_"),
-         Method = str_replace(Method, "^label_", ""),
-         Method = str_replace(Method, "_ConfStat", ""),
+         Method = str_remove(Method, "^ConfStat_VICTOR_"),
+         Method = str_remove(Method, "^label_"),
          Method = str_replace(Method, "_NoReject", ""),
+         Method = str_replace(Method, "_ConfStat", ""),
          Method = str_replace_all(Method, "_+", "_"),
-         Method = str_remove(Method, "_$")) %>%
+         Method = str_remove(Method, "_$"),
+         Method = if_else(str_detect(Metric_Method, "^ConfStat_VICTOR_"), paste0(Method, "_VICTOR"), Method)) %>%
   # Reformat 'Metric_Method' to 'Metric_Method'
   mutate(Metric_Method = paste0(Metric, "_", Method)) %>%
   # Convert 'Value' to numeric
@@ -214,10 +219,10 @@ Plot_Box_All
 #
 # plot_accuracy
 
-custom_order <- c("singleR", "VICTOR_singleR", "scmap", "VICTOR_scmap",
-                  "SCINA", "VICTOR_SCINA", "scPred","VICTOR_scPred",
-                  "CHETAH", "VICTOR_CHETAH", "scClassify","VICTOR_scClassify",
-                  "Seurat", "VICTOR_Seurat")
+custom_order <- c("singleR", "singleR_VICTOR", "scmap", "scmap_VICTOR",
+                  "SCINA", "SCINA_VICTOR", "scPred","scPred_VICTOR",
+                  "CHETAH", "CHETAH_VICTOR", "scClassify","scClassify_VICTOR",
+                  "Seurat", "Seurat_VICTOR")
 long_data$Method <- factor(long_data$Method, levels = custom_order)
 
 custom_order2 <- long_data$Actual_Cell_Type %>% unique() %>% sort()
