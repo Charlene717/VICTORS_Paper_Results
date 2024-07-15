@@ -279,8 +279,13 @@ plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_c
 
 
 
-pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult.pdf"),
-    width = 10, height = 10)
+# pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult.pdf"),
+#     width = 10, height = 10)
+
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+
+pdf(paste0(Name_time_wo_micro,"_MainResult.pdf"),
+    width = 10, height = 20)
 
 print(plots_final_Accuracy_data_SamePlat)
 print(plots_final_Accuracy_data_CrossPlat)
@@ -295,8 +300,14 @@ print(plots_final_Specificity_data_CrossPlat)
 dev.off()
 
 
-pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_Com.pdf"),
-    width = 17, height = 17) #  width = 17, height = 17)
+
+Set_Mislabel <- ""
+# pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_Com.pdf"),
+#     width = 17, height = 17) #  width = 17, height = 17)
+
+pdf(paste0(Name_time_wo_micro,"_MainResult_Com.pdf"),
+    width = 10, height = 20)
+
 print(plot_accuracy_combined)
 if(Set_Mislabel == "NoneMislabel"){
   print(plot_Recall_combined)
@@ -312,4 +323,5 @@ plot_objs <- grep("^[Pp]lot", ls(), value = TRUE)
 rm(list = plot_objs[sapply(plot_objs, function(obj) !is.function(get(obj)))])
 
 # Export RData
-save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
+# save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
+save.image(paste0(Name_time_wo_micro,".RData"))
