@@ -1,7 +1,9 @@
 ## To-do list
-## -[] 去除Unassign
-## -[] 檢查程式寫錯的地方
-
+## -[T] 去除Unassign
+## -[T] 檢查程式寫錯的地方
+## -[] 重整同平台與跨平台的設定
+## -[] 整體數據檢查表
+## -[] 精簡程式碼
 
 ##### Presetting ######
 rm(list = ls()) # Clean variable
@@ -267,6 +269,7 @@ plot_accuracy_combined
 
 plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
 plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
+plots_final_Accuracy_data_SamePlat
 
 
 plot_Recall_combined <- create_metric_plot(data_same_DataID, "Recall", paste0(Figure_Note, " Recall Across Actual Cell Types - Same Platform"), color_Method, x_col = "Mislabel_CellType") /
