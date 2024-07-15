@@ -5,6 +5,8 @@
 ## -[] 整體數據檢查表
 ## -[] 精簡程式碼
 
+## -[] 其他呈現方法(特別針對細胞種類去看，目前是一個sample為單位去算)
+
 ##### Presetting ######
 rm(list = ls()) # Clean variable
 memory.limit(150000)
@@ -239,14 +241,31 @@ long_data$Mislabel_CellType <- factor(long_data$Mislabel_CellType, levels = cust
 
 
 ################################################################################
-# 將long_data篩選出不同組合的dataframe，Same_DataID、 Cross_DataID
-# Same_DataID
-data_same_platform <- long_data %>%
-  filter((Sample_Platform == Ref_Platform))
+## Set Same_platform & Cross_platform
+if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 
-# Cross_DataID
+# Create a function to group the same platforms
+platform_group <- function(platform) {
+  if (platform %in% c("10xV2", "10xV2A", "10xV2B")) {
+    return("10xV2_Group")
+  } else {
+    return(platform)
+  }
+}
+
+# Apply the function to long_data to add a column marking platform groups
+long_data <- long_data %>%
+  mutate(Sample_Platform_Group = sapply(Sample_Platform, platform_group),
+         Ref_Platform_Group = sapply(Ref_Platform, platform_group))
+
+# Same_platform
+data_same_platform <- long_data %>%
+  filter(Sample_Platform_Group == Ref_Platform_Group)
+
+# Cross_platform
 data_cross_platform <- long_data %>%
-  filter(!(Sample_Platform == Ref_Platform))
+  filter(Sample_Platform_Group != Ref_Platform_Group)
+
 
 
 ## Boxplot
