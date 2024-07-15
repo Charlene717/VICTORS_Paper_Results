@@ -169,7 +169,7 @@ create_combind_plot <- function(plots, ncol, title_data_10x, legend_data, color_
   # Create a dummy data frame for the legend with a single point
   legend_data <- data.frame(Method = names(color_legend), x = 1, y = 1)
   custom_order <- c("singleR",  "scmap", "SCINA", "scPred",
-                    "CHETAH","scClassify","Seurat","VICTORS" )
+                    "CHETAH","scClassify","Seurat","VICTOR" )
   legend_data$Method <- factor(legend_data$Method, levels = custom_order)
 
   # Create a ggplot object for the legend without actual points
@@ -194,7 +194,15 @@ create_combind_plot <- function(plots, ncol, title_data_10x, legend_data, color_
 ## Set Color
 # Define the colors for the methods
 color_legend <- c(
-  "VICTORS" = "#32383b", # "#044a63"
+  "VICTOR" = "#32383b", # "#044a63"
+  "singleR_VICTOR" = "#32383b", # "#044a63"
+  "scPred_VICTOR" = "#32383b", # "#044a63"
+  "SCINA_VICTOR" = "#32383b", # "#044a63"
+  "scmap_VICTOR" = "#32383b", # "#044a63"
+  "CHETAH_VICTOR" = "#32383b", # "#044a63"
+  "scClassify_VICTOR" = "#32383b", # "#044a63"
+  "Seurat_VICTOR" = "#32383b", # "#044a63"
+
   "singleR" = "#2862bf",   # "#884db8"
   "scPred" = "#368a5b",
   "SCINA" = "#e0385d",
