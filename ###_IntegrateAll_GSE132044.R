@@ -107,12 +107,13 @@ target_vars <- c("label_singleR_ConfStat", "label_scmap_ConfStat", "label_SCINA_
 
 # 执行批量处理
 combined_data <- process_performance_metrics(combined_data, c("FileID"), target_vars)
+# combined_data <- process_performance_metrics(combined_data, c("FileID", "Mislabel_CellType", "Actual_Cell_Type"), target_vars)
 
 # head(combined_data)
 
 ## Remove duplicates
 selected_data <- combined_data %>%
-  dplyr::select(FileID, Sample_DataID, Ref_DataID, Sample_DataID, Ref_DataID,
+  dplyr::select(FileID, Sample_DataID, Ref_DataID,
                 Actual_Cell_Type, contains("ConfStat")) %>%
   distinct()
 
@@ -126,9 +127,6 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 
-library(dplyr)
-library(tidyr)
-library(stringr)
 
 long_data <- selected_data %>%
   pivot_longer(
@@ -189,8 +187,9 @@ head(long_data) # Display the transformed data
 # }
 
 
+## Remove duplicates
 long_data <- long_data %>%
-  dplyr::select(FileID, Sample_DataID, Ref_DataID, Sample_DataID, Ref_DataID,
+  dplyr::select(FileID, Sample_DataID, Ref_DataID,
                 Actual_Cell_Type, Metric, Method,Value) %>%
   distinct()
 
