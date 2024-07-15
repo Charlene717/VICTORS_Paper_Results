@@ -20,12 +20,28 @@ if(!require("caret")) install.packages("caret"); library(caret)
 if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("readr")) install.packages("readr"); library(readr)
 
+#### Set parameter ####
+Dataset <- "GSE132044"
+Figure_Note <- Dataset
+
+## Set export
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 6), collapse = ""))
+
+Name_ExportFolder <- paste0(Name_FileID,"_",Dataset)
+if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+Name_Export <- Name_ExportFolder
+
 #### Set Loading ###
 ## 設定主目錄
 # main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240710_S"
 
-# main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712"
-main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_scRNAseqPanc_20240711"
+if(Dataset == "GSE132044"){
+  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712"
+}else if(Dataset == "scRNAseqPanc"){
+  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_scRNAseqPanc_20240711"
+}
+
 
 
 # 獲取所有子目錄
@@ -283,7 +299,7 @@ methods <- c("singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify","Seur
 legend_set <- c(gsub(".*_VICTOR$", "VICTOR", as.character(long_data$Method))) %>% unique()
 
 
-Figure_Note <- ""
+
 
 # Creating plots for different metrics and DataID
 plot_accuracy_combined <- create_metric_plot(data_same_platform, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Same Platform"), color_Method , x_col = "Mislabel_CellType") /
@@ -310,12 +326,7 @@ plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_c
 
 
 
-# pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult.pdf"),
-#     width = 10, height = 10)
-
-Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
-
-pdf(paste0(Name_time_wo_micro,"_MainResult.pdf"),
+pdf(paste0(Name_ExportFolder, "/", Name_Export,"_MainResult.pdf"),
     width = 20, height = 20)
 
 print(plots_final_Accuracy_data_SamePlat)
@@ -332,11 +343,9 @@ dev.off()
 
 
 
-Set_Mislabel <- ""
-# pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_Com.pdf"),
-#     width = 17, height = 17) #  width = 17, height = 17)
+# Set_Mislabel <- ""
 
-pdf(paste0(Name_time_wo_micro,"_MainResult_Com.pdf"),
+pdf(paste0(Name_ExportFolder, "/", Name_Export,"_MainResult_Com.pdf"),
     width = 20, height = 20)
 
 print(plot_accuracy_combined)
@@ -352,8 +361,8 @@ plot_objs <- grep("^[Pp]lot", ls(), value = TRUE)
 rm(list = plot_objs[sapply(plot_objs, function(obj) !is.function(get(obj)))])
 
 # Export RData
-# save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
-save.image(paste0(Name_time_wo_micro,"_IntegrateAll.RData"))
+save.image(paste0(Name_ExportFolder,"/", Name_Export,"_IntegrateAll.RData"))
+# save.image(paste0(Name_time_wo_micro,"_IntegrateAll.RData"))
 
 
 
