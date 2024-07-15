@@ -1,8 +1,8 @@
 ## To-do list
 ## -[T] 去除Unassign
 ## -[T] 檢查程式寫錯的地方
-## -[] 重整同平台與跨平台的設定
-## -[] 整體數據檢查表
+## -[T] 重整同平台與跨平台的設定
+## -[T] 整體數據檢查表
 ## -[] 精簡程式碼
 
 ## -[] 其他呈現方法(特別針對細胞種類去看，目前是一個sample為單位去算)
@@ -350,3 +350,15 @@ rm(list = plot_objs[sapply(plot_objs, function(obj) !is.function(get(obj)))])
 # Export RData
 # save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
 save.image(paste0(Name_time_wo_micro,"_IntegrateAll.RData"))
+
+
+
+################################################################################
+#### Data frame for check ####
+selected_data_S <- selected_data %>%
+  dplyr::select(FileID, Sample_Platform, Ref_Platform, Mislabel_CellType,
+                contains("_Accuracy")) %>%
+  distinct()
+
+summary(is.na(selected_data_S))
+
