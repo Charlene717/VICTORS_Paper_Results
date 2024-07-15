@@ -311,7 +311,7 @@ Set_Mislabel <- ""
 #     width = 17, height = 17) #  width = 17, height = 17)
 
 pdf(paste0(Name_time_wo_micro,"_MainResult_Com.pdf"),
-    width = 10, height = 20)
+    width = 20, height = 20)
 
 print(plot_accuracy_combined)
 print(plot_Recall_combined)
