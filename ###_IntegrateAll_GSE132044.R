@@ -113,7 +113,7 @@ combined_data <- process_performance_metrics(combined_data, c("FileID"), target_
 
 ## Remove duplicates
 selected_data <- combined_data %>%
-  dplyr::select(FileID, Sample_DataID, Ref_DataID,
+  dplyr::select(FileID, Sample_Platform, Ref_Platform,
                 Actual_Cell_Type, contains("ConfStat")) %>%
   distinct()
 
@@ -189,7 +189,7 @@ head(long_data) # Display the transformed data
 
 ## Remove duplicates
 long_data <- long_data %>%
-  dplyr::select(FileID, Sample_DataID, Ref_DataID,
+  dplyr::select(FileID, Sample_Platform, Ref_Platform,
                 Actual_Cell_Type, Metric, Method,Value) %>%
   distinct()
 
@@ -240,11 +240,11 @@ long_data$Actual_Cell_Type <- factor(long_data$Actual_Cell_Type, levels = custom
 # 將long_data篩選出不同組合的dataframe，Same_DataID、 Cross_DataID
 # Same_DataID
 data_same_DataID <- long_data %>%
-  filter((Sample_DataID == Ref_DataID))
+  filter((Sample_Platform == Ref_Platform))
 
 # Cross_DataID
 data_cross_platform <- long_data %>%
-  filter(!(Sample_DataID == Ref_DataID))
+  filter(!(Sample_Platform == Ref_Platform))
 
 
 ## Boxplot
