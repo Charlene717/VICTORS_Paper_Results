@@ -265,22 +265,22 @@ plot_accuracy_combined <- create_metric_plot(data_same_DataID, "Accuracy", paste
   create_metric_plot(data_cross_platform, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Cross Platform"), color_Method, x_col = "Mislabel_CellType")
 plot_accuracy_combined
 
-plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same Platform", 2, legend_set, color_legend, set_x_col = "Mislabel_CellType")
-plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross Platform", 2, legend_set, color_legend, set_x_col = "Mislabel_CellType")
+plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
+plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
 
 
 plot_Recall_combined <- create_metric_plot(data_same_DataID, "Recall", paste0(Figure_Note, " Recall Across Actual Cell Types - Same Platform"), color_Method, x_col = "Mislabel_CellType") /
   create_metric_plot(data_cross_platform, "Recall",  paste0(Figure_Note, " Recall Across Actual Cell Types - Cross Platform"), color_Method, x_col = "Mislabel_CellType")
 
-plots_final_Recall_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Recall", "Same Platform", 2, legend_set, color_legend, set_x_col = "Mislabel_CellType")
-plots_final_Recall_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Recall", "Cross Platform", 2, legend_set, color_legend, set_x_col = "Mislabel_CellType")
+plots_final_Recall_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Recall", "Same Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
+plots_final_Recall_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Recall", "Cross Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
 
 
 plot_Specificity_combined <- create_metric_plot(data_same_DataID, "Specificity", paste0(Figure_Note, " Specificity Across Actual Cell Types - Same Platform"), color_Method, x_col = "Mislabel_CellType") /
   create_metric_plot(data_cross_platform, "Specificity",  paste0(Figure_Note, " Specificity Across Actual Cell Types - Cross Platform"), color_Method, x_col = "Mislabel_CellType")
 
-plots_final_Specificity_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Specificity", "Same Platform", 2, legend_set, color_legend, set_x_col = "Mislabel_CellType")
-plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Specificity", "Cross Platform", 2, legend_set, color_legend, set_x_col = "Mislabel_CellType")
+plots_final_Specificity_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Specificity", "Same Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
+plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Specificity", "Cross Platform", 3, legend_set, color_legend, set_x_col = "Mislabel_CellType")
 
 
 
@@ -290,7 +290,7 @@ plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_c
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 
 pdf(paste0(Name_time_wo_micro,"_MainResult.pdf"),
-    width = 10, height = 20)
+    width = 20, height = 20)
 
 print(plots_final_Accuracy_data_SamePlat)
 print(plots_final_Accuracy_data_CrossPlat)
