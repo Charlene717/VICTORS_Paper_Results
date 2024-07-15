@@ -1,3 +1,8 @@
+## To-do list
+## -[] 去除Unassign
+## -[] 檢查程式寫錯的地方
+
+
 ##### Presetting ######
 rm(list = ls()) # Clean variable
 memory.limit(150000)
