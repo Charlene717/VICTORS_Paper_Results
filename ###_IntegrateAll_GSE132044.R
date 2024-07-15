@@ -261,25 +261,25 @@ legend_set <- c(gsub(".*_VICTOR$", "VICTOR", as.character(long_data$Method))) %>
 Figure_Note <- ""
 
 # Creating plots for different metrics and DataID
-plot_accuracy_combined <- create_metric_plot(data_same_DataID, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Same DataID"), color_Method) /
-  create_metric_plot(data_cross_platform, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Cross DataID"), color_Method)
+plot_accuracy_combined <- create_metric_plot(data_same_DataID, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Same Platform"), color_Method) /
+  create_metric_plot(data_cross_platform, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Cross Platform"), color_Method)
 
-plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same DataID", 2, legend_set, color_legend)
-plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross DataID", 2, legend_set, color_legend)
-
-
-plot_Recall_combined <- create_metric_plot(data_same_DataID, "Recall", paste0(Figure_Note, " Recall Across Actual Cell Types - Same DataID"), color_Method) /
-  create_metric_plot(data_cross_platform, "Recall",  paste0(Figure_Note, " Recall Across Actual Cell Types - Cross DataID"), color_Method)
-
-plots_final_Recall_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Recall", "Same DataID", 2, legend_set, color_legend)
-plots_final_Recall_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Recall", "Cross DataID", 2, legend_set, color_legend)
+plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same Platform", 2, legend_set, color_legend)
+plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross Platform", 2, legend_set, color_legend)
 
 
-plot_Specificity_combined <- create_metric_plot(data_same_DataID, "Specificity", paste0(Figure_Note, " Specificity Across Actual Cell Types - Same DataID"), color_Method) /
-  create_metric_plot(data_cross_platform, "Specificity",  paste0(Figure_Note, " Specificity Across Actual Cell Types - Cross DataID"), color_Method)
+plot_Recall_combined <- create_metric_plot(data_same_DataID, "Recall", paste0(Figure_Note, " Recall Across Actual Cell Types - Same Platform"), color_Method) /
+  create_metric_plot(data_cross_platform, "Recall",  paste0(Figure_Note, " Recall Across Actual Cell Types - Cross Platform"), color_Method)
 
-plots_final_Specificity_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Specificity", "Same DataID", 2, legend_set, color_legend)
-plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Specificity", "Cross DataID", 2, legend_set, color_legend)
+plots_final_Recall_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Recall", "Same Platform", 2, legend_set, color_legend)
+plots_final_Recall_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Recall", "Cross Platform", 2, legend_set, color_legend)
+
+
+plot_Specificity_combined <- create_metric_plot(data_same_DataID, "Specificity", paste0(Figure_Note, " Specificity Across Actual Cell Types - Same Platform"), color_Method) /
+  create_metric_plot(data_cross_platform, "Specificity",  paste0(Figure_Note, " Specificity Across Actual Cell Types - Cross Platform"), color_Method)
+
+plots_final_Specificity_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Specificity", "Same Platform", 2, legend_set, color_legend)
+plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Specificity", "Cross Platform", 2, legend_set, color_legend)
 
 
 
