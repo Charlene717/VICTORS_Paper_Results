@@ -113,7 +113,7 @@ combined_data <- process_performance_metrics(combined_data, c("FileID"), target_
 
 ## Remove duplicates
 selected_data <- combined_data %>%
-  dplyr::select(FileID, Sample_Platform, Ref_Platform,
+  dplyr::select(FileID, Sample_Platform, Ref_Platform, Mislabel_CellType,
                 Actual_Cell_Type, contains("ConfStat")) %>%
   distinct()
 
@@ -189,7 +189,7 @@ head(long_data) # Display the transformed data
 
 ## Remove duplicates
 long_data <- long_data %>%
-  dplyr::select(FileID, Sample_Platform, Ref_Platform,
+  dplyr::select(FileID, Sample_Platform, Ref_Platform, Mislabel_CellType,
                 Actual_Cell_Type, Metric, Method,Value) %>%
   distinct()
 
@@ -202,7 +202,7 @@ long_data$Value <- as.numeric(long_data$Value)
 
 
 # 绘制 boxplot
-ggplot(long_data, aes(x = Actual_Cell_Type, y = Value, fill = Method)) +
+ggplot(long_data, aes(x = Mislabel_CellType, y = Value, fill = Method)) +
   geom_boxplot() +
   facet_wrap(~ Metric, scales = "free_y") + # 为不同的性能指标创建分面
   theme_bw() +
@@ -229,10 +229,10 @@ custom_order <- c("singleR", "singleR_VICTOR", "scmap", "scmap_VICTOR",
                   "Seurat", "Seurat_VICTOR")
 long_data$Method <- factor(long_data$Method, levels = custom_order)
 
-custom_order2 <- long_data$Actual_Cell_Type %>% unique() %>% sort()
+custom_order2 <- long_data$Mislabel_CellType %>% unique() %>% sort()
 custom_order2 <- custom_order2[custom_order2 !="None"]
 custom_order2 <- c("None", custom_order2)
-long_data$Actual_Cell_Type <- factor(long_data$Actual_Cell_Type, levels = custom_order2)
+long_data$Mislabel_CellType <- factor(long_data$Mislabel_CellType, levels = custom_order2)
 
 
 
@@ -261,25 +261,26 @@ legend_set <- c(gsub(".*_VICTOR$", "VICTOR", as.character(long_data$Method))) %>
 Figure_Note <- ""
 
 # Creating plots for different metrics and DataID
-plot_accuracy_combined <- create_metric_plot(data_same_DataID, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Same Platform"), color_Method) /
-  create_metric_plot(data_cross_platform, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Cross Platform"), color_Method)
+plot_accuracy_combined <- create_metric_plot(data_same_DataID, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Same Platform"), color_Method , x_col = "Mislabel_CellType") /
+  create_metric_plot(data_cross_platform, "Accuracy", paste0(Figure_Note, " Accuracy Across Actual Cell Types - Cross Platform"), color_Method, x_col = "Mislabel_CellType")
+plot_accuracy_combined
 
-plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same Platform", 2, legend_set, color_legend)
-plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross Platform", 2, legend_set, color_legend)
-
-
-plot_Recall_combined <- create_metric_plot(data_same_DataID, "Recall", paste0(Figure_Note, " Recall Across Actual Cell Types - Same Platform"), color_Method) /
-  create_metric_plot(data_cross_platform, "Recall",  paste0(Figure_Note, " Recall Across Actual Cell Types - Cross Platform"), color_Method)
-
-plots_final_Recall_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Recall", "Same Platform", 2, legend_set, color_legend)
-plots_final_Recall_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Recall", "Cross Platform", 2, legend_set, color_legend)
+plots_final_Accuracy_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Accuracy", "Same Platform", 2, legend_set, color_legend, x_col = "Mislabel_CellType")
+plots_final_Accuracy_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Accuracy", "Cross Platform", 2, legend_set, color_legend, x_col = "Mislabel_CellType")
 
 
-plot_Specificity_combined <- create_metric_plot(data_same_DataID, "Specificity", paste0(Figure_Note, " Specificity Across Actual Cell Types - Same Platform"), color_Method) /
-  create_metric_plot(data_cross_platform, "Specificity",  paste0(Figure_Note, " Specificity Across Actual Cell Types - Cross Platform"), color_Method)
+plot_Recall_combined <- create_metric_plot(data_same_DataID, "Recall", paste0(Figure_Note, " Recall Across Actual Cell Types - Same Platform"), color_Method, x_col = "Mislabel_CellType") /
+  create_metric_plot(data_cross_platform, "Recall",  paste0(Figure_Note, " Recall Across Actual Cell Types - Cross Platform"), color_Method, x_col = "Mislabel_CellType")
 
-plots_final_Specificity_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Specificity", "Same Platform", 2, legend_set, color_legend)
-plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Specificity", "Cross Platform", 2, legend_set, color_legend)
+plots_final_Recall_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Recall", "Same Platform", 2, legend_set, color_legend, x_col = "Mislabel_CellType")
+plots_final_Recall_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Recall", "Cross Platform", 2, legend_set, color_legend, x_col = "Mislabel_CellType")
+
+
+plot_Specificity_combined <- create_metric_plot(data_same_DataID, "Specificity", paste0(Figure_Note, " Specificity Across Actual Cell Types - Same Platform"), color_Method, x_col = "Mislabel_CellType") /
+  create_metric_plot(data_cross_platform, "Specificity",  paste0(Figure_Note, " Specificity Across Actual Cell Types - Cross Platform"), color_Method, x_col = "Mislabel_CellType")
+
+plots_final_Specificity_data_SamePlat <- create_and_combine_metric_plots(data_same_DataID, methods, Figure_Note, "Specificity", "Same Platform", 2, legend_set, color_legend, x_col = "Mislabel_CellType")
+plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_cross_platform, methods, Figure_Note, "Specificity", "Cross Platform", 2, legend_set, color_legend, x_col = "Mislabel_CellType")
 
 
 
