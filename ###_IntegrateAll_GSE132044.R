@@ -314,11 +314,9 @@ pdf(paste0(Name_time_wo_micro,"_MainResult_Com.pdf"),
     width = 10, height = 20)
 
 print(plot_accuracy_combined)
-if(Set_Mislabel == "NoneMislabel"){
-  print(plot_Recall_combined)
-}else{
-  print(plot_Specificity_combined)
-}
+print(plot_Recall_combined)
+print(plot_Specificity_combined)
+
 print(Plot_Box_All)
 dev.off()
 
