@@ -18,8 +18,8 @@ source("Plot_CellAnnot_UMAP_Box.R")
 
 
 #### Load dataset ####
-# Dataset <- "GSE132044_MisLabelB"
-Dataset <- "SeuratATAC"
+Dataset <- "GSE132044_MisLabelB"
+# Dataset <- "SeuratATAC"
 
 # load("D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
 # export_folder <- "D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/"
