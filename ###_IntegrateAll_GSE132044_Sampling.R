@@ -266,15 +266,22 @@ size_Method <- c(
   "Seurat_VICTOR" = 1.2
 )
 
-# 按顺序排列Ref_Platform
+# 按順序排列Ref_Platform
+# accuracy_data <- long_data %>%
+#   filter(Metric == "Accuracy") %>%
+#   mutate(Ref_Platform = factor(Ref_Platform, levels = c("10xV2A_B0", "10xV2A_B10", "10xV2A_B20", "10xV2A_B30",
+#                                                         "10xV2A_B40", "10xV2A_B50", "10xV2A_B60", "10xV2A_B70",
+#                                                         "10xV2A_B80", "10xV2A_B90", "10xV2A_B100", "10xV2A_B110",
+#                                                         "10xV2A_B120", "10xV2A_B130", "10xV2A_B140")))
+
 accuracy_data <- long_data %>%
   filter(Metric == "Accuracy") %>%
-  mutate(Ref_Platform = factor(Ref_Platform, levels = c("10xV2A_B0", "10xV2A_B10", "10xV2A_B20", "10xV2A_B30",
-                                                        "10xV2A_B40", "10xV2A_B50", "10xV2A_B60", "10xV2A_B70",
-                                                        "10xV2A_B80", "10xV2A_B90", "10xV2A_B100", "10xV2A_B110",
-                                                        "10xV2A_B120", "10xV2A_B130", "10xV2A_B140")))
+  mutate(
+    Ref_Platform_Num = as.numeric(gsub("[^0-9]", "", Ref_Platform)),
+    Ref_Platform = factor(Ref_Platform, levels = unique(Ref_Platform[order(Ref_Platform_Num)]))
+  )
 
-# 创建折线图
+# 創建折線圖
 Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform, y = Value, color = Method, linetype = Method, size = Method, group = Method)) +
   geom_line() +
   geom_point() +
