@@ -1,5 +1,8 @@
 ## To-do list
-## -[ ] 折線圖
+## -[T] 折線圖
+## -[ ] x軸數字自動化
+## -[ ] 美化圖片
+
 ## -[ ] 精簡程式碼
 
 ## -[] 其他呈現方法
@@ -189,16 +192,11 @@ long_data$Value <- as.numeric(long_data$Value)
 
 
 
-# 绘制 折線圖
+## 折線圖
 library(ggplot2)
 library(dplyr)
 
-# 过滤出Accuracy的数据
-accuracy_data <- long_data %>%
-  filter(Metric == "Accuracy")
-
-
-# 定义颜色和线型
+# 定義顏色、線型和線寬
 color_Method <- c(
   "singleR" = "#2862bf",
   "singleR_VICTOR" = "#2862bf",
@@ -245,6 +243,29 @@ linetype_Method <- c(
   "Seurat_VICTOR" = "solid"
 )
 
+size_Method <- c(
+  "singleR" = 0.5,
+  "singleR_VICTOR" = 1.2,
+
+  "scPred" = 0.5,
+  "scPred_VICTOR" = 1.2,
+
+  "SCINA" = 0.5,
+  "SCINA_VICTOR" = 1.2,
+
+  "scmap" = 0.5,
+  "scmap_VICTOR" = 1.2,
+
+  "CHETAH" = 0.5,
+  "CHETAH_VICTOR" = 1.2,
+
+  "scClassify" = 0.5,
+  "scClassify_VICTOR" = 1.2,
+
+  "Seurat" = 0.5,
+  "Seurat_VICTOR" = 1.2
+)
+
 # 按顺序排列Ref_Platform
 accuracy_data <- long_data %>%
   filter(Metric == "Accuracy") %>%
@@ -254,11 +275,12 @@ accuracy_data <- long_data %>%
                                                         "10xV2A_B120", "10xV2A_B130", "10xV2A_B140")))
 
 # 创建折线图
-Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform, y = Value, color = Method, linetype = Method, group = Method)) +
+Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform, y = Value, color = Method, linetype = Method, size = Method, group = Method)) +
   geom_line() +
   geom_point() +
   scale_color_manual(values = color_Method) +
   scale_linetype_manual(values = linetype_Method) +
+  scale_size_manual(values = size_Method) +
   labs(title = "Accuracy across different Ref_Platforms by Method",
        x = "Ref Platform",
        y = "Accuracy") +
