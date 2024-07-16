@@ -16,14 +16,18 @@ if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 
 source("Plot_CellAnnot_UMAP_Box.R")
 
+
 #### Load dataset ####
+Dataset <- "GSE132044_MisLabelB"
 # load("D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
 # export_folder <- "D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/"
 # export_name <- "VICTOR"
 
-load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712/Export_GSE132044_MislabelB cell/20240712095055BUNQLI_MislabelB cell_Qry_10xV2_Ref_10xV2A/20240712095055BUNQLI.RData")
-export_folder <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_Figure1/"
-export_name <- "VICTOR"
+if(Dataset == "GSE132044_MisLabelB"){
+  load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712/Export_GSE132044_MislabelB cell/20240712095055BUNQLI_MislabelB cell_Qry_10xV2_Ref_10xV2A/20240712095055BUNQLI.RData")
+
+}
+
 
 # source("FUN_Plot_Beautify_UMAP_Box.R")
 # source("Set_plot_color.R")
@@ -31,32 +35,25 @@ export_name <- "VICTOR"
 DimPlot(seuratObject_Sample, reduction = "umap", group.by = "Actual_Cell_Type")
 DimPlot(seuratObject_Ref, reduction = "umap", group.by = "Actual_Cell_Type")
 
+
+#### Set Parameter ####
+
+## Set export
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 10)
+Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = ""))
+
+Name_Export <- paste0("Fig1_",Name_FileID,"_",Dataset)
+
+Name_ExportFolder <- paste0("Export_",Name_Export)
+if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+
+
+
+#### Data pre-processing ####
 Metadata <- seuratObject_Sample@meta.data
 Metadata <- Metadata %>%
   dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
                 "Sample_Platform","Ref_Platform", contains("ConfStat"))
-
-## Modify column names
-convert_column_names <- function(colname) {
-  if (grepl("^label_", colname)) {
-    colname <- gsub("^label_", "", colname)
-    colname <- gsub("_ConfStat$", "", colname)
-  } else if (grepl("^ConfStat_VICTOR_label_", colname)) {
-    colname <- gsub("^ConfStat_VICTOR_label_", "", colname)
-    colname <- gsub("_NoReject$", "", colname)
-    colname <- paste0(colname, "_VICTOR")
-  }
-  return(colname)
-}
-
-# 應用轉換函数到Metadata的列名
-new_colnames <- sapply(colnames(Metadata), convert_column_names)
-colnames(Metadata) <- new_colnames
-
-# 查看修改后的列名
-colnames(Metadata)
-
-
 
 
 #### Plot Confusion Matrix Proportions ####
@@ -73,28 +70,31 @@ long_metadata <- Metadata %>%
   mutate(CM_Value = factor(CM_Value, levels = c("TP", "TN", "FP", "FN", "Other")))
 
 
-# ## 修改Method名稱
-# library(dplyr)
-#
-# # 定义转换函数
-# convert_method_names <- function(method) {
-#   if (grepl("^label_", method)) {
-#     method <- gsub("^label_", "", method)
-#     method <- gsub("_ConfStat$", "", method)
-#   } else if (grepl("^ConfStat_VICTOR_label_", method)) {
-#     method <- gsub("^ConfStat_VICTOR_label_", "", method)
-#     method <- gsub("_NoReject$", "", method)
-#     method <- paste0(method, "_VICTOR")
-#   }
-#   return(method)
-# }
-#
-# # 应用转换函数到long_metadata的Method列
-# long_metadata <- long_metadata %>%
-#   mutate(Method = sapply(Method, convert_method_names))
-#
-# # 查看修改后的Method列
-# unique(long_metadata$Method)
+## 修改Method名稱
+library(dplyr)
+
+# 定义转换函数
+convert_method_names <- function(method) {
+  if (grepl("^label_", method)) {
+    method <- gsub("^label_", "", method)
+    method <- gsub("_ConfStat$", "", method)
+  } else if (grepl("^ConfStat_VICTOR_label_", method)) {
+    method <- gsub("^ConfStat_VICTOR_label_", "", method)
+    method <- gsub("_NoReject$", "", method)
+    method <- paste0(method, "_VICTOR")
+  }
+  return(method)
+}
+
+# 应用转换函数到long_metadata的Method列
+long_metadata <- long_metadata %>%
+  mutate(Method = sapply(Method, convert_method_names))
+
+new_colnames <- sapply(colnames(Metadata), convert_method_names)
+colnames(Metadata) <- new_colnames
+
+unique(long_metadata$Method) # 查看修改后的Method列
+
 
 
 
@@ -232,14 +232,14 @@ grid.arrange(grobs = c(plots[(length(plots)/2+1):length(plots)],plots2), nrow = 
 
 #### Export ####
 ## Export PDF
-pdf(paste0(export_folder, "/", export_name, "_MainResult_Fig1.pdf"),
+pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_Fig1.pdf"),
     width = 28, height = 12)
 grid.arrange(grobs = c(plots[1:(length(plots)/2)],plots1), nrow = 2)
 grid.arrange(grobs = c(plots[(length(plots)/2+1):length(plots)],plots2), nrow = 2)
 dev.off()
 
 
-# pdf(paste0(export_folder, "/", export_name, "_MainResult_Fig1_Accuracy.pdf"),
+# pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_Fig1_Accuracy.pdf"),
 #     width = 16, height = 8)
 # print(grid.arrange(grobs = plots1, nrow = 1))
 # print(grid.arrange(grobs = plots2, nrow = 1))
@@ -247,11 +247,12 @@ dev.off()
 
 ## Export tsv
 All_accuracy_data <- rbind(All_accuracy_data1, All_accuracy_data2_VICTOR)
-try(write_tsv(All_accuracy_data, paste0(export_folder, "/", export_name, "_Accuracy_Table.tsv")))
+try(write_tsv(All_accuracy_data, paste0(Name_ExportFolder, "/", Name_Export, "_Accuracy_Table.tsv")))
 
 
-# # 移除环境中的其他对象
-# rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","export_folder","export_name")))
-#
-# # Export RData
-# save.image(paste0(export_folder,"/", export_name,"_Fig1_Accuracy.RData"))
+# 移除环境中的其他对象
+rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","Name_ExportFolder","Name_Export",
+                        "long_metadata", "seuratObject_Sample", "seuratObject_Ref")))
+
+# Export RData
+save.image(paste0(Name_ExportFolder,"/", Name_Export,"_Fig1_Accuracy.RData"))
