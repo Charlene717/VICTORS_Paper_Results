@@ -1,8 +1,8 @@
 #### To-do list ####
 # -[T] 修改命名
-# -[ ]
-# -[ ] 寫成函數
-# -[ ] 套用到ATAC
+# -[T] 寫成函數
+# -[T] 套用到ATAC
+# -[ ] 整理程式碼
 
 ##### Presetting ######
 rm(list = ls()) # Clean variable ##* Comment out if Run All
@@ -58,9 +58,6 @@ if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create n
 
 #### Data pre-processing ####
 Metadata <- seuratObject_Sample@meta.data
-Metadata <- Metadata %>%
-  dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
-                "Sample_Platform","Ref_Platform", contains("ConfStat"))
 
 if ("FileID" %in% colnames(Metadata)) {
   Metadata <- Metadata %>%
@@ -211,7 +208,7 @@ plot_accuracy_single <- function(accuracy_data, method, dataset) {
     labs(x = "Cell Type", y = "Accuracy", title = method)
 
   # 条件检查数据集名称并设置颜色填充
-  if (dataset == "GSE132044_MisLabelB") {
+  if (grepl("^GSE132044", dataset)) {
     plot <- plot + scale_fill_manual(values = color_CellType_Ref)
   }
 
@@ -255,8 +252,11 @@ grid.arrange(grobs = c(plots[(length(plots)/2+1):length(plots)],plots2), nrow = 
 
 #### Export ####
 ## Export PDF
-pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_Fig1.pdf"),
-    width = 28, height = 12)
+pdf_width <- if (grepl("^GSE132044", Dataset)) 28 else 40
+pdf_height <- if (grepl("^GSE132044", Dataset)) 12 else 14
+
+pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult.pdf"),
+    width = pdf_width, height = pdf_height)
 grid.arrange(grobs = c(plots[1:(length(plots)/2)],plots1), nrow = 2)
 grid.arrange(grobs = c(plots[(length(plots)/2+1):length(plots)],plots2), nrow = 2)
 dev.off()
@@ -278,4 +278,4 @@ rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","Name_ExportFolder","Name
                         "long_metadata", "seuratObject_Sample", "seuratObject_Ref")))
 
 # Export RData
-save.image(paste0(Name_ExportFolder,"/", Name_Export,"_Fig1_Accuracy.RData"))
+save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
