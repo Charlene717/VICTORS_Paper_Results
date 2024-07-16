@@ -29,7 +29,7 @@ Figure_Note <- Dataset
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = ""))
 
-Name_Export <- paste0("Sampling_",Name_FileID,"_",Dataset)
+Name_Export <- paste0("IntegrateAll_Sampling_",Name_FileID,"_",Dataset)
 
 Name_ExportFolder <- paste0("Export_",Name_Export)
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
