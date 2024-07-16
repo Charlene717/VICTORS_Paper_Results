@@ -28,9 +28,9 @@ Figure_Note <- Dataset
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = ""))
 
-Name_Export <- paste0(Name_FileID,"_",Dataset)
+Name_Export <- paste0("IntegrateAll_",Name_FileID,"_",Dataset)
 
-Name_ExportFolder <- paste0("Export_IntegrateAll_",Name_Export)
+Name_ExportFolder <- paste0("Export_",Name_Export)
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 
 
@@ -363,7 +363,7 @@ plot_objs <- grep("^[Pp]lot", ls(), value = TRUE)
 rm(list = plot_objs[sapply(plot_objs, function(obj) !is.function(get(obj)))])
 
 # Export RData
-save.image(paste0(Name_ExportFolder,"/", Name_Export,"_IntegrateAll.RData"))
+save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
 # save.image(paste0(Name_time_wo_micro,"_IntegrateAll.RData"))
 
 
