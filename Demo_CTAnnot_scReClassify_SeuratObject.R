@@ -16,6 +16,42 @@ if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scRe
 if (!require("DT")) install.packages("DT"); library(DT)
 if (!require("mclust")) install.packages("mclust"); library(mclust)
 
+#### Load data ####
+## Load sample
+load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GSE132044/GSE132044_Read_All_Processed_Sample_OriQC/GSE132044_10xV2_Sample_CellNum1681_Seed123_Processed.RData") #; rm(Name_Export_o,Name_ExportFolder_o)
+
+if(is.null(seuratObject@meta.data$`Actual_Cell_Type`)){
+  seuratObject@meta.data$`Actual_Cell_Type` <- seuratObject@meta.data$`Cell_Type`
+}
+seuratObject <- UpdateSeuratObject(seuratObject)
+Query_Seurat <- seuratObject; rm(seuratObject)
+if(Set_Sam_Delet_Unknown){
+  Query_Seurat <- subset(Query_Seurat, subset = Actual_Cell_Type != "Unknown")
+  # Query_Seurat <- subset(Query_Seurat, subset = Cell_Type != "Unknown")
+}
+
+## SetIdent for Query_Seurat
+Query_Seurat <- Query_Seurat %>% SetIdent(value = "Annotation")
+DimPlot(Query_Seurat, label = TRUE, repel = TRUE) + NoLegend()
+# DimPlot(Query_Seurat, reduction = "umap", group.by = "Annotation")
+
+## Load reference
+load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GSE132044/GSE132044_Read_All_Processed_Ref_OriQC/GSE132044_10xV2A_Ref_CellNum1611_Seed123_Processed.RData") #; rm(Name_Export_o,Name_ExportFolder_o)
+seuratObject <- UpdateSeuratObject(seuratObject)
+Reference_Seurat <- seuratObject; rm(seuratObject)
+if(Set_Ref_Delet_Unknown){ Reference_Seurat <- subset(Reference_Seurat, subset = Actual_Cell_Type != "Unknown") }
+
+
+if(Set_Ref_Delet_CTMetric){
+  Reference_Seurat <- subset(Reference_Seurat, subset = Actual_Cell_Type != Set_Ref_Delet)
+}
+
+## SetIdent for Reference_Seurat
+Reference_Seurat <- Reference_Seurat %>% SetIdent(value = "Actual_Cell_Type")
+DimPlot(Reference_Seurat, label = TRUE, repel = TRUE) + NoLegend()
+# DimPlot(Reference_Seurat, reduction = "umap", group.by = "Actual_Cell_Type")
+
+#### scReClassify ####
 # Convert Seurat objects to SingleCellExperiment
 # ref_sce <- as.SingleCellExperiment(Reference_Seurat)
 sample_sce <- as.SingleCellExperiment(Query_Seurat)
