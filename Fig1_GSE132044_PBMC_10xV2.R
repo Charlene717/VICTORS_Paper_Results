@@ -195,11 +195,10 @@ color_CellType_Ref <- list(
 )
 
 # 在绘图函数中设置 alpha 参数
-plot_accuracy_single <- function(accuracy_data, method) {
+plot_accuracy_single <- function(accuracy_data, method, dataset) {
   plot <- ggplot(accuracy_data[accuracy_data$Method == method, ], aes(x = Actual_Cell_Type, y = Accuracy, fill = Actual_Cell_Type)) +
     geom_bar(stat = "identity", color = "black", alpha = 0.8) +  # 设置透明度
     geom_text(aes(label = sprintf("%.3f", Accuracy)), vjust = 0.5, hjust = 1, size = 6, angle = 90) +
-    scale_fill_manual(values = color_CellType_Ref) +
     theme_minimal() +
     theme(text = element_text(size = 18, face = "bold"),
           axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
@@ -210,6 +209,12 @@ plot_accuracy_single <- function(accuracy_data, method) {
           aspect.ratio = 1) +
     ylim(0, 1.05) +
     labs(x = "Cell Type", y = "Accuracy", title = method)
+
+  # 条件检查数据集名称并设置颜色填充
+  if (dataset == "GSE132044_MisLabelB") {
+    plot <- plot + scale_fill_manual(values = color_CellType_Ref)
+  }
+
   return(plot)
 }
 
@@ -223,7 +228,7 @@ All_accuracy_data1 <- do.call(rbind, lapply(Method1, function(alg) {
 }))
 
 # 为每个算法生成图表对象
-plots1 <- lapply(Method1, function(alg) plot_accuracy_single(All_accuracy_data1, alg))
+plots1 <- lapply(Method1, function(alg) plot_accuracy_single(All_accuracy_data1, alg, Dataset))
 
 # 使用 grid.arrange 并排排列所有图表，设置 nrow = 1 以排成一行
 grid.arrange(grobs = plots1, nrow = 1)
@@ -238,7 +243,7 @@ All_accuracy_data2_VICTOR <- do.call(rbind, lapply(Method2_VICTOR, function(alg)
 }))
 
 # 为每个算法生成图表对象
-plots2 <- lapply(Method2_VICTOR, function(alg) plot_accuracy_single(All_accuracy_data2_VICTOR, alg))
+plots2 <- lapply(Method2_VICTOR, function(alg) plot_accuracy_single(All_accuracy_data2_VICTOR, alg, Dataset))
 
 # 使用 grid.arrange 并排排列所有图表，设置 nrow = 1 以排成一行
 grid.arrange(grobs = plots2, nrow = 1)
