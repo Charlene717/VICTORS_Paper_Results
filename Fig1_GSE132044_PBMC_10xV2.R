@@ -68,6 +68,32 @@ long_metadata <- Metadata %>%
                values_to = "CM_Value") %>%
   mutate(CM_Value = factor(CM_Value, levels = c("TP", "TN", "FP", "FN", "Other")))
 
+
+## 修改Method名稱
+library(dplyr)
+
+# 定义转换函数
+convert_method_names <- function(method) {
+  if (grepl("^label_", method)) {
+    method <- gsub("^label_", "", method)
+    method <- gsub("_ConfStat$", "", method)
+  } else if (grepl("^ConfStat_VICTOR_label_", method)) {
+    method <- gsub("^ConfStat_VICTOR_label_", "", method)
+    method <- gsub("_NoReject$", "", method)
+    method <- paste0(method, "_VICTOR")
+  }
+  return(method)
+}
+
+# 应用转换函数到long_metadata的Method列
+long_metadata <- long_metadata %>%
+  mutate(Method = sapply(Method, convert_method_names))
+
+# 查看修改后的Method列
+unique(long_metadata$Method)
+
+
+
 color_Class <- c(
   "TP" = "#b58b2a",
   "TN" = "#e8bc56",
@@ -167,7 +193,9 @@ plot_accuracy_single <- function(accuracy_data, method) {
 
 
 # 計算所有方法的準確率並繪製圖表
-Method1 <- c("singleR", "scmap", "SCINA", "scPred")
+# Method1 <- c("singleR", "scmap", "SCINA", "scPred")
+Method1 <- methods[1:(length(methods)/2)]
+
 All_accuracy_data1 <- do.call(rbind, lapply(Method1, function(alg) {
   calculate_accuracy(Metadata, alg, alg)
 }))
@@ -181,6 +209,8 @@ grid.arrange(grobs = c(plots[1:4],plots1), nrow = 2)
 
 ##
 Method2_VICTOR <- c("singleR_VICTOR", "scmap_VICTOR", "SCINA_VICTOR", "scPred_VICTOR")
+Method2_VICTOR <- methods[(length(methods)/2 +1 ):length(methods)]
+
 All_accuracy_data2_VICTOR <- do.call(rbind, lapply(Method2_VICTOR, function(alg) {
   calculate_accuracy(Metadata, alg, alg)
 }))
