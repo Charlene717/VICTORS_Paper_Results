@@ -18,7 +18,9 @@ source("Plot_CellAnnot_UMAP_Box.R")
 
 
 #### Load dataset ####
-Dataset <- "GSE132044_MisLabelB"
+# Dataset <- "GSE132044_MisLabelB"
+Dataset <- "SeuratATAC"
+
 # load("D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
 # export_folder <- "D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/"
 # export_name <- "VICTOR"
@@ -27,6 +29,9 @@ if(Dataset == "GSE132044_MisLabelB"){
   load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712/Export_GSE132044_MislabelB cell/20240712095055BUNQLI_MislabelB cell_Qry_10xV2_Ref_10xV2A/20240712095055BUNQLI.RData")
   # load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712/Export_GSE132044_MislabelB cell/20240712095816SIXEYV_MislabelB cell_Qry_10xV2_Ref_10xV3/20240712095816SIXEYV.RData")
   # load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712/Export_GSE132044_MislabelB cell/20240712095420NCXIDQ_MislabelB cell_Qry_10xV2_Ref_10xV2B/20240712095420NCXIDQ.RData")
+
+}else if(Dataset == "SeuratATAC"){
+  load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_SeuratPBMC_ATAC/Export_SeuratPBMC_ATAC20240711192333.RData")
 
 }
 
@@ -56,6 +61,17 @@ Metadata <- seuratObject_Sample@meta.data
 Metadata <- Metadata %>%
   dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
                 "Sample_Platform","Ref_Platform", contains("ConfStat"))
+
+if ("FileID" %in% colnames(Metadata)) {
+  Metadata <- Metadata %>%
+    dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
+                  "Sample_Platform","Ref_Platform", contains("ConfStat"))
+} else {
+  Metadata <- Metadata %>%
+    dplyr::select("Actual_Cell_Type", #"Sample_Platform","Ref_Platform", # "seurat_clusters",
+                  contains("ConfStat"))
+}
+
 
 
 #### Plot Confusion Matrix Proportions ####
