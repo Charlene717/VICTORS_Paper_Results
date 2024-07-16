@@ -16,13 +16,13 @@
 ## -[] SeuratV5 Azimuth (For 多體學資料)
 
 
-## -[] 自動化跑主程式
-## -[] 自動存參數
-## -[] 自動存數據重要資訊(生物技術平台)
+## -[V] 自動化跑主程式
+## -[V] 自動存參數
+## -[V] 自動存數據重要資訊(生物技術平台)
 
 ## -[] ATAC-seq
-## -[] Sampling
-## -[] Old sample
+## -[V] Sampling
+## -[V] Old sample
 ## -[] Big Data
 
 ## -[] UMAP
