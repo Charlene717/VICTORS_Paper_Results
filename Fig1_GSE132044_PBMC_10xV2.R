@@ -1,3 +1,9 @@
+#### To-do list ####
+# -[ ] 修改命名
+# -[ ]
+# -[ ] 寫成函數
+# -[ ] 套用到ATAC
+
 ##### Presetting ######
 rm(list = ls()) # Clean variable ##* Comment out if Run All
 memory.limit(150000)
@@ -11,31 +17,41 @@ if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 source("Plot_CellAnnot_UMAP_Box.R")
 
 #### Load dataset ####
-load("D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
-export_folder <- "D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/"
+# load("D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
+# export_folder <- "D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Figure1/"
+# export_name <- "VICTOR"
+
+load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712/Export_GSE132044_MislabelB cell/20240712095055BUNQLI_MislabelB cell_Qry_10xV2_Ref_10xV2A/20240712095055BUNQLI.RData")
+export_folder <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_Figure1/"
 export_name <- "VICTOR"
 
 # source("FUN_Plot_Beautify_UMAP_Box.R")
 # source("Set_plot_color.R")
 
-seuratObject_Sample@meta.data$`Actual_Cell_Type` <- seuratObject_Sample@meta.data$`Actual Cell Type`
-seuratObject_Sample@meta.data$`seurat_clusters` <- seuratObject_Sample@meta.data$`seurat clusters`
+DimPlot(seuratObject_Sample, reduction = "umap", group.by = "Actual_Cell_Type")
+DimPlot(seuratObject_Ref, reduction = "umap", group.by = "Actual_Cell_Type")
 
-seuratObject_Sample@meta.data$singleR_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_singleR_NoReject_SVGLRglmnet_ROC
-seuratObject_Sample@meta.data$scmap_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_scmap_NoReject_SVGLRglmnet_ROC
-seuratObject_Sample@meta.data$SCINA_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_SCINA_NoReject_SVGLRglmnet_ROC
-seuratObject_Sample@meta.data$scPred_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_scPred_NoReject_Annot_SVGLRglmnet_ROC
 
-seuratObject_Sample@meta.data$singleR <- seuratObject_Sample@meta.data$label_singleR_DiagPara
-seuratObject_Sample@meta.data$scmap <- seuratObject_Sample@meta.data$label_scmap_DiagPara
-seuratObject_Sample@meta.data$SCINA <- seuratObject_Sample@meta.data$label_SCINA_DiagPara
-seuratObject_Sample@meta.data$scPred <- seuratObject_Sample@meta.data$label_scPred_DiagPara_Annot
-seuratObject_Sample@meta.data$ID <- seuratObject_Sample@meta.data$NAME
+# seuratObject_Sample@meta.data$singleR_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_singleR_NoReject_SVGLRglmnet_ROC
+# seuratObject_Sample@meta.data$scmap_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_scmap_NoReject_SVGLRglmnet_ROC
+# seuratObject_Sample@meta.data$SCINA_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_SCINA_NoReject_SVGLRglmnet_ROC
+# seuratObject_Sample@meta.data$scPred_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_scPred_NoReject_Annot_SVGLRglmnet_ROC
+#
+# seuratObject_Sample@meta.data$singleR <- seuratObject_Sample@meta.data$label_singleR_DiagPara
+# seuratObject_Sample@meta.data$scmap <- seuratObject_Sample@meta.data$label_scmap_DiagPara
+# seuratObject_Sample@meta.data$SCINA <- seuratObject_Sample@meta.data$label_SCINA_DiagPara
+# seuratObject_Sample@meta.data$scPred <- seuratObject_Sample@meta.data$label_scPred_DiagPara_Annot
+# seuratObject_Sample@meta.data$ID <- seuratObject_Sample@meta.data$NAME
+#
+# Metadata <- seuratObject_Sample@meta.data
+# Metadata <- Metadata[,c("ID","Actual_Cell_Type","seurat_clusters",
+#                         "singleR_VICTOR","scmap_VICTOR","SCINA_VICTOR","scPred_VICTOR",
+#                         "singleR","scmap","SCINA","scPred")]
 
 Metadata <- seuratObject_Sample@meta.data
-Metadata <- Metadata[,c("ID","Actual_Cell_Type","seurat_clusters",
-                        "singleR_VICTOR","scmap_VICTOR","SCINA_VICTOR","scPred_VICTOR",
-                        "singleR","scmap","SCINA","scPred")]
+Metadata <- Metadata %>%
+  dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
+                 "Sample_Platform","Ref_Platform", contains("ConfStat"))
 
 
 
@@ -47,7 +63,7 @@ if(!require('tidyr')) install.packages('tidyr'); library(tidyr)
 
 # 将Metadata数据转换为长格式，便于处理和绘图
 long_metadata <- Metadata %>%
-  pivot_longer(cols = c("singleR", "scmap", "SCINA", "scPred","singleR_VICTOR", "scmap_VICTOR", "SCINA_VICTOR", "scPred_VICTOR"),
+  pivot_longer(cols = contains("ConfStat"),
                names_to = "Method",
                values_to = "CM_Value") %>%
   mutate(CM_Value = factor(CM_Value, levels = c("TP", "TN", "FP", "FN", "Other")))
