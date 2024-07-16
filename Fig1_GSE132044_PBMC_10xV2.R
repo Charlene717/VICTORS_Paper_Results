@@ -48,6 +48,26 @@ DimPlot(seuratObject_Ref, reduction = "umap", group.by = "Actual_Cell_Type")
 #                         "singleR_VICTOR","scmap_VICTOR","SCINA_VICTOR","scPred_VICTOR",
 #                         "singleR","scmap","SCINA","scPred")]
 
+
+convert_column_names <- function(colname) {
+  if (grepl("^label_", colname)) {
+    colname <- gsub("^label_", "", colname)
+    colname <- gsub("_ConfStat$", "", colname)
+  } else if (grepl("^ConfStat_VICTOR_label_", colname)) {
+    colname <- gsub("^ConfStat_VICTOR_label_", "", colname)
+    colname <- gsub("_NoReject$", "", colname)
+    colname <- paste0(colname, "_VICTOR")
+  }
+  return(colname)
+}
+
+# 應用轉換函数到Metadata的列名
+new_colnames <- sapply(colnames(Metadata), convert_column_names)
+colnames(Metadata) <- new_colnames
+
+# 查看修改后的列名
+colnames(Metadata)
+
 Metadata <- seuratObject_Sample@meta.data
 Metadata <- Metadata %>%
   dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
@@ -69,28 +89,28 @@ long_metadata <- Metadata %>%
   mutate(CM_Value = factor(CM_Value, levels = c("TP", "TN", "FP", "FN", "Other")))
 
 
-## 修改Method名稱
-library(dplyr)
-
-# 定义转换函数
-convert_method_names <- function(method) {
-  if (grepl("^label_", method)) {
-    method <- gsub("^label_", "", method)
-    method <- gsub("_ConfStat$", "", method)
-  } else if (grepl("^ConfStat_VICTOR_label_", method)) {
-    method <- gsub("^ConfStat_VICTOR_label_", "", method)
-    method <- gsub("_NoReject$", "", method)
-    method <- paste0(method, "_VICTOR")
-  }
-  return(method)
-}
-
-# 应用转换函数到long_metadata的Method列
-long_metadata <- long_metadata %>%
-  mutate(Method = sapply(Method, convert_method_names))
-
-# 查看修改后的Method列
-unique(long_metadata$Method)
+# ## 修改Method名稱
+# library(dplyr)
+#
+# # 定义转换函数
+# convert_method_names <- function(method) {
+#   if (grepl("^label_", method)) {
+#     method <- gsub("^label_", "", method)
+#     method <- gsub("_ConfStat$", "", method)
+#   } else if (grepl("^ConfStat_VICTOR_label_", method)) {
+#     method <- gsub("^ConfStat_VICTOR_label_", "", method)
+#     method <- gsub("_NoReject$", "", method)
+#     method <- paste0(method, "_VICTOR")
+#   }
+#   return(method)
+# }
+#
+# # 应用转换函数到long_metadata的Method列
+# long_metadata <- long_metadata %>%
+#   mutate(Method = sapply(Method, convert_method_names))
+#
+# # 查看修改后的Method列
+# unique(long_metadata$Method)
 
 
 
@@ -205,10 +225,10 @@ plots1 <- lapply(Method1, function(alg) plot_accuracy_single(All_accuracy_data1,
 
 # 使用 grid.arrange 并排排列所有图表，设置 nrow = 1 以排成一行
 grid.arrange(grobs = plots1, nrow = 1)
-grid.arrange(grobs = c(plots[1:4],plots1), nrow = 2)
+grid.arrange(grobs = c(plots[1:(length(plots)/2)],plots1), nrow = 2)
 
 ##
-Method2_VICTOR <- c("singleR_VICTOR", "scmap_VICTOR", "SCINA_VICTOR", "scPred_VICTOR")
+# Method2_VICTOR <- c("singleR_VICTOR", "scmap_VICTOR", "SCINA_VICTOR", "scPred_VICTOR")
 Method2_VICTOR <- methods[(length(methods)/2 +1 ):length(methods)]
 
 All_accuracy_data2_VICTOR <- do.call(rbind, lapply(Method2_VICTOR, function(alg) {
@@ -220,7 +240,7 @@ plots2 <- lapply(Method2_VICTOR, function(alg) plot_accuracy_single(All_accuracy
 
 # 使用 grid.arrange 并排排列所有图表，设置 nrow = 1 以排成一行
 grid.arrange(grobs = plots2, nrow = 1)
-grid.arrange(grobs = c(plots[5:8],plots2), nrow = 2)
+grid.arrange(grobs = c(plots[(length(plots)/2+1):length(plots)],plots2), nrow = 2)
 
 
 
@@ -229,9 +249,9 @@ grid.arrange(grobs = c(plots[5:8],plots2), nrow = 2)
 #### Export ####
 ## Export PDF
 pdf(paste0(export_folder, "/", export_name, "_MainResult_Fig1.pdf"),
-    width = 16, height = 12)
-grid.arrange(grobs = c(plots[1:4],plots1), nrow = 2)
-grid.arrange(grobs = c(plots[5:8],plots2), nrow = 2)
+    width = 28, height = 12)
+grid.arrange(grobs = c(plots[1:(length(plots)/2)],plots1), nrow = 2)
+grid.arrange(grobs = c(plots[(length(plots)/2+1):length(plots)],plots2), nrow = 2)
 dev.off()
 
 
