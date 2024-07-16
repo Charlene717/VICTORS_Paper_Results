@@ -1,7 +1,8 @@
 ## To-do list
 ## -[T] 折線圖
-## -[ ] x軸數字自動化
+## -[T] x軸數字自動化
 ## -[ ] 美化圖片
+## -[ ] 標題註解說明
 
 ## -[ ] 精簡程式碼
 
@@ -267,13 +268,6 @@ size_Method <- c(
 )
 
 # 按順序排列Ref_Platform
-# accuracy_data <- long_data %>%
-#   filter(Metric == "Accuracy") %>%
-#   mutate(Ref_Platform = factor(Ref_Platform, levels = c("10xV2A_B0", "10xV2A_B10", "10xV2A_B20", "10xV2A_B30",
-#                                                         "10xV2A_B40", "10xV2A_B50", "10xV2A_B60", "10xV2A_B70",
-#                                                         "10xV2A_B80", "10xV2A_B90", "10xV2A_B100", "10xV2A_B110",
-#                                                         "10xV2A_B120", "10xV2A_B130", "10xV2A_B140")))
-
 accuracy_data <- long_data %>%
   filter(Metric == "Accuracy") %>%
   mutate(
@@ -288,11 +282,19 @@ Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform, y = Value, color = Meth
   scale_color_manual(values = color_Method) +
   scale_linetype_manual(values = linetype_Method) +
   scale_size_manual(values = size_Method) +
+  scale_y_continuous(limits = c(0, 1)) +
   labs(title = "Accuracy across different Ref_Platforms by Method",
        x = "Ref Platform",
        y = "Accuracy") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
+    axis.text.y = element_text(size = 16),
+    axis.title = element_text(size = 16),
+    plot.title = element_text(size = 20, face = "bold"),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16)
+  )
 
 Plot_line
 
