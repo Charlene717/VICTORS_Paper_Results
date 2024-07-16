@@ -1,5 +1,5 @@
 #### To-do list ####
-# -[ ] 修改命名
+# -[T] 修改命名
 # -[ ]
 # -[ ] 寫成函數
 # -[ ] 套用到ATAC
@@ -31,24 +31,7 @@ export_name <- "VICTOR"
 DimPlot(seuratObject_Sample, reduction = "umap", group.by = "Actual_Cell_Type")
 DimPlot(seuratObject_Ref, reduction = "umap", group.by = "Actual_Cell_Type")
 
-
-# seuratObject_Sample@meta.data$singleR_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_singleR_NoReject_SVGLRglmnet_ROC
-# seuratObject_Sample@meta.data$scmap_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_scmap_NoReject_SVGLRglmnet_ROC
-# seuratObject_Sample@meta.data$SCINA_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_SCINA_NoReject_SVGLRglmnet_ROC
-# seuratObject_Sample@meta.data$scPred_VICTOR <- seuratObject_Sample@meta.data$DiagPara_label_scPred_NoReject_Annot_SVGLRglmnet_ROC
-#
-# seuratObject_Sample@meta.data$singleR <- seuratObject_Sample@meta.data$label_singleR_DiagPara
-# seuratObject_Sample@meta.data$scmap <- seuratObject_Sample@meta.data$label_scmap_DiagPara
-# seuratObject_Sample@meta.data$SCINA <- seuratObject_Sample@meta.data$label_SCINA_DiagPara
-# seuratObject_Sample@meta.data$scPred <- seuratObject_Sample@meta.data$label_scPred_DiagPara_Annot
-# seuratObject_Sample@meta.data$ID <- seuratObject_Sample@meta.data$NAME
-#
-# Metadata <- seuratObject_Sample@meta.data
-# Metadata <- Metadata[,c("ID","Actual_Cell_Type","seurat_clusters",
-#                         "singleR_VICTOR","scmap_VICTOR","SCINA_VICTOR","scPred_VICTOR",
-#                         "singleR","scmap","SCINA","scPred")]
-
-
+## Modify column names
 convert_column_names <- function(colname) {
   if (grepl("^label_", colname)) {
     colname <- gsub("^label_", "", colname)
