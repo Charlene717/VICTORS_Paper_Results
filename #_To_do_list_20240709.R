@@ -10,17 +10,19 @@
 ## -[L] VICTOR_Prediction
 ## -[V] VICTOR_SeuratV5_SeuratV4
 
-## -[] Fig Diag Accuracy ConfStat
+## -[V] Fig Diag Accuracy ConfStat
+
+## -[] 初步結果報告
 
 ## -[] scReClassify
-## -[] SeuratV5 Azimuth (For 多體學資料)
+## -[T] SeuratV5 Azimuth (For 多體學資料)
 
 
 ## -[V] 自動化跑主程式
 ## -[V] 自動存參數
 ## -[V] 自動存數據重要資訊(生物技術平台)
 
-## -[] ATAC-seq
+## -[T] ATAC-seq
 ## -[V] Sampling
 ## -[V] Old sample
 ## -[] Big Data
