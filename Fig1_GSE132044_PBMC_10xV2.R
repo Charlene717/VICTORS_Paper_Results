@@ -31,6 +31,11 @@ export_name <- "VICTOR"
 DimPlot(seuratObject_Sample, reduction = "umap", group.by = "Actual_Cell_Type")
 DimPlot(seuratObject_Ref, reduction = "umap", group.by = "Actual_Cell_Type")
 
+Metadata <- seuratObject_Sample@meta.data
+Metadata <- Metadata %>%
+  dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
+                "Sample_Platform","Ref_Platform", contains("ConfStat"))
+
 ## Modify column names
 convert_column_names <- function(colname) {
   if (grepl("^label_", colname)) {
@@ -51,10 +56,6 @@ colnames(Metadata) <- new_colnames
 # 查看修改后的列名
 colnames(Metadata)
 
-Metadata <- seuratObject_Sample@meta.data
-Metadata <- Metadata %>%
-  dplyr::select("FileID","Actual_Cell_Type","seurat_clusters",
-                 "Sample_Platform","Ref_Platform", contains("ConfStat"))
 
 
 
