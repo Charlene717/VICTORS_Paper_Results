@@ -1,8 +1,8 @@
 ## To-do list
 ## -[T] 折線圖
 ## -[T] x軸數字自動化
-## -[ ] 美化圖片
-## -[ ] 標題註解說明
+## -[T] 美化圖片
+## -[T] 標題註解說明
 
 ## -[ ] 精簡程式碼
 
@@ -275,6 +275,16 @@ accuracy_data <- long_data %>%
     Ref_Platform = factor(Ref_Platform, levels = unique(Ref_Platform[order(Ref_Platform_Num)]))
   )
 
+
+# 動態生成標题和副標題
+Fig_cell_text <- "B cells"
+query_platforms <- paste(unique(accuracy_data$Sample_Platform), collapse = ", ")
+reference_platforms <- unique(sub("_[^_]+$", "", accuracy_data$Ref_Platform))
+
+  title_text <- paste("Accuracy across different references with varying", Fig_cell_text, "counts by Methods")
+subtitle_text <- paste("Query:", query_platforms, "; Reference:", reference_platforms)
+
+
 # 創建折線圖
 Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform, y = Value, color = Method, linetype = Method, size = Method, group = Method)) +
   geom_line() +
@@ -282,25 +292,28 @@ Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform, y = Value, color = Meth
   scale_color_manual(values = color_Method) +
   scale_linetype_manual(values = linetype_Method) +
   scale_size_manual(values = size_Method) +
-  scale_y_continuous(limits = c(0, 1)) +
-  labs(title = "Accuracy across different Ref_Platforms by Method",
-       x = "Ref Platform",
+  scale_y_continuous(limits = c(0, 1)) +  # 设置y轴范围为0到1
+  labs(title = title_text,
+       subtitle = subtitle_text,
+       x = "Reference State",
        y = "Accuracy") +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
-    axis.text.y = element_text(size = 16),
+    axis.text.y = element_text(size = 14),
     axis.title = element_text(size = 16),
     plot.title = element_text(size = 20, face = "bold"),
+    plot.subtitle = element_text(size = 16),
     legend.text = element_text(size = 14),
     legend.title = element_text(size = 16)
   )
 
 Plot_line
 
+
 #### Export ####
 pdf(paste0(Name_ExportFolder, "/", Name_Export,"_MainResult.pdf"),
-    width = 20, height = 20)
+    width = 11, height = 7)
 
 print(Plot_line)
 
