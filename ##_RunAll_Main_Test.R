@@ -16,7 +16,7 @@ if(Set_Sam_Delet_Unknown){
 }
 
 ## SetIdent for seuratObject_Sample
-seuratObject_Sample <- seuratObject_Sample %>% SetIdent(value = "Annotation")
+try({ seuratObject_Sample <- seuratObject_Sample %>% SetIdent(value = "Annotation") })
 DimPlot(seuratObject_Sample, label = TRUE, repel = TRUE) + NoLegend()
 # DimPlot(seuratObject_Sample, reduction = "umap", group.by = "Annotation")
 
