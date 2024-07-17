@@ -67,19 +67,7 @@ DimPlot(Reference_Seurat, label = TRUE, repel = TRUE) + NoLegend()
 sample_sce <- as.SingleCellExperiment(Query_Seurat)
 
 # Standardize the data and create 'logNorm' assay
-# Log-normalize query dataset if not already done
-if(seurat_version == "V5"){
-  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- scater::logNormCounts(sample_sce) }
-}else if(seurat_version == "V5M"){
-  # try( if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce) } )
-  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- scater::logNormCounts(sample_sce) }
-}else{
-  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- scater::logNormCounts(sample_sce) }
-}
-
-# if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) { ref_sce <- logNormCounts(ref_sce)}
-# if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce)}
-
+# ref_sce <- scater::logNormCounts(ref_sce)
 sample_sce <- scater::logNormCounts(sample_sce)
 
 # # Create 'logNorm' layer in assays
@@ -125,9 +113,9 @@ if (any(cellType_counts < LimNum)) {
 
 # Run scReClassify
 set.seed(123)
-# Set_classifier = "svm"
-# Set_percent = 1
-# Set_L = 10
+Set_classifier = "svm"
+Set_percent = 1
+Set_L = 10
 # trace("multiAdaSampling", edit=TRUE) # layer = "data"
 cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName = "matPCs",
                                          classifier = Set_classifier, percent = Set_percent, L = Set_L)
