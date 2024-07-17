@@ -92,9 +92,10 @@ pca_sample <- stats::prcomp(t(logNorm_sample), center = TRUE, scale. = TRUE) # r
 # reducedDim(ref_sce, "matPCs") <- pca_ref$x
 reducedDim(sample_sce, "matPCs") <- pca_sample$x
 
-# Cell types
-# cellTypes <- sample_sce[["cellTypes"]]
-cellTypes <- sample_sce[["Actual_Cell_Type"]]
+## (!!) Set Cell types
+sample_sce[["cellTypes"]] <- sample_sce[["Actual_Cell_Type"]]
+names(sample_sce@colData@listData[["cellTypes"]]) <- row.names(Query_Seurat@meta.data)
+cellTypes <- sample_sce[["cellTypes"]]
 
 # Check for NA values and remove them from ref_sce
 valid_cells <- !is.na(cellTypes) & complete.cases(reducedDim(sample_sce, "matPCs"))
