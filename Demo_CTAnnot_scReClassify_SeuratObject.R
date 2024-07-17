@@ -19,15 +19,13 @@ if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require("caret")) install.packages("caret"); library(caret)
 
-# PMID31874628 scReClassify # https://bioconductor.org/packages/release/bioc/vignettes/scReClassify/inst/doc/scReClassify.html
-
 # Load necessary packages
 if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scReClassify)
 if (!require("DT")) install.packages("DT"); library(DT)
 if (!require("mclust")) install.packages("mclust"); library(mclust)
 if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
 
-
+## Set para
 Set_Sam_Delet_Unknown <- TRUE
 Set_Ref_Delet_Unknown <- TRUE
 seurat_version <- "V5"
@@ -137,3 +135,4 @@ cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName =
 
 # Save the new annotations to meta.data
 Query_Seurat$label_scReClassify <- cellTypes.reclassify$final
+DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "label_scReClassify") + NoLegend()
