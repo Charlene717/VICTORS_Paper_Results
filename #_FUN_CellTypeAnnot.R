@@ -410,7 +410,7 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
 
 ################################################################################
 #### scReClassify ####
-Fun_scReClassify <- function(Query_Seurat, Set_RefAnnoCol = "Annotation",
+Fun_scReClassify <- function(Query_Seurat, Set_AnnoCol = "Annotation",
                              Set_classifier = "svm", Set_percent = 1, Set_L = 10) {
 
   #### scReClassify ####
@@ -433,7 +433,7 @@ Fun_scReClassify <- function(Query_Seurat, Set_RefAnnoCol = "Annotation",
   reducedDim(sample_sce, "matPCs") <- pca_sample$x
 
   ## Set Cell types
-  sample_sce[["cellTypes"]] <- sample_sce[[Set_RefAnnoCol]]
+  sample_sce[["cellTypes"]] <- sample_sce[[Set_AnnoCol]]
   names(sample_sce@colData@listData[["cellTypes"]]) <- row.names(Query_Seurat@meta.data)
   cellTypes <- sample_sce[["cellTypes"]]
 
@@ -443,11 +443,11 @@ Fun_scReClassify <- function(Query_Seurat, Set_RefAnnoCol = "Annotation",
                                            classifier = Set_classifier, percent = Set_percent, L = Set_L)
 
   # Save the new annotations to meta.data
-  Query_Seurat[[paste0("ReAnnot_scReClassify_", Set_RefAnnoCol)]] <- cellTypes.reclassify$final
+  Query_Seurat[[paste0("ReAnnot_scReClassify_", Set_AnnoCol)]] <- cellTypes.reclassify$final
 
   return(Query_Seurat)
 }
 
 # ## Example usage:
-# # Query_Seurat <- run_scReClassify(Query_Seurat, Set_RefAnnoCol = "label_singleR", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
-# Query_Seurat <- run_scReClassify(Query_Seurat, Set_RefAnnoCol = "Actual_Cell_Type", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
+# # Query_Seurat <- run_scReClassify(Query_Seurat, Set_AnnoCol = "label_singleR", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
+# Query_Seurat <- run_scReClassify(Query_Seurat, Set_AnnoCol = "Actual_Cell_Type", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
