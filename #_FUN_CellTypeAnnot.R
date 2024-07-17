@@ -53,12 +53,15 @@ Run_singleR <- function(Query_Seurat, Reference_Seurat,
 
   # Log-normalize query dataset if not already done
   if(seurat_version == "V5"){
-    if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- logNormCounts(query_sce) }
+    # if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- logNormCounts(query_sce) }
+    if (is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- scater::logNormCounts(query_sce) }
   }else if(seurat_version == "V5M"){
     # try( if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- logNormCounts(query_sce) } )
-    if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- logNormCounts(query_sce) }
+    if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { query_sce <- scater::logNormCounts(query_sce) }
   }else{
-    if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- logNormCounts(query_sce) }
+    # if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- logNormCounts(query_sce) }
+    if (is.null(Query_Seurat@assays[["RNA"]]@data)) { query_sce <- scater::logNormCounts(query_sce) }
+
   }
 
   # Run SingleR
