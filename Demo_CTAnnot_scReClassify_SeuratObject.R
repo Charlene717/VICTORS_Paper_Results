@@ -45,7 +45,7 @@ if(Set_Sam_Delet_Unknown){
 }
 
 ## SetIdent for Query_Seurat
-Query_Seurat <- Query_Seurat %>% SetIdent(value = "Annotation")
+try({ Query_Seurat <- Query_Seurat %>% SetIdent(value = "Annotation") })
 DimPlot(Query_Seurat, label = TRUE, repel = TRUE) + NoLegend()
 # DimPlot(Query_Seurat, reduction = "umap", group.by = "Annotation")
 
@@ -124,3 +124,9 @@ cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName =
 # Save the new annotations to meta.data
 Query_Seurat$label_scReClassify <- cellTypes.reclassify$final
 DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "label_scReClassify") + NoLegend()
+DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "Actual_Cell_Type") + NoLegend()
+
+
+
+
+
