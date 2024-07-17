@@ -61,18 +61,18 @@ sample_sce <- as.SingleCellExperiment(Query_Seurat)
 # Standardize the data and create 'logNorm' assay
 # Log-normalize query dataset if not already done
 if(seurat_version == "V5"){
-  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- logNormCounts(sample_sce) }
+  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- scater::logNormCounts(sample_sce) }
 }else if(seurat_version == "V5M"){
   # try( if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce) } )
-  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce) }
+  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- scater::logNormCounts(sample_sce) }
 }else{
-  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- logNormCounts(sample_sce) }
+  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- scater::logNormCounts(sample_sce) }
 }
-
 
 # if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) { ref_sce <- logNormCounts(ref_sce)}
 # if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce)}
 
+sample_sce <- scater::logNormCounts(sample_sce)
 
 # # Create 'logNorm' layer in assays
 # SummarizedExperiment::assay(ref_sce, "logNorm") <- SummarizedExperiment::assay(ref_sce, "logcounts")
@@ -93,8 +93,8 @@ pca_sample <- stats::prcomp(t(logNorm_sample), center = TRUE, scale. = TRUE) # r
 reducedDim(sample_sce, "matPCs") <- pca_sample$x
 
 # Cell types
-cellTypes <- sample_sce[["cellTypes"]]
-
+# cellTypes <- sample_sce[["cellTypes"]]
+cellTypes <- sample_sce[["Actual_Cell_Type"]]
 
 # Check for NA values and remove them from ref_sce
 valid_cells <- !is.na(cellTypes) & complete.cases(reducedDim(sample_sce, "matPCs"))
