@@ -1,3 +1,6 @@
+# PMID31874628 scReClassify
+# https://bioconductor.org/packages/release/bioc/vignettes/scReClassify/inst/doc/scReClassify.html
+
 ##### Presetting ######
 rm(list = ls()) # Clean variable ##* Comment out if Run All
 memory.limit(150000)
