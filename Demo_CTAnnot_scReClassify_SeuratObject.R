@@ -15,6 +15,12 @@ if(!require("caret")) install.packages("caret"); library(caret)
 if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scReClassify)
 if (!require("DT")) install.packages("DT"); library(DT)
 if (!require("mclust")) install.packages("mclust"); library(mclust)
+if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
+
+
+Set_Sam_Delet_Unknown <- TRUE
+Set_Ref_Delet_Unknown <- TRUE
+seurat_version <- "V5"
 
 #### Load data ####
 ## Load sample
@@ -42,10 +48,6 @@ Reference_Seurat <- seuratObject; rm(seuratObject)
 if(Set_Ref_Delet_Unknown){ Reference_Seurat <- subset(Reference_Seurat, subset = Actual_Cell_Type != "Unknown") }
 
 
-if(Set_Ref_Delet_CTMetric){
-  Reference_Seurat <- subset(Reference_Seurat, subset = Actual_Cell_Type != Set_Ref_Delet)
-}
-
 ## SetIdent for Reference_Seurat
 Reference_Seurat <- Reference_Seurat %>% SetIdent(value = "Actual_Cell_Type")
 DimPlot(Reference_Seurat, label = TRUE, repel = TRUE) + NoLegend()
@@ -57,9 +59,19 @@ DimPlot(Reference_Seurat, label = TRUE, repel = TRUE) + NoLegend()
 sample_sce <- as.SingleCellExperiment(Query_Seurat)
 
 # Standardize the data and create 'logNorm' assay
-# Log-normalize dataset if not already done
-if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) { ref_sce <- logNormCounts(ref_sce)}
-if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce)}
+# Log-normalize query dataset if not already done
+if(seurat_version == "V5"){
+  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- logNormCounts(sample_sce) }
+}else if(seurat_version == "V5M"){
+  # try( if (is.null(Query_Seurat@assays[["RNA"]]@layers[["counts"]]) || is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce) } )
+  if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce) }
+}else{
+  if (is.null(Query_Seurat@assays[["RNA"]]@counts) || is.null(Query_Seurat@assays[["RNA"]]@data)) { sample_sce <- logNormCounts(sample_sce) }
+}
+
+
+# if (is.null(Reference_Seurat@assays[["RNA"]]@layers[["data"]])) { ref_sce <- logNormCounts(ref_sce)}
+# if (is.null(Query_Seurat@assays[["RNA"]]@layers[["data"]])) { sample_sce <- logNormCounts(sample_sce)}
 
 
 # # Create 'logNorm' layer in assays
@@ -70,7 +82,7 @@ SummarizedExperiment::assay(sample_sce, "logNorm") <- SummarizedExperiment::assa
 remove_constant_rows <- function(mat) { mat[rowSums(mat != 0) > 0, ]}
 
 # logNorm_ref <- remove_constant_rows(assay(ref_sce, "logNorm"))
-logNorm_sample <- remove_constant_rows(assay(sample_sce, "logNorm"))
+logNorm_sample <- remove_constant_rows(SummarizedExperiment::assay(sample_sce, "logNorm"))
 
 
 # ## Dimension reduction
@@ -104,6 +116,10 @@ if (any(cellType_counts < LimNum)) {
 
 # Run scReClassify
 set.seed(123)
+# Set_classifier = "svm"
+# Set_percent = 1
+# Set_L = 10
+# trace("multiAdaSampling", edit=TRUE) # layer = "data"
 cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName = "matPCs",
                                          classifier = Set_classifier, percent = Set_percent, L = Set_L)
 
