@@ -122,11 +122,14 @@ cellTypes.reclassify <- multiAdaSampling(sample_sce, cellTypes, reducedDimName =
 
 
 # Save the new annotations to meta.data
-Query_Seurat$label_scReClassify <- cellTypes.reclassify$final
-DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "label_scReClassify") + NoLegend()
+Query_Seurat$ReAnnot_scReClassify <- cellTypes.reclassify$final
+DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "ReAnnot_scReClassify") + NoLegend()
 DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "Actual_Cell_Type") + NoLegend()
 
+#### Diagnosis setting ####
+Query_Seurat$Diag_scReClassify
 
 
+#### ConfStat ####
 
 
