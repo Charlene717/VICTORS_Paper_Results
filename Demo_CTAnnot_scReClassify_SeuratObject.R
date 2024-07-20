@@ -127,7 +127,8 @@ DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "ReAnnot_scReClass
 DimPlot(Query_Seurat, label = TRUE, repel = TRUE , group.by = "Actual_Cell_Type") + NoLegend()
 
 #### Diagnosis setting ####
-Query_Seurat$Diag_scReClassify
+source("#_FUN_Metrics_CellTypeAnnot.R")
+FUN_Confusion_Matrix(Query_Seurat,"Actual_Cell_Type", "Annotation","ReAnnot_scReClassify")
 
 
 #### ConfStat ####
