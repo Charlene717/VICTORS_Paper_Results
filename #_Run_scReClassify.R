@@ -37,31 +37,31 @@ for (annoCol in annoCols) {
 }
 
 
-# #### DiagnosticMetrics ####
-# source("#_FUN_Metrics_CellTypeAnnot.R")
-#
-# label_pairs <- list(
-#   c("label_singleR_NoReject", "ReAnnot_scReClassify_label_singleR_NoReject"),
-#   c("label_scmap_NoReject", "ReAnnot_scReClassify_label_scmap_NoReject"),
-#   c("label_SCINA_NoReject", "ReAnnot_scReClassify_label_SCINA_NoReject"),
-#   c("label_scPred_NoReject", "ReAnnot_scReClassify_label_scPred_NoReject"),
-#   c("label_CHETAH_NoReject", "ReAnnot_scReClassify_label_CHETAH_NoReject"),
-#   c("label_scClassify_NoReject", "ReAnnot_scReClassify_label_scClassify_NoReject"),
-#   c("label_Seurat_NoReject", "ReAnnot_scReClassify_label_Seurat_NoReject")
-# )
-#
-#
-# # 定義一個函數來處理每個標籤對
-# process_labels <- function(seuratObject, actual, no_reject, label) {
-#   seuratObject <- FUN_Confusion_Matrix(seuratObject, actual, no_reject, label)
-#   seuratObject <- FUN_CTAnnot_Accuracy(seuratObject, actual, no_reject)
-#   return(seuratObject)
-# }
-#
-# # 依次處理每個標籤對
-# for (labels in label_pairs) {
-#   try({ seuratObject_Sample <- process_labels(seuratObject_Sample, "Actual_Cell_Type", labels[1], labels[2]) })
-# }
+#### DiagnosticMetrics ####
+source("#_FUN_Metrics_CellTypeAnnot.R")
+
+label_pairs <- list(
+  c("label_singleR_NoReject", "ReAnnot_scReClassify_label_singleR_NoReject"),
+  c("label_scmap_NoReject", "ReAnnot_scReClassify_label_scmap_NoReject"),
+  c("label_SCINA_NoReject", "ReAnnot_scReClassify_label_SCINA_NoReject"),
+  c("label_scPred_NoReject", "ReAnnot_scReClassify_label_scPred_NoReject"),
+  c("label_CHETAH_NoReject", "ReAnnot_scReClassify_label_CHETAH_NoReject"),
+  c("label_scClassify_NoReject", "ReAnnot_scReClassify_label_scClassify_NoReject"),
+  c("label_Seurat_NoReject", "ReAnnot_scReClassify_label_Seurat_NoReject")
+)
+
+
+# 定義一個函數來處理每個標籤對
+process_labels <- function(seuratObject, actual, no_reject, label) {
+  seuratObject <- FUN_Confusion_Matrix(seuratObject, actual, no_reject, label)
+  seuratObject <- FUN_CTAnnot_Accuracy(seuratObject, actual, no_reject)
+  return(seuratObject)
+}
+
+# 依次處理每個標籤對
+for (labels in label_pairs) {
+  try({ seuratObject_Sample <- process_labels(seuratObject_Sample, "Actual_Cell_Type", labels[1], labels[2]) })
+}
 #
 #
 # #### Visualization ####
