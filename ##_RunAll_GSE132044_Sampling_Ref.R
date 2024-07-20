@@ -29,7 +29,11 @@ Actual_Cell_Type <- c("None")
 
 # Define the folders for samples and references
 Path_Sample_Folder <- "D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GSE132044/GSE132044_Sampling_Sample"
-Path_Ref_Folder <- "D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GSE132044/GSE132044_Sampling_Ref"
+
+# Path_Ref_Folder <- "D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GSE132044/GSE132044_Sampling_Ref"
+Path_Ref_Folder <- "D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/GSE132044/GSE132044_Sampling_Ref/Natural killer cell"
+
+
 
 # Get the list of all .RData files from both folders
 files_Sample <- list.files(Path_Sample_Folder, pattern = "\\.RData$", full.names = TRUE)
