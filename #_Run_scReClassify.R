@@ -142,8 +142,24 @@ for (label in labels) {
 gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
 gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
 
-#### Visualization scReClassify ####
 
+#### Visualization scReClassify ####
+# 迭代绘图
+plots_count_scReClassify <- list()
+plots_prop_scReClassify <- list()
+metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
+
+for (label in labels) {
+  try({
+    conf_stat_label <- paste0("ReAnnot_scReClassify_", label,"_ConfStat")
+    plots <- plot_histograms(metadata, "Actual_Cell_Type", conf_stat_label, color_Class)
+    plots_count_scReClassify <- c(plots_count_scReClassify, list(plots[[1]]))
+    plots_prop_scReClassify <- c(plots_prop_scReClassify, list(plots[[2]]))
+  })
+}
+
+gridExtra::grid.arrange(grobs = plots_count_scReClassify, ncol = 3)
+gridExtra::grid.arrange(grobs = plots_prop_scReClassify, ncol = 3)
 
 
 
