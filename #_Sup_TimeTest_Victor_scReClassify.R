@@ -104,13 +104,22 @@ library(ggplot2)
 ggplot(time_results, aes(x = Cell_Number)) +
   geom_line(aes(y = scReClassify_Time, color = "scReClassify")) +
   geom_point(aes(y = scReClassify_Time, color = "scReClassify")) +
-  geom_text(aes(y = scReClassify_Time, label = round(scReClassify_Time, 1), color = "scReClassify"), vjust = -0.5) +
+  geom_text(aes(y = scReClassify_Time, label = round(scReClassify_Time, 1), color = "scReClassify"), vjust = -0.5, size = 5) +
   geom_line(aes(y = VICTOR_Time, color = "VICTOR")) +
   geom_point(aes(y = VICTOR_Time, color = "VICTOR")) +
-  geom_text(aes(y = VICTOR_Time, label = round(VICTOR_Time, 1), color = "VICTOR"), vjust = -0.5) +
+  geom_text(aes(y = VICTOR_Time, label = round(VICTOR_Time, 1), color = "VICTOR"), vjust = -0.5, size = 5) +
   labs(title = "Time taken by scReClassify and VICTOR for different sample sizes",
        x = "Number of Cells in seuratObject_Sample",
        y = "Time (seconds)",
        color = "Method") +
-  theme_minimal() +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(size = 20, face = "bold"),
+    axis.title.x = element_text(size = 18),
+    axis.title.y = element_text(size = 18),
+    axis.text.x = element_text(size = 15),
+    axis.text.y = element_text(size = 15),
+    legend.title = element_text(size = 18),
+    legend.text = element_text(size = 15)
+  ) +
   scale_color_manual(values = c("scReClassify" = "#7373B9", "VICTOR" = "#FF60AF"))
