@@ -413,6 +413,9 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
 Fun_scReClassify <- function(Query_Seurat, Set_AnnoCol = "Annotation",
                              Set_classifier = "svm", Set_percent = 1, Set_L = 10) {
 
+  # if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+  # if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scReClassify)
+
   #### scReClassify ####
   # Convert Seurat objects to SingleCellExperiment
   sample_sce <- as.SingleCellExperiment(Query_Seurat)
