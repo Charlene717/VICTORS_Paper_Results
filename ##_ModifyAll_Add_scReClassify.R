@@ -14,7 +14,8 @@ if(!require("readr")) install.packages("readr"); library(readr)
 #### Set Loading ###
 # 設定主目錄
 # main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240720/Export_GSE132044_MislabelB cell"
-main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240720"
+main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results_GSE132044_scReClassify/Export_GSE132044_20240720"
+export_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results_GSE132044_scReClassify/Export_GSE132044_20240720"
 
 # 獲取所有子目錄
 subdirectories <- list.dirs(main_directory, recursive = TRUE, full.names = TRUE)
