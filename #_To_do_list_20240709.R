@@ -12,9 +12,9 @@
 
 ## -[V] Fig Diag Accuracy ConfStat
 
-## -[] 初步結果報告
+## -[V] 初步結果報告
 
-## -[] scReClassify
+## -[T] scReClassify
 ## -[T] SeuratV5 Azimuth (For 多體學資料)
 
 
