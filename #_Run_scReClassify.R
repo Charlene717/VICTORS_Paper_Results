@@ -15,7 +15,9 @@ if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require("caret")) install.packages("caret"); library(caret)
 
+if(!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 if (!require("scReClassify")) BiocManager::install("scReClassify"); library(scReClassify)
+
 if (!require("DT")) install.packages("DT"); library(DT)
 if (!require("mclust")) install.packages("mclust"); library(mclust)
 if(!require("SingleCellExperiment"))  BiocManager::install("SingleCellExperiment"); library(SingleCellExperiment)
