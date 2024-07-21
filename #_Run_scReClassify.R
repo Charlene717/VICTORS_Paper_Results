@@ -33,7 +33,9 @@ annoCols <- c("label_singleR_NoReject", "label_scmap_NoReject", "label_SCINA_NoR
 
 # Apply run_scReClassify for each annotation column
 for (annoCol in annoCols) {
-  seuratObject_Sample <- Fun_scReClassify(seuratObject_Sample, Set_AnnoCol = annoCol, Set_classifier = "svm", Set_percent = 1, Set_L = 10)
+  try({
+    seuratObject_Sample <- Fun_scReClassify(seuratObject_Sample, Set_AnnoCol = annoCol, Set_classifier = "svm", Set_percent = 1, Set_L = 10)
+  })
 }
 
 
