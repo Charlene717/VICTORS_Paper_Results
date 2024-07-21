@@ -98,10 +98,10 @@ for (i in 1:length(cell_numbers)) {
   # seuratObject_Ref_sampled <- VICTOR.lt$Reference
 }
 
-#### 視覺化 ####
+#### Visualization ####
 library(ggplot2)
 
-ggplot(time_results, aes(x = Cell_Number)) +
+Plot_TimeLine <- ggplot(time_results, aes(x = Cell_Number)) +
   geom_line(aes(y = scReClassify_Time, color = "scReClassify")) +
   geom_point(aes(y = scReClassify_Time, color = "scReClassify")) +
   geom_text(aes(y = scReClassify_Time, label = round(scReClassify_Time, 1), color = "scReClassify"), vjust = -0.5, size = 5) +
@@ -123,3 +123,22 @@ ggplot(time_results, aes(x = Cell_Number)) +
     legend.text = element_text(size = 15)
   ) +
   scale_color_manual(values = c("scReClassify" = "#7373B9", "VICTOR" = "#FF60AF"))
+
+print(Plot_TimeLine)
+
+#### Export ####
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+
+# pdf(paste0(Name_ExportFolder,"/",Name_Export,"#_Sup_TimeTest_Victor_scReClassify_",Name_time_wo_micro,".pdf"),
+pdf(paste0("#_Sup_TimeTest_Victor_scReClassify_",Name_time_wo_micro,".pdf"),
+    width = 10, height = 6)
+
+print(Plot_TimeLine)
+
+dev.off()
+
+## Export RData
+save.image(paste0("#_Sup_TimeTest_Victor_scReClassify_",Name_time_wo_micro,".RData"))
+
+
+
