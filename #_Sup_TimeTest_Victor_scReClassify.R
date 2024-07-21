@@ -59,31 +59,52 @@ sample_cells <- function(seurat_object, n_cells, seed = 123) {
 
 # 使用範例
 # 假設seuratObject_Ref是你的Seurat對象，並希望抽取1000個細胞
-seuratObject_Ref <- sample_cells(seuratObject_Ref, 1000)
+seuratObject_Ref_sampled <- sample_cells(seuratObject_Ref, 1000)
 
 # 檢查抽取後的細胞類型分布
 table(seuratObject_Ref_sampled$Actual_Cell_Type)
 
-
-
-
-
 #### Time test ####
 source("#_FUN_CellTypeAnnot.R")
 
+# 設定不同細胞數目
+cell_numbers <- c(200, 400, 600, 800, 1000, 1200, 1400, 1600)
 
-## Run scReClassify
-seuratObject_Sample <- run_scReClassify(seuratObject_Sample, Set_AnnoCol = "Cell_Type", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
+# 初始化時間結果
+time_results <- data.frame(Cell_Number = cell_numbers, scReClassify_Time = NA, VICTOR_Time = NA)
 
+# 測試不同seuratObject_Sample數目運行scReClassify和VICTOR需要多少時間
+for (i in 1:length(cell_numbers)) {
+  n_cells <- cell_numbers[i]
+  seuratObject_Sample_subset <- sample_cells(seuratObject_Sample, n_cells)
 
-## Run VICTOR
-VICTOR.lt <- VICTOR(seuratObject_Sample, seuratObject_Ref,
-                    ActualCellTypeColumn = "Actual_Cell_Type",
-                    AnnotCellTypeColumn = "label_singleR_NoReject",
-                    seurat_version = "V5")
+  # 測試scReClassify時間
+  start_time <- Sys.time()
+  seuratObject_Sample_subset <- run_scReClassify(seuratObject_Sample_subset, Set_AnnoCol = "Cell_Type", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
+  end_time <- Sys.time()
+  time_results$scReClassify_Time[i] <- as.numeric(difftime(end_time, start_time, units = "secs"))
 
-seuratObject_Sample <- VICTOR.lt$Query
-seuratObject_Ref <- VICTOR.lt$Reference
+  # 測試VICTOR時間
+  start_time <- Sys.time()
+  VICTOR.lt <- VICTOR(seuratObject_Sample_subset, seuratObject_Ref_sampled,
+                      ActualCellTypeColumn = "Actual_Cell_Type",
+                      AnnotCellTypeColumn = "Cell_Type",
+                      seurat_version = "V5")
+  end_time <- Sys.time()
+  time_results$VICTOR_Time[i] <- as.numeric(difftime(end_time, start_time, units = "secs"))
 
+  seuratObject_Sample_subset <- VICTOR.lt$Query
+  seuratObject_Ref_sampled <- VICTOR.lt$Reference
+}
 
+#### 視覺化 ####
+library(ggplot2)
 
+ggplot(time_results, aes(x = Cell_Number)) +
+  geom_line(aes(y = scReClassify_Time, color = "scReClassify")) +
+  geom_line(aes(y = VICTOR_Time, color = "VICTOR")) +
+  labs(title = "Time taken by scReClassify and VICTOR for different sample sizes",
+       x = "Number of Cells in seuratObject_Sample",
+       y = "Time (seconds)",
+       color = "Method") +
+  theme_minimal()
