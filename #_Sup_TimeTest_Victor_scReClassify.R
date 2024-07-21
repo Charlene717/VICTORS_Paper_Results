@@ -103,10 +103,14 @@ library(ggplot2)
 
 ggplot(time_results, aes(x = Cell_Number)) +
   geom_line(aes(y = scReClassify_Time, color = "scReClassify")) +
+  geom_point(aes(y = scReClassify_Time, color = "scReClassify")) +
+  geom_text(aes(y = scReClassify_Time, label = round(scReClassify_Time, 1), color = "scReClassify"), vjust = -0.5) +
   geom_line(aes(y = VICTOR_Time, color = "VICTOR")) +
+  geom_point(aes(y = VICTOR_Time, color = "VICTOR")) +
+  geom_text(aes(y = VICTOR_Time, label = round(VICTOR_Time, 1), color = "VICTOR"), vjust = -0.5) +
   labs(title = "Time taken by scReClassify and VICTOR for different sample sizes",
        x = "Number of Cells in seuratObject_Sample",
        y = "Time (seconds)",
        color = "Method") +
-  theme_minimal()
-
+  theme_minimal() +
+  scale_color_manual(values = c("scReClassify" = "#7373B9", "VICTOR" = "#FF60AF"))
