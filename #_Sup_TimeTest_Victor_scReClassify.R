@@ -32,8 +32,8 @@ table(seuratObject_Ref$Actual_Cell_Type)
 #### Sampling ####
 # 定義函數來隨機抽取指定數量的細胞
 sample_cells <- function(seurat_object, n_cells, seed = 123) {
-
   if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
+
   set.seed(seed)  # 設定隨機種子以確保結果可重現
 
   # 獲取細胞類型的計數
@@ -47,7 +47,7 @@ sample_cells <- function(seurat_object, n_cells, seed = 123) {
 
   # 從每個細胞類型中隨機抽取對應數目的細胞
   sampled_cells <- unlist(lapply(names(sample_sizes), function(cell_type) {
-    cell_indices <- WhichCells(seurat_object, ident = cell_type)
+    cell_indices <- which(seurat_object$Actual_Cell_Type == cell_type)
     sample(cell_indices, sample_sizes[cell_type])
   }))
 
@@ -56,6 +56,7 @@ sample_cells <- function(seurat_object, n_cells, seed = 123) {
 
   return(seurat_object_sampled)
 }
+
 
 # 使用範例
 # 假設seuratObject_Ref是你的Seurat對象，並希望抽取1000個細胞
@@ -80,7 +81,7 @@ for (i in 1:length(cell_numbers)) {
 
   # 測試scReClassify時間
   start_time <- Sys.time()
-  seuratObject_Sample_subset <- run_scReClassify(seuratObject_Sample_subset, Set_AnnoCol = "Cell_Type", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
+  seuratObject_Sample_subset <- Fun_scReClassify(seuratObject_Sample_subset, Set_AnnoCol = "Cell_Type", Set_classifier = "svm", Set_percent = 1, Set_L = 10)
   end_time <- Sys.time()
   time_results$scReClassify_Time[i] <- as.numeric(difftime(end_time, start_time, units = "secs"))
 
@@ -94,7 +95,7 @@ for (i in 1:length(cell_numbers)) {
   time_results$VICTOR_Time[i] <- as.numeric(difftime(end_time, start_time, units = "secs"))
 
   seuratObject_Sample_subset <- VICTOR.lt$Query
-  seuratObject_Ref_sampled <- VICTOR.lt$Reference
+  # seuratObject_Ref_sampled <- VICTOR.lt$Reference
 }
 
 #### 視覺化 ####
@@ -108,3 +109,4 @@ ggplot(time_results, aes(x = Cell_Number)) +
        y = "Time (seconds)",
        color = "Method") +
   theme_minimal()
+
