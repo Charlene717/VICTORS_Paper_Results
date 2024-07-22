@@ -293,11 +293,16 @@ accuracy_data <- long_data %>%
 
 
 # 動態生成標题和副標題
-Fig_cell_text <- "B cells"
 query_platforms <- paste(unique(accuracy_data$Sample_Platform), collapse = ", ")
 reference_platforms <- unique(sub("_[^_]+$", "", accuracy_data$Ref_Platform))
 
-  title_text <- paste("Accuracy across different references with varying", Fig_cell_text, "counts by Methods")
+
+if(!is.na(Set_Tar_CellType)){
+  title_text <- paste("Accuracy of", Set_Tar_CellType ,"across references with varying", Set_Tar_CellType, "counts by Methods")
+}else{
+  title_text <- paste("Accuracy across references with varying", Set_Tar_CellType, "counts by Methods")
+}
+
 subtitle_text <- paste("Query:", query_platforms, "; Reference:", reference_platforms)
 
 
