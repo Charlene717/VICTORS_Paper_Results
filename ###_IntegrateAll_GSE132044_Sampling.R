@@ -31,7 +31,13 @@ Set_Tar_CellType <- "B cell" # NA
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = ""))
 
-Name_Export <- paste0("IntegrateAll_Sampling_",Name_FileID,"_",Dataset)
+
+if(!is.na(Set_Tar_CellType)){
+  Name_Export <- paste0("IntegrateAll_Sampling_",Name_FileID,"_",Dataset)
+}else{
+  Name_Export <- paste0("IntegrateAll_Sampling_",Name_FileID,"_",Dataset,"_AllCT")
+}
+
 
 # Name_ExportFolder <- paste0("Export_",Name_Export)
 # if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
@@ -293,11 +299,16 @@ accuracy_data <- long_data %>%
 
 
 # 動態生成標题和副標題
-Fig_cell_text <- "B cells"
 query_platforms <- paste(unique(accuracy_data$Sample_Platform), collapse = ", ")
 reference_platforms <- unique(sub("_[^_]+$", "", accuracy_data$Ref_Platform))
 
-  title_text <- paste("Accuracy across different references with varying", Fig_cell_text, "counts by Methods")
+
+if(!is.na(Set_Tar_CellType)){
+  title_text <- paste("Accuracy of", Set_Tar_CellType ,"across references with varying", Set_Tar_CellType, "counts by Methods")
+}else{
+  title_text <- paste("Accuracy across references with varying", Set_Tar_CellType, "counts by Methods")
+}
+
 subtitle_text <- paste("Query:", query_platforms, "; Reference:", reference_platforms)
 
 
