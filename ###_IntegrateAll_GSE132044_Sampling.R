@@ -22,9 +22,9 @@ if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("readr")) install.packages("readr"); library(readr)
 
 #### Set parameter ####
-Dataset <- "GSE132044_B"
+Dataset <- "GSE132044_CD4T"
 Figure_Note <- Dataset
-Set_Tar_CellType <- "B cell" # NA
+Set_Tar_CellType <- NA # "CD4+ T cell" # "Natural killer cell" # "B cell" # NA
 
 
 ## Set export
@@ -297,6 +297,16 @@ accuracy_data <- long_data %>%
     Ref_Platform = factor(Ref_Platform, levels = unique(Ref_Platform[order(Ref_Platform_Num)]))
   )
 
+# 創建新的列來儲存處理過的 Ref_Platform，不修改原始數據
+accuracy_data <- accuracy_data %>%
+  # mutate(Ref_Platform_Clean = sub(".*_", "", Ref_Platform)) # 倒數第一個_以前刪除
+  mutate(Ref_Platform_Clean = sub("^[^_]*_", "", Ref_Platform)) # 第一個_以前刪除
+
+# 確保 Ref_Platform_Clean 按照 Ref_Platform 的順序排列
+accuracy_data <- accuracy_data %>%
+  mutate(Ref_Platform_Clean = factor(Ref_Platform_Clean, levels = unique(Ref_Platform_Clean[order(Ref_Platform_Num)])))
+
+
 
 # 動態生成標题和副標題
 query_platforms <- paste(unique(accuracy_data$Sample_Platform), collapse = ", ")
@@ -313,7 +323,7 @@ subtitle_text <- paste("Query:", query_platforms, "; Reference:", reference_plat
 
 
 # 創建折線圖
-Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform, y = Value, color = Method, linetype = Method, size = Method, group = Method)) +
+Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform_Clean, y = Value, color = Method, linetype = Method, size = Method, group = Method)) +
   geom_line() +
   geom_point() +
   scale_color_manual(values = color_Method) +
