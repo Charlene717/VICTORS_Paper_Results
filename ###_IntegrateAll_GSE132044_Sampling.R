@@ -31,19 +31,23 @@ Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = 
 
 Name_Export <- paste0("IntegrateAll_Sampling_",Name_FileID,"_",Dataset)
 
-Name_ExportFolder <- paste0("Export_",Name_Export)
-if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+# Name_ExportFolder <- paste0("Export_",Name_Export)
+# if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 
 
 #### Set Loading ###
 ## 設定主目錄
 
 if(Dataset == "GSE132044_B"){
-  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_SamplingB_Seed123_20240711"
+  # main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_SamplingB_Seed123_20240711"
+  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/VICTORS_Paper_Results_GSE132044_Sampling_Ref/Export_GSE132044_SamplingB_Seed111_20240711"
+
 }else if(Dataset == ""){
   main_directory <- ""
 }
 
+
+Name_ExportFolder <- main_directory
 
 
 # 獲取所有子目錄
