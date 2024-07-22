@@ -42,6 +42,12 @@ if(Dataset == "GSE132044_B"){
   # main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_SamplingB_Seed123_20240711"
   main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/VICTORS_Paper_Results_GSE132044_Sampling_Ref/Export_GSE132044_SamplingB_Seed111_20240711"
 
+}else if(Dataset == "GSE132044_NK"){
+  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/VICTORS_Paper_Results_GSE132044_Sampling_Ref/Export_GSE132044_SamplingNK_Seed111_20240720"
+
+}else if(Dataset == "GSE132044_CD4T"){
+  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/VICTORS_Paper_Results_GSE132044_Sampling_Ref/Export_GSE132044_SamplingCD4T_Seed111_20240720"
+
 }else if(Dataset == ""){
   main_directory <- ""
 }
