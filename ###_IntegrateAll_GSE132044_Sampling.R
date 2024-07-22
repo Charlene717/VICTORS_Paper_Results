@@ -24,6 +24,8 @@ if(!require("readr")) install.packages("readr"); library(readr)
 #### Set parameter ####
 Dataset <- "GSE132044_B"
 Figure_Note <- Dataset
+Set_Tar_CellType <- "B cell" # NA
+
 
 ## Set export
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
@@ -78,6 +80,10 @@ for (subdir in subdirectories) {
 print(combined_data)
 
 
+if(!is.na(Set_Tar_CellType)){
+  combined_data_Ori <- combined_data
+  combined_data <- combined_data[combined_data$Actual_Cell_Type == Set_Tar_CellType, ]
+}
 
 
 #### Add Metrics ####
