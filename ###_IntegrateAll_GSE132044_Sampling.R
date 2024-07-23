@@ -22,7 +22,7 @@ if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("readr")) install.packages("readr"); library(readr)
 
 #### Set parameter ####
-Dataset <- "GSE132044_CD4T"
+Dataset <- "GSE132044_B" # "GSE132044_CD4T" # "GSE132044_NK" # "GSE132044_B"
 Figure_Note <- Dataset
 Set_Tar_CellType <- NA # "CD4+ T cell" # "Natural killer cell" # "B cell" # NA
 
