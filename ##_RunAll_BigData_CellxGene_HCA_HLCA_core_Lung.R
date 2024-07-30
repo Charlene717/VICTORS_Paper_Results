@@ -46,31 +46,30 @@ for (Cell_Type in Actual_Cell_Type) {
 
   # Iterate through each sample file
   for (sample_file in files_Sample) {
-    # Extract matching part from sample file name
-    Match_Sample <- getMatchPart(sample_file, "CellxGene_HCA_HLCA_core_Lung_Query")
+    # Extract Set_Sample from sample file name
+    Set_Sample <- getMatchPart(sample_file, "CellxGene_HCA_HLCA_core_Lung_Query")
 
     # Iterate through each reference file
     for (ref_file in files_Ref) {
-      # Extract matching part from reference file name
-      Match_Ref <- getMatchPart(ref_file, "CellxGene_HCA_HLCA_core_Lung_Ref_5000_Seed123_Delet")
+      # Extract Set_Reference from reference file name
+      Set_Reference <- getMatchPart(ref_file, "CellxGene_HCA_HLCA_core_Lung_Ref_5000_Seed123_Delet")
 
       # Only proceed if the matching parts are identical
-      if (Match_Sample == Match_Ref) {
+      if (Set_Sample == Set_Reference) {
         # Assign file paths
         Path_Sample <- sample_file
         Path_Ref <- ref_file
 
         # Source the R script
         try({
-          # source("##_RunAll_CTAEvaluator_Main.R")
           source("##_RunAll_Main_Test.R")
         })
 
         # Clearing the variables except the ones needed for the next iteration
-        rm(list = setdiff(ls(), c("GSE_Name","ref_file", "sample_file", "Cell_Type",
-                                  "Match_Sample", "Match_Ref",
+        rm(list = setdiff(ls(), c("GSE_Name", "ref_file", "sample_file", "Cell_Type",
+                                  "Set_Sample", "Set_Reference",
                                   "files_Sample", "files_Ref", "Path_Sample_Folder", "Path_Ref_Folder",
-                                  "getMatchPart", "Actual_Cell_Type","Set_Ref_Delet")), envir = .GlobalEnv)
+                                  "getMatchPart", "Actual_Cell_Type", "Set_Ref_Delet")), envir = .GlobalEnv)
       }
     }
   }
