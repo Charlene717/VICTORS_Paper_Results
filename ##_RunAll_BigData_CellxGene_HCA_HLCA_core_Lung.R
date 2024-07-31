@@ -21,7 +21,7 @@ GSE_Name = "HCA_HLCA_core"
 #### Load Data Path ####
 # Load a specific .RData file to get Actual_Cell_Type
 load("D:/Dropbox/##_GitHub/###_VUMC/CreateDataset/Input_Dataset/CellxGene_HCA_HLCA_core_Lung/CellxGene_HCA_HLCA_core_Lung_Ref/CellxGene_HCA_HLCA_core_Lung_Ref_5000_Seed123.RData")
-Actual_Cell_Type <- seuratObject@meta.data$Actual_Cell_Type %>% unique()
+Actual_Cell_Type <- seuratObject@meta.data$Actual_Cell_Type %>% unique() %>% as.character()
 Actual_Cell_Type <- c("None", Actual_Cell_Type)
 rm(seuratObject)
 
