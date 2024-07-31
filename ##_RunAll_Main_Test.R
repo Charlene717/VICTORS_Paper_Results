@@ -19,13 +19,16 @@ if(Set_Sam_Delet_Unknown){
 try({ seuratObject_Sample <- seuratObject_Sample %>% SetIdent(value = "Annotation") })
 DimPlot(seuratObject_Sample, label = TRUE, repel = TRUE) + NoLegend()
 # DimPlot(seuratObject_Sample, reduction = "umap", group.by = "Annotation")
+seuratObject_Sample@meta.data$Actual_Cell_Type <- seuratObject_Sample@meta.data$Actual_Cell_Type %>% as.character()
+
+
 
 ## Load reference
 load(Path_Ref) #; rm(Name_Export_o,Name_ExportFolder_o)
 seuratObject <- UpdateSeuratObject(seuratObject)
 seuratObject_Ref <- seuratObject; rm(seuratObject)
 if(Set_Ref_Delet_Unknown){ seuratObject_Ref <- subset(seuratObject_Ref, subset = Actual_Cell_Type != "Unknown") }
-
+seuratObject_Ref@meta.data$Actual_Cell_Type <- seuratObject_Ref@meta.data$Actual_Cell_Type %>% as.character()
 
 if(Set_Ref_Delet_CTMetric){
   seuratObject_Ref <- subset(seuratObject_Ref, subset = Actual_Cell_Type != Set_Ref_Delet)
