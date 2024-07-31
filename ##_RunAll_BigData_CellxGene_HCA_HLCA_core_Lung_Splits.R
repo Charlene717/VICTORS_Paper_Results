@@ -80,7 +80,7 @@ for (Cell_Type in Actual_Cell_Type) {
         rm(list = setdiff(ls(), c("GSE_Name", "ref_file", "sample_file", "Cell_Type",
                                   "Set_Sample", "Set_Reference",
                                   "files_Sample", "files_Ref", "Path_Sample_Folder", "Path_Ref_Folder",
-                                  "getMatchPart", "Actual_Cell_Type", "Set_Ref_Delet")), envir = .GlobalEnv)
+                                  "getSamplePart","getRefPart", "Actual_Cell_Type", "Set_Ref_Delet")), envir = .GlobalEnv)
       }
     }
   }
