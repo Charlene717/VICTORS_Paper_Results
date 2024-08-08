@@ -21,7 +21,7 @@ if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("readr")) install.packages("readr"); library(readr)
 
 #### Set parameter ####
-Dataset <- "GSE132044"
+Dataset <- "HLCA_core"
 Figure_Note <- Dataset
 
 ## Set export
@@ -42,6 +42,8 @@ if(Dataset == "GSE132044"){
   main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712"
 }else if(Dataset == "scRNAseqPanc"){
   main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_scRNAseqPanc_20240711"
+}else if(Dataset == "HLCA_core"){
+  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results_HLCA_core/Export_HLCA_core_20240808"
 }
 
 
@@ -54,14 +56,17 @@ combined_data <- data.frame()
 
 # 遍歷所有子目錄
 for (subdir in subdirectories) {
-  # 獲取當前子目錄中所有_metadataSamp.tsv結尾的檔案
-  tsv_files <- list.files(subdir, pattern = "_metadataSamp\\.tsv$", full.names = TRUE)
+  try({
+    # 獲取當前子目錄中所有_metadataSamp.tsv結尾的檔案
+    tsv_files <- list.files(subdir, pattern = "_metadataSamp\\.tsv$", full.names = TRUE)
 
-  # 讀取並合併這些檔案
-  for (file in tsv_files) {
-    file_data <- read_tsv(file)
-    combined_data <- bind_rows(combined_data, file_data)
-  }
+    # 讀取並合併這些檔案
+    for (file in tsv_files) {
+      file_data <- read_tsv(file)
+      combined_data <- bind_rows(combined_data, file_data)
+    }
+  })
+
 }
 
 # 顯示整合後的dataframe
