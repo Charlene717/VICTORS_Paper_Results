@@ -23,8 +23,9 @@ if(!require("readr")) install.packages("readr"); library(readr)
 
 #### Set parameter ####
 Dataset <- "GSE132044_B" # "GSE132044_CD4T" # "GSE132044_NK" # "GSE132044_B"
+Name_VaryCT <- "B cell"
 Figure_Note <- Dataset
-Set_Tar_CellType <- NA # "CD4+ T cell" # "Natural killer cell" # "B cell" # NA
+Set_Tar_CellType <- Name_VaryCT # NA # "CD4+ T cell" # "Natural killer cell" # "B cell" # NA
 
 
 ## Set export
@@ -317,7 +318,7 @@ reference_platforms <- unique(sub("_[^_]+$", "", accuracy_data$Ref_Platform))
 if(!is.na(Set_Tar_CellType)){
   title_text <- paste("Accuracy of", Set_Tar_CellType ,"across references with varying", Set_Tar_CellType, "counts by Methods")
 }else{
-  title_text <- paste("Accuracy across references with varying", Set_Tar_CellType, "counts by Methods")
+  title_text <- paste("Accuracy across references with varying", Name_VaryCT, "counts by Methods")
 }
 
 subtitle_text <- paste("Query:", query_platforms, "; Reference:", reference_platforms)
