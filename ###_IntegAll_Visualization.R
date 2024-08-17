@@ -11,12 +11,12 @@ Set_boxplot_fill <- FALSE # Set_boxplot_fill <- TRUE
 my_ggplot_theme <- function() {
   theme_bw() +
     theme(
-      text = element_text(size = 18),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
-      axis.title = element_text(size = 20),
-      axis.text.y = element_text(size = 20),
-      legend.title = element_text(size = 20),
-      legend.text = element_text(size = 18),
+      text = element_text(size = 20),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
+      axis.title = element_text(size = 24),
+      axis.text.y = element_text(size = 22),
+      legend.title = element_text(size = 22),
+      legend.text = element_text(size = 20),
       panel.border = element_rect(colour = "black", fill = NA, size = 1.2)  # 加粗外围边框
     )
 }
@@ -42,7 +42,7 @@ if(Set_boxplot_fill){
     # 创建盒形图
     plt <- ggplot(data %>% filter(Metric == metric),
                   aes(x = .data[[x_col]], y = Value)) +
-      geom_boxplot(aes(color = Method, fill = Method),alpha = 0.5,
+      geom_boxplot(aes(color = Method, fill = Method),alpha = 0.4,
                    outlier.shape = 21, outlier.colour = NA, size = 0.8) +  # 明确边框颜色
       # scale_y_continuous(limits = c(0, 1)) +
       scale_fill_manual(values = color_method) +
@@ -151,9 +151,9 @@ create_combind_plot <- function(plots, ncol, title_data_10x, legend_data, color_
     current_col <- ifelse(i %% ncol == 0, ncol, i %% ncol)
 
     # 应用主题元素
-    plots[[i]] <- plots[[i]] + theme(text = element_text(size = 16), legend.position = "none",
-                                     axis.title.x = element_text(face = "bold", size = 20),
-                                     axis.title.y = element_text(face = "bold", size = 20))
+    plots[[i]] <- plots[[i]] + theme(text = element_text(size = 20), legend.position = "none",
+                                     axis.title.x = element_text(face = "bold", size = 24),
+                                     axis.title.y = element_text(face = "bold", size = 24))
     if (current_col != 1) {
       # plots[[i]] <- plots[[i]] + theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
       #                                  axis.ticks.y = element_blank())
