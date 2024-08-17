@@ -69,7 +69,7 @@ accuracy_data <- accuracy_data %>%
   ))
 
 # 設定顏色
-color_mapping <- c("VICTOR" = "#1f78b4", "scReClassify" = "#33a02c")
+color_mapping <- c("VICTOR" = "#335769", "scReClassify" = "#55a6cf")
 accuracy_data$Color_Group <- ifelse(str_detect(accuracy_data$Method, "VICTOR"), "VICTOR", "scReClassify")
 
 # 繪製直方圖
