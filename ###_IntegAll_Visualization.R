@@ -84,13 +84,13 @@ color_Method <- list(
   "scmap" = "#ad772f", # "#3e75bd" # "#696866" # "#d94185"
   "scmap_VICTOR" = "#32383b", # "#2c7856",
 
-  "CHETAH" = "#7ccf7f", # "#3e75bd" # "#696866" # "#d94185"
+  "CHETAH" = "#6ea127", # "#3e75bd" # "#696866" # "#d94185"
   "CHETAH_VICTOR" = "#32383b", # "#2c7856",
 
   "scClassify" = "#8d389c", # "#3e75bd" # "#696866" # "#d94185"
   "scClassify_VICTOR" = "#32383b", # "#2c7856",
 
-  "Seurat" = "#42dbd9", # "#3e75bd" # "#696866" # "#d94185"
+  "Seurat" = "#2fa3a2", # "#3e75bd" # "#696866" # "#d94185"
   "Seurat_VICTOR" = "#32383b" # "#2c7856"
 )
 
@@ -207,9 +207,9 @@ color_legend <- c(
   "scPred" = "#368a5b",
   "SCINA" = "#e0385d",
   "scmap" = "#ad772f",
-  "CHETAH" = "#7ccf7f",
+  "CHETAH" = "#6ea127",
   "scClassify" = "#8d389c",
-  "Seurat" = "#42dbd9"
+  "Seurat" = "#2fa3a2"
 )
 
 # source("PlotFun_SetColor.R")
