@@ -358,7 +358,7 @@ print(Plot_line)
 
 dev.off()
 
-
+try(write_tsv(accuracy_data, paste0(Name_ExportFolder, "/", Name_Export, "_accuracy_data.tsv")))
 
 # Export RData
 save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
