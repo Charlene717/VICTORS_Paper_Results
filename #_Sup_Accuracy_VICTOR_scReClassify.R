@@ -20,6 +20,20 @@ if(!require("scReClassify")) BiocManager::install("scReClassify"); library(scReC
 load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240722/Export_GSE132044_20240720_scReClassify/20240712095055BUNQLI_MislabelB cell_Qry_10xV2_Ref_10xV2A/20240712095055BUNQLI.RData")
 
 
+#### Set parameter ####
+Dataset <- "GSE132044" # "GSE132044"  # "scRNAseqPanc"  # "HLCA_core"
+
+## Set export
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = ""))
+
+Name_Export <- paste0("scReClassify_",Name_FileID,"_",Dataset)
+
+Name_ExportFolder <- paste0("Export_",Name_Export)
+if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+
+
+
 
 # 確保所需的包已安裝並加載
 if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
@@ -89,7 +103,7 @@ ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Diagnostic_Tool)) +
   scale_fill_manual(values = color_mapping) +
   theme_minimal(base_size = 20) +  # 设置基础字体大小
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 22),  # 放大x轴标签字体
+    axis.text.x = element_text(angle = 60, hjust = 1, size = 22),  # 放大x轴标签字体
     axis.text.y = element_text(size = 22),  # 放大y轴标签字体
     axis.title.x = element_text(size = 24, face = "bold"),  # 放大x轴标题字体
     axis.title.y = element_text(size = 24, face = "bold"),  # 放大y轴标题字体
@@ -103,7 +117,20 @@ ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Diagnostic_Tool)) +
     title = "Accuracy across different methods",
     subtitle = subtitle_text,  # 添加副标题
     x = "Method", y = "Accuracy"
-  ) + scale_y_continuous(limits = c(0,1))
+  ) + scale_y_continuous(limits = c(0,1)) -> Plot_MethAccuracy
+
+print(Plot_MethAccuracy)
+
+
+#### Export ####
+
+pdf(paste0(Name_ExportFolder, "/", Name_Export,"_MethAccuracy.pdf"),
+    width = 15, height = 10) #HLCA_core#  width = 30, height = 17) #scRNAseqPanc# width = 22, height = 13)
+
+print(Plot_MethAccuracy)
+
+dev.off()
+
 
 
 # #### Export ####
