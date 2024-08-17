@@ -48,7 +48,8 @@ if(!is.na(Set_Tar_CellType)){
 
 if(Dataset == "GSE132044_B"){
   # main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_SamplingB_Seed123_20240711"
-  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/VICTORS_Paper_Results_GSE132044_Sampling_Ref/Export_GSE132044_SamplingB_Seed111_20240711"
+  # main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/VICTORS_Paper_Results_GSE132044_Sampling_Ref/Export_GSE132044_SamplingB_Seed111_20240711"
+  main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240722/VICTORS_Paper_Results_GSE132044_Sampling_Ref/VICTORS_Paper_Results_GSE132044_Sampling_Ref_20240711_B"
 
 }else if(Dataset == "GSE132044_NK"){
   main_directory <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/VICTORS_Paper_Results_GSE132044_Sampling_Ref/Export_GSE132044_SamplingNK_Seed111_20240720"
