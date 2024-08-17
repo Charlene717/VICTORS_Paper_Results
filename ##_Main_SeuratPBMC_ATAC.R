@@ -1,3 +1,5 @@
+## Ref: https://satijalab.org/seurat/articles/seurat5_atacseq_integration_vignette
+
 ##### Presetting ######
 rm(list = ls()) # Clean variable ##* Comment out if Run All
 memory.limit(150000)
