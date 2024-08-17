@@ -42,7 +42,7 @@ if(Set_boxplot_fill){
     # 创建盒形图
     plt <- ggplot(data %>% filter(Metric == metric),
                   aes(x = .data[[x_col]], y = Value)) +
-      geom_boxplot(aes(color = Method, fill = Method),alpha = 0.4,
+      geom_boxplot(aes(color = Method, fill = Method),alpha = 0.3,
                    outlier.shape = 21, outlier.colour = NA, size = 0.8) +  # 明确边框颜色
       # scale_y_continuous(limits = c(0, 1)) +
       scale_fill_manual(values = color_method) +
@@ -57,7 +57,7 @@ if(Set_boxplot_fill){
            x = x_col, y = metric, color = "Method")
 
     # Add outlier
-    plt <- plt + geom_point(aes(color = Method), position = position_dodge(width = 0.75), size = 1.5)
+    plt <- plt + geom_point(aes(color = Method), position = position_dodge(width = 0.75), size = 1.2)
     # plt <- plt + stat_summary(fun = mean, geom = "text", aes(label = round(..y.., digits = 2)),
     #                           vjust = -1.5, size = 6, color = "black")
 
