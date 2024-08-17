@@ -30,11 +30,17 @@ if(!require("stringr")) install.packages("stringr"); library(stringr)
 confstat_cols <- colnames(seuratObject_Sample@meta.data) %>%
   str_subset("(_ConfStat$|^ConfStat_)")
 
-# 計算Accuracy (TP + TN) / (TP + TN + FP + FN)
+# 計算每個方法的 Accuracy
 accuracy_data <- seuratObject_Sample@meta.data %>%
   select(all_of(confstat_cols)) %>%
-  summarise(across(everything(), ~ mean((. == "TP" | . == "TN") & !is.na(.)) /
-                     mean(!is.na(.)), .names = "Accuracy_{col}")) %>%
+  summarise(across(everything(), ~{
+    TP <- sum(. == "TP", na.rm = TRUE)
+    TN <- sum(. == "TN", na.rm = TRUE)
+    FP <- sum(. == "FP", na.rm = TRUE)
+    FN <- sum(. == "FN", na.rm = TRUE)
+    Accuracy <- (TP + TN) / (TP + TN + FP + FN)
+    return(Accuracy)
+  }, .names = "Accuracy_{col}")) %>%
   pivot_longer(cols = everything(), names_to = "Method", values_to = "Accuracy") %>%
   drop_na()  # 忽略NA值
 
@@ -49,6 +55,31 @@ ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Method)) +
   labs(title = "Accuracy across different methods",
        x = "Method", y = "Accuracy")
 
+
+# 保留包含 VICTOR 或 scReClassify 的列
+accuracy_data <- accuracy_data %>%
+  filter(str_detect(Method, "VICTOR") | str_detect(Method, "scReClassify"))
+
+# 修改 Method 名稱
+accuracy_data <- accuracy_data %>%
+  mutate(Method = case_when(
+    str_detect(Method, "VICTOR") ~ str_replace(Method, "Accuracy_VICTOR_label_(.*?)_NoReject", "\\1_VICTOR"),
+    str_detect(Method, "scReClassify") ~ str_replace(Method, "Accuracy_ReAnnot_scReClassify_label_(.*?)_NoReject", "\\1_scReClassify"),
+    TRUE ~ Method
+  ))
+
+# 設定顏色
+color_mapping <- c("VICTOR" = "#1f78b4", "scReClassify" = "#33a02c")
+accuracy_data$Color_Group <- ifelse(str_detect(accuracy_data$Method, "VICTOR"), "VICTOR", "scReClassify")
+
+# 繪製直方圖
+ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Color_Group)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values = color_mapping) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Accuracy across different methods",
+       x = "Method", y = "Accuracy")
 
 
 
