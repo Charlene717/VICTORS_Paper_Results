@@ -21,7 +21,7 @@ if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("readr")) install.packages("readr"); library(readr)
 
 #### Set parameter ####
-Dataset <- "HLCA_core"
+Dataset <- "scRNAseqPanc" # "GSE132044"  # "scRNAseqPanc"  # "HLCA_core"
 Figure_Note <- Dataset
 
 ## Set export
