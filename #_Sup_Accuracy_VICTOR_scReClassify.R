@@ -123,13 +123,16 @@ print(Plot_MethAccuracy)
 
 
 #### Export ####
-
+## Export PDF
 pdf(paste0(Name_ExportFolder, "/", Name_Export,"_MethAccuracy.pdf"),
     width = 15, height = 10) #HLCA_core#  width = 30, height = 17) #scRNAseqPanc# width = 22, height = 13)
 
 print(Plot_MethAccuracy)
 
 dev.off()
+
+## Export tsv
+try(write_tsv(accuracy_data, paste0(Name_ExportFolder, "/", Name_Export, "_MethAccuracy.tsv")))
 
 
 
