@@ -70,17 +70,40 @@ accuracy_data <- accuracy_data %>%
 
 # 設定顏色
 color_mapping <- c("VICTOR" = "#335769", "scReClassify" = "#55a6cf")
-accuracy_data$Color_Group <- ifelse(str_detect(accuracy_data$Method, "VICTOR"), "VICTOR", "scReClassify")
+accuracy_data$Diagnostic_Tool <- ifelse(str_detect(accuracy_data$Method, "VICTOR"), "VICTOR", "scReClassify")
 
-# 繪製直方圖
-ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Color_Group)) +
-  geom_bar(stat = "identity", position = "dodge") +
+# 提取副標題信息
+subtitle_text <- paste0(
+  "Query: ", seuratObject_Sample@misc[["BasicInfo"]][["Platform"]],
+  "; Reference: ", seuratObject_Sample@misc[["CTAnnot"]][["Ref_Platform"]]
+)
+
+# 确保数据框非空
+if(nrow(accuracy_data) == 0) {
+  stop("accuracy_data is empty. Please check the filtering step.")
+}
+
+# 绘制直方图
+ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Diagnostic_Tool)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black", size = 0.5) +  # 设置黑色边框和较小的粗细
   scale_fill_manual(values = color_mapping) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(title = "Accuracy across different methods",
-       x = "Method", y = "Accuracy")
-
+  theme_minimal(base_size = 20) +  # 设置基础字体大小
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 22),  # 放大x轴标签字体
+    axis.text.y = element_text(size = 22),  # 放大y轴标签字体
+    axis.title.x = element_text(size = 24, face = "bold"),  # 放大x轴标题字体
+    axis.title.y = element_text(size = 24, face = "bold"),  # 放大y轴标题字体
+    plot.title = element_text(size = 28, face = "bold", hjust = 0.5),  # 放大标题字体并居中
+    plot.subtitle = element_text(size = 22, face = "italic", hjust = 0.5),  # 放大副标题字体并居中
+    legend.title = element_text(size = 22),  # 放大图例标题字体
+    legend.text = element_text(size = 20),  # 放大图例内容字体
+    panel.border = element_rect(color = "black", fill = NA, size = 1.5)  # 增加黑色粗框
+  ) +
+  labs(
+    title = "Accuracy across different methods",
+    subtitle = subtitle_text,  # 添加副标题
+    x = "Method", y = "Accuracy"
+  ) + scale_y_continuous(limits = c(0,1))
 
 
 # #### Export ####
