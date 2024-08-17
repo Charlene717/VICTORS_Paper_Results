@@ -373,7 +373,72 @@ save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
 # save.image(paste0(Name_time_wo_micro,"_IntegrateAll.RData"))
 
 
+################################################################################
+################################################################################
+#### Summary table ####
 
+if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+
+create_boxplot_table <- function(data, metric, value_var) {
+  data %>%
+    filter(Metric == metric) %>%
+    group_by(Mislabel_CellType, Method) %>%
+    summarize(
+      Min = min(!!sym(value_var), na.rm = TRUE),
+      Q1 = quantile(!!sym(value_var), 0.25, na.rm = TRUE),
+      Median = median(!!sym(value_var), na.rm = TRUE),
+      Q3 = quantile(!!sym(value_var), 0.75, na.rm = TRUE),
+      Max = max(!!sym(value_var), na.rm = TRUE),
+      .groups = 'drop'
+    )
+}
+
+# # 调用函数
+# Same_platform_accuracy_Quartile <- create_boxplot_table(data_same_platform, "Accuracy", "Value")
+#
+# # 查看结果
+# print(Same_platform_accuracy_Quartile)
+
+
+
+# 生成同平台数据集的准确度表格
+try(TenX_platform_accuracy_Quartile <- create_boxplot_table(data_10x, "Accuracy", "Value"))
+try(Same_platform_accuracy_Quartile <- create_boxplot_table(data_same_platform, "Accuracy", "Value"))
+try(Cross_platform_accuracy_Quartile <- create_boxplot_table(data_cross_platform, "Accuracy", "Value"))
+
+# 保存 TenX_platform_accuracy_Quartile 为 TSV 文件
+try(write_tsv(TenX_platform_accuracy_Quartile, paste0(Name_ExportFolder, "/", Name_Export, "_10xPlatform.tsv")))
+
+# 保存 Same_platform_accuracy_Quartile 为 TSV 文件
+try(write_tsv(Same_platform_accuracy_Quartile, paste0(Name_ExportFolder, "/", Name_Export, "_SamePlatform.tsv")))
+
+# 保存 Cross_platform_accuracy_Quartile 为 TSV 文件
+try(write_tsv(Cross_platform_accuracy_Quartile, paste0(Name_ExportFolder, "/", Name_Export, "_CrossPlatform.tsv")))
+
+
+# 仅保留 Metric 为 "Accuracy" 的行
+try({
+  Same_platform_accuracy <- data_same_platform %>%
+    filter(Metric == "Accuracy")
+})
+
+try({
+  Cross_platform_accuracy <- data_cross_platform %>%
+    filter(Metric == "Accuracy")
+})
+
+
+
+# 移除环境中的其他对象
+rm(list=setdiff(ls(), c("Name_ExportFolder", "Name_Export",
+                        "Same_platform_accuracy", "Cross_platform_accuracy",
+                        "Same_platform_accuracy_Quartile","Cross_platform_accuracy_Quartile")))
+
+# Export RData
+save.image(paste0(Name_ExportFolder,"/", Name_Export,"_S.RData"))
+
+
+################################################################################
 ################################################################################
 #### Data frame for check ####
 selected_data_S <- selected_data %>%
