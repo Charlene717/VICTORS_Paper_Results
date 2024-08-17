@@ -170,9 +170,11 @@ create_combind_plot <- function(plots, ncol, title_data_10x, legend_data, color_
   legend_data <- data.frame(Method = names(color_legend), x = 1, y = 1)
   # custom_order <- c("singleR",  "scmap", "SCINA", "scPred",
   #                   "CHETAH","scClassify","Seurat","VICTOR" )
-  custom_order <- c("singleR","scPred","Seurat",
-                    "scmap","CHETAH","VICTOR",
-                    "SCINA", "scClassify")
+  # custom_order <- c("singleR","scPred","Seurat",
+  #                   "scmap","CHETAH","VICTOR",
+  #                   "SCINA", "scClassify")
+  custom_order <- c("singleR", "CHETAH", "scmap", "scClassify","SCINA", "Seurat",
+                    "scPred", "VICTOR" )
   legend_data$Method <- factor(legend_data$Method, levels = custom_order)
 
   # Create a ggplot object for the legend without actual points
@@ -182,8 +184,8 @@ create_combind_plot <- function(plots, ncol, title_data_10x, legend_data, color_
     theme_void() +
     theme(legend.position = "bottom",
           legend.title = element_text(size = 22),
-          legend.text = element_text(size = 22)) +
-    guides(color = guide_legend(title = legend_title, override.aes = list(shape = 15,size =6), ncol = 3))
+          legend.text = element_text(size = 24)) +
+    guides(color = guide_legend(title = legend_title, override.aes = list(shape = 15,size =6), ncol = 5))
 
   # 创建标题标签
   title_label <- ggdraw() + draw_plot_label(title_data_10x, size = 15, x = 0.5, hjust = 0.5)
