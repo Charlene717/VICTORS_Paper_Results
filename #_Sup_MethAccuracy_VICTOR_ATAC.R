@@ -114,7 +114,7 @@ subtitle_text <- paste0(
 
 # 绘制直方图
 ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Legend_Group)) +
-  geom_bar(stat = "identity", position = "dodge", size = 0.5, alpha = 0.85) +  # , color = "black" # 设置黑色边框和较小的粗细
+  geom_bar(stat = "identity", position = "dodge", size = 0.5, alpha = 0.95) +  # , color = "black" # 设置黑色边框和较小的粗细
   scale_fill_manual(values = color_legend) +
   theme_minimal(base_size = 20) +  # 设置基础字体大小
   theme(
