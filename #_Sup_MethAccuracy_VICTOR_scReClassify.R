@@ -114,9 +114,9 @@ ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Diagnostic_Tool)) +
     panel.border = element_rect(color = "black", fill = NA, size = 1.5)  # 增加黑色粗框
   ) +
   labs(
-    title = "Accuracy across different methods",
+    title = "Evaluation of Different Cell Annotation Results",
     subtitle = subtitle_text,  # 添加副标题
-    x = "Method", y = "Accuracy"
+    x = "", y = "Accuracy"
   ) + scale_y_continuous(limits = c(0,1)) -> Plot_MethAccuracy
 
 print(Plot_MethAccuracy)
