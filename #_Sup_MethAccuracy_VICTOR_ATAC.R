@@ -106,6 +106,12 @@ color_legend <- c(
   "Seurat" = "#2fa3a2"
 )
 
+# 提取副標題信息
+subtitle_text <- paste0(
+  "Query: ", "10x_pbmc_scATAC-seq",
+  "; Reference: ", "10x_pbmc_scRNA-seq"
+)
+
 # 绘制直方图
 ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Legend_Group)) +
   geom_bar(stat = "identity", position = "dodge", size = 0.5, alpha = 0.85) +  # , color = "black" # 设置黑色边框和较小的粗细
@@ -124,7 +130,8 @@ ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Legend_Group)) +
 
   labs(
     title = "Accuracy across different methods",
-    x = "Method", y = "Accuracy"
+    subtitle = subtitle_text,  # 添加副标题
+    x = "", y = "Accuracy"
   )   -> Plot_MethAccuracy
 
 print(Plot_MethAccuracy)
