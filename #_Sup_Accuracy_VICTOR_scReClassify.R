@@ -21,133 +21,34 @@ load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240722/Expo
 
 
 
+# 確保所需的包已安裝並加載
+if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+if(!require("ggplot2")) install.packages("ggplot2"); library(ggplot2)
+if(!require("stringr")) install.packages("stringr"); library(stringr)
 
+# 提取以 _ConfStat 結尾或 ConfStat_ 開頭的列名
+confstat_cols <- colnames(seuratObject_Sample@meta.data) %>%
+  str_subset("(_ConfStat$|^ConfStat_)")
 
+# 計算Accuracy (TP + TN) / (TP + TN + FP + FN)
+accuracy_data <- seuratObject_Sample@meta.data %>%
+  select(all_of(confstat_cols)) %>%
+  summarise(across(everything(), ~ mean((. == "TP" | . == "TN") & !is.na(.)) /
+                     mean(!is.na(.)), .names = "Accuracy_{col}")) %>%
+  pivot_longer(cols = everything(), names_to = "Method", values_to = "Accuracy") %>%
+  drop_na()  # 忽略NA值
 
+# 將列名轉化為更易讀的格式
+accuracy_data$Method <- gsub("_ConfStat|ConfStat_", "", accuracy_data$Method)
 
-#### DiagnosticMetrics ####
-source("#_FUN_Metrics_CellTypeAnnot.R")
+# 繪製直方圖
+ggplot(accuracy_data, aes(x = Method, y = Accuracy, fill = Method)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Accuracy across different methods",
+       x = "Method", y = "Accuracy")
 
-label_pairs <- list(
-  c("label_singleR_NoReject", "ReAnnot_scReClassify_label_singleR_NoReject"),
-  c("label_scmap_NoReject", "ReAnnot_scReClassify_label_scmap_NoReject"),
-  c("label_SCINA_NoReject", "ReAnnot_scReClassify_label_SCINA_NoReject"),
-  c("label_scPred_NoReject", "ReAnnot_scReClassify_label_scPred_NoReject"),
-  c("label_CHETAH_NoReject", "ReAnnot_scReClassify_label_CHETAH_NoReject"),
-  c("label_scClassify_NoReject", "ReAnnot_scReClassify_label_scClassify_NoReject"),
-  c("label_Seurat_NoReject", "ReAnnot_scReClassify_label_Seurat_NoReject")
-)
-
-
-# 定義一個函數來處理每個標籤對
-process_labels <- function(seuratObject, actual, no_reject, label) {
-  seuratObject <- FUN_Confusion_Matrix(seuratObject, actual, no_reject, label)
-  seuratObject <- FUN_CTAnnot_Accuracy(seuratObject, actual, no_reject)
-  return(seuratObject)
-}
-
-# 依次處理每個標籤對
-for (labels in label_pairs) {
-  try({ seuratObject_Sample <- process_labels(seuratObject_Sample, "Actual_Cell_Type", labels[1], labels[2]) })
-}
-
-
-##### Visualization #####
-
-#### Visualization CTAnnot label ####
-# 定義標籤名稱列表
-labels_diag_para <- c(
-  "label_singleR_ConfStat",
-  "label_scmap_ConfStat",
-  "label_SCINA_ConfStat",
-  "label_scPred_ConfStat",
-  "label_CHETAH_ConfStat",
-  "label_scClassify_ConfStat",
-  "label_Seurat_ConfStat"
-)
-
-# 繪製 UMAP 圖
-for (label in labels_diag_para) {
-  try({ DimPlot(seuratObject_Sample, reduction = "umap", group.by = label) })
-}
-
-source("Set_plot_color.R")
-source("PlotFun_Histogram.R")
-metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
-
-# 定義一個函數來處理每個標籤對
-plot_histograms <- function(metadata, actual, label, color_vector) {
-  list(
-    Count = plot_histogram(metadata, actual, label, Note_Title = "", position_type = "stack", color_vector = color_vector),
-    Prop = plot_histogram(metadata, actual, label, Note_Title = "", type = "proportion", color_vector = color_vector)
-  )
-}
-
-# 使用 lapply 来依次处理每个标签对
-plots <- lapply(labels_diag_para, function(label) {
-  try({
-    plot_histograms(metadata, 'Actual_Cell_Type', label, color_Class)
-  })
-})
-
-# plots <- lapply(labels_diag_para, function(label) plot_histograms(metadata, 'Actual_Cell_Type', label, color_Class))
-
-# 提取所有 Count 图
-plots_count <- lapply(plots, `[[`, "Count")
-gridExtra::grid.arrange(grobs = plots_count, ncol = 3)
-
-# 提取所有 Prop 图
-plots_prop <- lapply(plots, `[[`, "Prop")
-gridExtra::grid.arrange(grobs = plots_prop, ncol = 3)
-
-
-#### Visualization VICTOR ####
-# 定義標籤
-labels <- c(
-  "label_singleR_NoReject",
-  "label_scmap_NoReject",
-  "label_SCINA_NoReject",
-  "label_scPred_NoReject",
-  "label_CHETAH_NoReject",
-  "label_scClassify_NoReject",
-  "label_Seurat_NoReject"
-)
-
-# 迭代绘图
-plots_count_victor <- list()
-plots_prop_victor <- list()
-metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
-
-for (label in labels) {
-  try({
-    conf_stat_label <- paste0("ConfStat_VICTOR_", label)
-    plots <- plot_histograms(metadata, "Actual_Cell_Type", conf_stat_label, color_Class)
-    plots_count_victor <- c(plots_count_victor, list(plots[[1]]))
-    plots_prop_victor <- c(plots_prop_victor, list(plots[[2]]))
-  })
-}
-
-gridExtra::grid.arrange(grobs = plots_count_victor, ncol = 3)
-gridExtra::grid.arrange(grobs = plots_prop_victor, ncol = 3)
-
-
-#### Visualization scReClassify ####
-# 迭代绘图
-plots_count_scReClassify <- list()
-plots_prop_scReClassify <- list()
-metadata <- seuratObject_Sample@meta.data %>% as.data.frame()
-
-for (label in labels) {
-  try({
-    conf_stat_label <- paste0("ReAnnot_scReClassify_", label,"_ConfStat")
-    plots <- plot_histograms(metadata, "Actual_Cell_Type", conf_stat_label, color_Class)
-    plots_count_scReClassify <- c(plots_count_scReClassify, list(plots[[1]]))
-    plots_prop_scReClassify <- c(plots_prop_scReClassify, list(plots[[2]]))
-  })
-}
-
-gridExtra::grid.arrange(grobs = plots_count_scReClassify, ncol = 3)
-gridExtra::grid.arrange(grobs = plots_prop_scReClassify, ncol = 3)
 
 
 
