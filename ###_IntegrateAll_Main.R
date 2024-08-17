@@ -335,7 +335,7 @@ plots_final_Specificity_data_CrossPlat <- create_and_combine_metric_plots(data_c
 
 
 pdf(paste0(Name_ExportFolder, "/", Name_Export,"_MainResult.pdf"),
-    width = 22, height = 14)
+    width = 22, height = 14) #HLCA_core#  width = 30, height = 17) #scRNAseqPanc# width = 22, height = 13)
 
 print(plots_final_Accuracy_data_SamePlat)
 print(plots_final_Accuracy_data_CrossPlat)
