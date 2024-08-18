@@ -10,13 +10,15 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require("Seurat")) install.packages("Seurat"); library(Seurat)
 if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 
-source("PlotFun_Beautify_UMAP_Box.R")
+# source("PlotFun_Beautify_UMAP_Box.R")
+source("FUN_Plot_Beautify_UMAP_Box.R")
 source("Set_plot_color.R")
 
 
 #### Load Dataset ####
 Dataset <- "GSE132044_PBMC_MislabelB"
-load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
+# load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
+load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_Fig1_2024071601VAI_GSE132044_MisLabelB_Ref10xV2A/Fig1_2024071601VAI_GSE132044_MisLabelB_Fig1_Accuracy.RData")
 
 # Dataset <- "GSE132044_PBMC_MislabelNone"
 # load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelNone/20231221065523SVLJPQ_Multi/20231221065523SVLJPQ.RData")
@@ -45,19 +47,19 @@ df <- data.frame(`Actual_Cell_Type` = as.character(seuratObject$`Actual_Cell_Typ
 
 
 plots_Anno_CT_count1 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "singleR", Set_cluster_Title = "singleR",
-                                         Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_vector)
+                                         Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count1$UMAP_label2 + plots_Anno_CT_count1$UMAP_label + plots_Anno_CT_count1$Grouped_Barchart + plots_Anno_CT_count1$Percent_Stacked_Barchart)
 
 plots_Anno_CT_count2 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scmap", Set_cluster_Title = "scmap",
-                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_vector)
+                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count2$UMAP_label2 + plots_Anno_CT_count2$UMAP_label + plots_Anno_CT_count2$Grouped_Barchart + plots_Anno_CT_count2$Percent_Stacked_Barchart)
 
 plots_Anno_CT_count3 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "SCINA", Set_cluster_Title = "SCINA",
-                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_vector)
+                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count3$UMAP_label2 + plots_Anno_CT_count3$UMAP_label + plots_Anno_CT_count3$Grouped_Barchart + plots_Anno_CT_count3$Percent_Stacked_Barchart)
 
 plots_Anno_CT_count4 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scPred", Set_cluster_Title = "scPred",
-                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_vector)
+                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count4$UMAP_label2 + plots_Anno_CT_count4$UMAP_label + plots_Anno_CT_count4$Grouped_Barchart + plots_Anno_CT_count4$Percent_Stacked_Barchart)
 
 
