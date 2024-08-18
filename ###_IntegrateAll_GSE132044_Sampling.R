@@ -20,11 +20,13 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require("caret")) install.packages("caret"); library(caret)
 if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
 if(!require("readr")) install.packages("readr"); library(readr)
+if(!require("stringr")) install.packages("stringr"); library(stringr)
 
 #### Set parameter ####
 Dataset <- "GSE132044_B" # "GSE132044_CD4T" # "GSE132044_NK" # "GSE132044_B"
-Name_VaryCT <- "B cell"
 Figure_Note <- Dataset
+
+Name_VaryCT <- "B cell"
 Set_Tar_CellType <- Name_VaryCT # Name_VaryCT # NA ### # "CD4+ T cell" # "Natural killer cell" # "B cell" # NA
 
 
@@ -173,9 +175,10 @@ selected_data <- combined_data %>%
 source("###_IntegAll_Visualization.R")
 
 ## long_data for all metrics # 将数据重塑为长格式，包括所有的指标
-library(dplyr)
-library(tidyr)
-library(stringr)
+if(!require("tidyr")) install.packages("tidyr"); library(tidyr)
+if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+if(!require("stringr")) install.packages("stringr"); library(stringr)
+
 
 
 long_data <- selected_data %>%
@@ -308,6 +311,16 @@ accuracy_data <- accuracy_data %>%
 accuracy_data <- accuracy_data %>%
   mutate(Ref_Platform_Clean = factor(Ref_Platform_Clean, levels = unique(Ref_Platform_Clean[order(Ref_Platform_Num)])))
 
+if(Name_VaryCT == "B cell"){
+  if(!require("dplyr")) install.packages("dplyr"); library(dplyr)
+  if(!require("stringr")) install.packages("stringr"); library(stringr)
+
+  # 提取数字部分并保持因子类型
+  accuracy_data <- accuracy_data %>%
+    mutate(Ref_Platform_Clean = factor(str_extract(Ref_Platform_Clean, "\\d+"),
+                                       levels = str_extract(levels(Ref_Platform_Clean), "\\d+")))
+}
+
 
 
 # 動態生成標题和副標題
@@ -334,25 +347,33 @@ Plot_line <- ggplot(accuracy_data, aes(x = Ref_Platform_Clean, y = Value, color 
   scale_y_continuous(limits = c(0, 1)) +  # 设置y轴范围为0到1
   labs(title = title_text,
        subtitle = subtitle_text,
-       x = "Reference State",
+       # x = "Reference State",
+       x = paste0("Number of ",Set_Tar_CellType, " in Reference"),
        y = "Accuracy") +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
-    axis.text.y = element_text(size = 14),
-    axis.title = element_text(size = 16),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 17),
+    axis.text.y = element_text(size = 17),
+    axis.title = element_text(size = 18, face = "bold"),
+    panel.border = element_rect(color = "black", fill = NA, size = 1.5),  # 增加黑色粗框
     plot.title = element_text(size = 20, face = "bold"),
     plot.subtitle = element_text(size = 16),
-    legend.text = element_text(size = 14),
-    legend.title = element_text(size = 16)
-  )
+    legend.background = element_rect(fill = alpha("white", 0.8), color = NA),  # 添加白色透明背景
+    legend.box.background = element_rect(color = "gray", size = 1),  # 给图例框添加灰色边框
+    # legend.title = element_text(size = 16),
+    legend.title = element_blank(),  # 移除图例标题)
+    legend.text = element_text(size = 14)
+    )+
+  guides(color = guide_legend(nrow =  8),  # 设置图例为两列
+         linetype = guide_legend(ncol = 2),
+         size = guide_legend(ncol = 2))
 
 Plot_line
 
 
 #### Export ####
 pdf(paste0(Name_ExportFolder, "/", Name_Export,"_MainResult.pdf"),
-    width = 11, height = 7)
+    width = 13, height = 7)
 
 print(Plot_line)
 
