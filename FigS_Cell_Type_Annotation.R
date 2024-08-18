@@ -16,18 +16,28 @@ source("Set_plot_color.R")
 
 
 #### Load Dataset ####
-Dataset <- "GSE132044_PBMC_MislabelB"
-# load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
-load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_Fig1_2024071601VAI_GSE132044_MisLabelB_Ref10xV2A/Fig1_2024071601VAI_GSE132044_MisLabelB_Fig1_Accuracy.RData")
+Dataset <- "GSE132044_PBMC_MislabelB" # "GSE132044_PBMC_MislabelB" # GSE132044_PBMC_MislabelNone"
 
-# Dataset <- "GSE132044_PBMC_MislabelNone"
-# load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelNone/20231221065523SVLJPQ_Multi/20231221065523SVLJPQ.RData")
+if(Dataset == "GSE132044_PBMC_MislabelB"){
+  # load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
+  load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_Fig1_2024071601VAI_GSE132044_MisLabelB_Ref10xV2A/Fig1_2024071601VAI_GSE132044_MisLabelB_Fig1_Accuracy.RData")
 
-# Dataset <- "GSE132044_PBMC_MislabelCD16Mono"
-# load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelCD16Mono/20231215144125WUXTQO_Multi/20231215144125WUXTQO.RData")
+}else(Dataset == "GSE132044_PBMC_MislabelNone"){
+  # load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelNone/20231221065523SVLJPQ_Multi/20231221065523SVLJPQ.RData")
+}
 
 seuratObject <- seuratObject_Sample
 seuratObject@meta.data$`Actual Cell Type` %>% unique()
+
+#### Set parameter ####
+Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = ""))
+
+Name_Export <- paste0(Name_FileID, "_", Dataset)
+
+Name_ExportFolder <- paste0("Export_Annotation_",Name_Export)
+
+if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 
 
 #### Extract Annotation ####
@@ -35,6 +45,10 @@ seuratObject@meta.data$singleR <- seuratObject@meta.data$label_singleR
 seuratObject@meta.data$scmap <- seuratObject@meta.data$label_scmap
 seuratObject@meta.data$SCINA <- seuratObject@meta.data$label_SCINA
 seuratObject@meta.data$scPred <- seuratObject@meta.data$label_scPred
+seuratObject@meta.data$CHETAH <- seuratObject@meta.data$label_CHETAH
+seuratObject@meta.data$scClassify <- seuratObject@meta.data$label_scClassify
+seuratObject@meta.data$Seurat <- seuratObject@meta.data$label_Seurat
+
 
 colnames(seuratObject@meta.data) <- gsub(" ", "_",colnames(seuratObject@meta.data))
 
@@ -43,6 +57,9 @@ df <- data.frame(`Actual_Cell_Type` = as.character(seuratObject$`Actual_Cell_Typ
                  scmap = as.character(seuratObject$`scmap`),
                  SCINA = as.character(seuratObject$`SCINA`),
                  scPred = as.character(seuratObject$`scPred`),
+                 CHETAH = as.character(seuratObject$`CHETAH`),
+                 scClassify = as.character(seuratObject$`scClassify`),
+                 Seurat = as.character(seuratObject$`Seurat`),
                  `seurat_clusters` = as.character(seuratObject$`seurat_clusters`))
 
 
@@ -62,6 +79,18 @@ plots_Anno_CT_count4 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scPre
                                           Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count4$UMAP_label2 + plots_Anno_CT_count4$UMAP_label + plots_Anno_CT_count4$Grouped_Barchart + plots_Anno_CT_count4$Percent_Stacked_Barchart)
 
+plots_Anno_CT_count5 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "CHETAH", Set_cluster_Title = "CHETAH",
+                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
+print(plots_Anno_CT_count5$UMAP_label2 + plots_Anno_CT_count5$UMAP_label + plots_Anno_CT_count5$Grouped_Barchart + plots_Anno_CT_count5$Percent_Stacked_Barchart)
+
+plots_Anno_CT_count6 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scClassify", Set_cluster_Title = "scClassify",
+                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
+print(plots_Anno_CT_count6$UMAP_label2 + plots_Anno_CT_count6$UMAP_label + plots_Anno_CT_count6$Grouped_Barchart + plots_Anno_CT_count6$Percent_Stacked_Barchart)
+
+plots_Anno_CT_count7 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "Seurat", Set_cluster_Title = "Seurat",
+                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
+print(plots_Anno_CT_count7$UMAP_label2 + plots_Anno_CT_count7$UMAP_label + plots_Anno_CT_count7$Grouped_Barchart + plots_Anno_CT_count7$Percent_Stacked_Barchart)
+
 
 ## Combine all plots
 plots_UMAP.lt <- list()
@@ -69,27 +98,29 @@ plots_UMAP.lt[["UMAP1"]] <- plots_Anno_CT_count1$UMAP_label
 plots_UMAP.lt[["UMAP2"]] <- plots_Anno_CT_count2$UMAP_label
 plots_UMAP.lt[["UMAP3"]] <- plots_Anno_CT_count3$UMAP_label
 plots_UMAP.lt[["UMAP4"]] <- plots_Anno_CT_count4$UMAP_label
+plots_UMAP.lt[["UMAP5"]] <- plots_Anno_CT_count5$UMAP_label
+plots_UMAP.lt[["UMAP6"]] <- plots_Anno_CT_count6$UMAP_label
+plots_UMAP.lt[["UMAP7"]] <- plots_Anno_CT_count7$UMAP_label
 
 plots_Percent.lt <- list()
 plots_Percent.lt[["Percent1"]] <- plots_Anno_CT_count1$Percent_Stacked_Barchart+ theme(legend.position = "none")
 plots_Percent.lt[["Percent2"]] <- plots_Anno_CT_count2$Percent_Stacked_Barchart+ theme(legend.position = "none")
 plots_Percent.lt[["Percent3"]] <- plots_Anno_CT_count3$Percent_Stacked_Barchart+ theme(legend.position = "none")
 plots_Percent.lt[["Percent4"]] <- plots_Anno_CT_count4$Percent_Stacked_Barchart+ theme(legend.position = "none")
+plots_Percent.lt[["Percent5"]] <- plots_Anno_CT_count5$Percent_Stacked_Barchart+ theme(legend.position = "none")
+plots_Percent.lt[["Percent6"]] <- plots_Anno_CT_count6$Percent_Stacked_Barchart+ theme(legend.position = "none")
+plots_Percent.lt[["Percent7"]] <- plots_Anno_CT_count7$Percent_Stacked_Barchart+ theme(legend.position = "none")
 
-combined_UMAP_plot <- plot_grid(plotlist = plots_UMAP.lt, ncol = 4)
+
+
+combined_UMAP_plot <- plot_grid(plotlist = plots_UMAP.lt, ncol = 7)
 print(combined_UMAP_plot)
 
-combined_Percent_plot <- plot_grid(plotlist = plots_Percent.lt, ncol = 4)
+combined_Percent_plot <- plot_grid(plotlist = plots_Percent.lt, ncol = 7)
 print(combined_Percent_plot)
 
 
-## Export
-Name_ExportFolder <- "Export_Annotation"
-
-Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
-Name_Export <- paste0(Name_time_wo_micro, "_", Dataset)
-
-if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
+#### Export ####
 pdf(paste0(Name_ExportFolder, "/", Name_Export, "_Annotation.pdf"),
     width = 15, height = 7)
 print(combined_UMAP_plot)
