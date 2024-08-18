@@ -120,6 +120,62 @@ combined_Percent_plot <- plot_grid(plotlist = plots_Percent.lt, ncol = 7)
 print(combined_Percent_plot)
 
 
+## 精簡整合圖
+# 对 UMAP 图进行主题调整
+plots_UMAP.lt <- lapply(seq_along(plots_UMAP.lt), function(i) {
+  plot <- plots_UMAP.lt[[i]]
+
+  # 对于除第一张图外的图，移除 y 轴标题
+  if (i != 1) {
+    plot <- plot + theme(axis.title.y = element_blank())
+  }
+
+  # 对所有图移除 x 轴标题和刻度，移除 y 轴刻度
+  plot <- plot + theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()  # 确保移除 y 轴刻度
+  )
+
+  return(plot)
+})
+
+# 合并 UMAP 图，确保第一张图和其他图大小一致
+combined_UMAP_plot <- plot_grid(plotlist = plots_UMAP.lt, ncol = 7, align = 'hv')
+print(combined_UMAP_plot)
+
+
+
+# 对 Percent 图进行主题调整并修改标题
+plots_Percent.lt <- lapply(seq_along(plots_Percent.lt), function(i) {
+  plot <- plots_Percent.lt[[i]]
+
+  # 修改标题，去掉 "on Actual_Cell_Type"
+  plot <- plot + labs(title = gsub(" on Actual_Cell_Type", "", plot$labels$title))
+
+  # 对于除第一张图外的图，移除 y 轴标题和刻度
+  if (i != 1) {
+    plot <- plot + theme(axis.title.y = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank())
+  }
+
+  # 仅移除 x 轴标题，保留原本的 x 轴刻度和标签
+  plot <- plot + theme(axis.title.x = element_blank())
+
+  return(plot)
+})
+
+# 合并 Percent 图，确保所有图大小一致
+combined_Percent_plot <- plot_grid(plotlist = plots_Percent.lt, ncol = 7, align = 'hv')
+print(combined_Percent_plot)
+
+
+
+
+
+
+
 #### Export ####
 pdf(paste0(Name_ExportFolder, "/", Name_Export, "_Annotation.pdf"),
     width = 15, height = 7)
