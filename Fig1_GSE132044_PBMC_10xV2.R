@@ -195,7 +195,7 @@ color_CellType_Ref <- list(
 plot_accuracy_single <- function(accuracy_data, method, dataset) {
   plot <- ggplot(accuracy_data[accuracy_data$Method == method, ], aes(x = Actual_Cell_Type, y = Accuracy, fill = Actual_Cell_Type)) +
     geom_bar(stat = "identity", color = "black", alpha = 0.8) +  # 设置透明度
-    geom_text(aes(label = sprintf("%.3f", Accuracy)), vjust = 0.5, hjust = 1, size = 6, angle = 90) +
+    geom_text(aes(label = sprintf("%.2f", Accuracy)), vjust = 0.5, hjust = 1, size = 6, angle = 90) +
     theme_minimal() +
     theme(text = element_text(size = 18, face = "bold"),
           axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
