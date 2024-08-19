@@ -10,9 +10,15 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require('dplyr')) {install.packages('dplyr'); library(dplyr)}
 if(!require('readr')) {install.packages('readr'); library(readr)}
 
-# 讀取資料
-file_path <- "D:\\Dropbox\\##_GitHub\\###_VUMC\\VICTORS_Paper_Results\\#_Revision_20240818_Fin\\Figure 3 GSE132044 Within-platform\\IntegrateAll_20240817164107OSN_GSE132044_SamePlatform.tsv"
-data <- read_tsv(file_path)
+Set_Dataset = "GSE132044_SamePlatform"
+## Load data
+if(Set_Dataset == "GSE132044_SamePlatform"){
+  file_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure 3 GSE132044 Within-platform/"
+  file_Name <- "IntegrateAll_20240817164107OSN_GSE132044_SamePlatform.tsv"
+}
+
+
+data <- read_tsv( paste0(file_path, file_Name))
 
 # 計算VICTOR對上對應方法的Median Accuracy差異並轉換為百分比形式
 victor_diff <- data %>%
@@ -50,3 +56,14 @@ final_diff <- bind_rows(max_diff, min_diff) %>%
 
 # 顯示結果
 final_diff
+
+
+#### Export ####
+# 將 victor_diff 輸出為 TSV 檔案
+write_tsv(victor_diff, paste0(file_path,"Victor_Median_Accuracy_Diff.tsv"))
+
+# 將 final_diff 輸出為 TSV 檔案
+write_tsv(final_diff,paste0(file_path,"Victor_Median_Accuracy_Diff_Range.tsv"))
+
+
+
