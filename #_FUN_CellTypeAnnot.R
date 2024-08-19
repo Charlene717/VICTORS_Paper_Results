@@ -341,6 +341,8 @@ Run_Seurat_Annot <- function(Query_Seurat, Reference_Seurat,
                              Set_RefAnnoCol = "Actual_Cell_Type",
                              Set_NumPC = 50, ...) {
   # Mapping and annotating query datasets # https://satijalab.org/seurat/articles/integration_mapping
+  # Ref: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8238499/
+  # Ref: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6687398/
   # Load necessary packages
   if (!requireNamespace("Seurat", quietly = TRUE)) install.packages("Seurat"); library(Seurat)
   if (!requireNamespace("tidyverse", quietly = TRUE)) install.packages("tidyverse"); library(tidyverse)
