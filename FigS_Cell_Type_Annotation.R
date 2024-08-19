@@ -17,6 +17,8 @@ source("Set_plot_color.R")
 
 #### Load Dataset ####
 Dataset <- "GSE132044_PBMC_MislabelB" # "GSE132044_PBMC_MislabelB" # GSE132044_PBMC_MislabelNone"
+AnnotType <- "NoReject"
+
 
 if(Dataset == "GSE132044_PBMC_MislabelB"){
   # load("D:/Dropbox/###_VUMC/##_Research/VICTORS/20231229_Figures/PBMC_GSE132044/Export_GSE132044_MislabelB cell/20231212125506KYHDNV_Multi/20231212125506KYHDNV.RData")
@@ -35,7 +37,7 @@ seuratObject@meta.data$`Actual Cell Type` %>% unique()
 Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 Name_FileID <- paste0(Name_time_wo_micro, paste0(sample(LETTERS, 3), collapse = ""))
 
-Name_Export <- paste0(Name_FileID, "_", Dataset)
+Name_Export <- paste0(Name_FileID, "_", Dataset,"_",AnnotType)
 
 Name_ExportFolder <- paste0("Export_Annotation_",Name_Export)
 
@@ -43,13 +45,25 @@ if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create n
 
 
 #### Extract Annotation ####
-seuratObject@meta.data$singleR <- seuratObject@meta.data$label_singleR
-seuratObject@meta.data$scmap <- seuratObject@meta.data$label_scmap
-seuratObject@meta.data$SCINA <- seuratObject@meta.data$label_SCINA
-seuratObject@meta.data$scPred <- seuratObject@meta.data$label_scPred
-seuratObject@meta.data$CHETAH <- seuratObject@meta.data$label_CHETAH
-seuratObject@meta.data$scClassify <- seuratObject@meta.data$label_scClassify
-seuratObject@meta.data$Seurat <- seuratObject@meta.data$label_Seurat
+if(AnnotType=="NoReject"){
+  seuratObject@meta.data$singleR <- seuratObject@meta.data$label_singleR_NoReject
+  seuratObject@meta.data$scmap <- seuratObject@meta.data$label_scmap_NoReject
+  seuratObject@meta.data$SCINA <- seuratObject@meta.data$label_SCINA_NoReject
+  seuratObject@meta.data$scPred <- seuratObject@meta.data$label_scPred_NoReject
+  seuratObject@meta.data$CHETAH <- seuratObject@meta.data$label_CHETAH_NoReject
+  seuratObject@meta.data$scClassify <- seuratObject@meta.data$label_scClassify_NoReject
+  seuratObject@meta.data$Seurat <- seuratObject@meta.data$label_Seurat_NoReject
+
+}else{
+  seuratObject@meta.data$singleR <- seuratObject@meta.data$label_singleR
+  seuratObject@meta.data$scmap <- seuratObject@meta.data$label_scmap
+  seuratObject@meta.data$SCINA <- seuratObject@meta.data$label_SCINA
+  seuratObject@meta.data$scPred <- seuratObject@meta.data$label_scPred
+  seuratObject@meta.data$CHETAH <- seuratObject@meta.data$label_CHETAH
+  seuratObject@meta.data$scClassify <- seuratObject@meta.data$label_scClassify
+  seuratObject@meta.data$Seurat <- seuratObject@meta.data$label_Seurat
+
+}
 
 
 colnames(seuratObject@meta.data) <- gsub(" ", "_",colnames(seuratObject@meta.data))
@@ -65,31 +79,31 @@ df <- data.frame(`Actual_Cell_Type` = as.character(seuratObject$`Actual_Cell_Typ
                  `seurat_clusters` = as.character(seuratObject$`seurat_clusters`))
 
 
-plots_Anno_CT_count1 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "singleR", Set_cluster_Title = "singleR",
+plots_Anno_CT_count1 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "singleR", Set_cluster_Title = paste0("singleR"," ",AnnotType),
                                          Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count1$UMAP_label2 + plots_Anno_CT_count1$UMAP_label + plots_Anno_CT_count1$Grouped_Barchart + plots_Anno_CT_count1$Percent_Stacked_Barchart)
 
-plots_Anno_CT_count2 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scmap", Set_cluster_Title = "scmap",
+plots_Anno_CT_count2 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scmap", Set_cluster_Title = paste0("scmap"," ",AnnotType),
                                           Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count2$UMAP_label2 + plots_Anno_CT_count2$UMAP_label + plots_Anno_CT_count2$Grouped_Barchart + plots_Anno_CT_count2$Percent_Stacked_Barchart)
 
-plots_Anno_CT_count3 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "SCINA", Set_cluster_Title = "SCINA",
+plots_Anno_CT_count3 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "SCINA", Set_cluster_Title = paste0("SCINA"," ",AnnotType),
                                           Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count3$UMAP_label2 + plots_Anno_CT_count3$UMAP_label + plots_Anno_CT_count3$Grouped_Barchart + plots_Anno_CT_count3$Percent_Stacked_Barchart)
 
-plots_Anno_CT_count4 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scPred", Set_cluster_Title = "scPred",
+plots_Anno_CT_count4 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scPred", Set_cluster_Title = paste0("scPred"," ",AnnotType),
                                           Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count4$UMAP_label2 + plots_Anno_CT_count4$UMAP_label + plots_Anno_CT_count4$Grouped_Barchart + plots_Anno_CT_count4$Percent_Stacked_Barchart)
 
-plots_Anno_CT_count5 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "CHETAH", Set_cluster_Title = "CHETAH",
+plots_Anno_CT_count5 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "CHETAH", Set_cluster_Title = paste0("CHETAH"," ",AnnotType),
                                           Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count5$UMAP_label2 + plots_Anno_CT_count5$UMAP_label + plots_Anno_CT_count5$Grouped_Barchart + plots_Anno_CT_count5$Percent_Stacked_Barchart)
 
-plots_Anno_CT_count6 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scClassify", Set_cluster_Title = "scClassify",
+plots_Anno_CT_count6 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "scClassify", Set_cluster_Title = paste0("scClassify"," ",AnnotType),
                                           Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count6$UMAP_label2 + plots_Anno_CT_count6$UMAP_label + plots_Anno_CT_count6$Grouped_Barchart + plots_Anno_CT_count6$Percent_Stacked_Barchart)
 
-plots_Anno_CT_count7 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "Seurat", Set_cluster_Title = "Seurat",
+plots_Anno_CT_count7 <- Fun_Plot_UMAP_Bar(df, seuratObject, Set_cluster = "Seurat", Set_cluster_Title = paste0("Seurat"," ",AnnotType),
                                           Set_cluster2 = "Actual_Cell_Type", Set_cluster_Title2= "Actual_Cell_Type", palette = "Set3", legend = FALSE, color_vector = color_CellType_Ref)
 print(plots_Anno_CT_count7$UMAP_label2 + plots_Anno_CT_count7$UMAP_label + plots_Anno_CT_count7$Grouped_Barchart + plots_Anno_CT_count7$Percent_Stacked_Barchart)
 
@@ -261,7 +275,7 @@ print(legend_only_plot)
 
 #### Export ####
 pdf(paste0(Name_ExportFolder, "/", Name_Export, "_Annotation.pdf"),
-    width = 15, height = 7)
+    width = 17, height = 9)
 print(combined_UMAP_plot)
 print(combined_Percent_plot)
 print(legend_only_plot)
