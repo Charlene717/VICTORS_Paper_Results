@@ -13,8 +13,15 @@ if(!require("tidyr")) install.packages("tidyr"); library(tidyr)
 if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 
 #### Load data ####
-load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/20240715161840IVL_GSE132044_IntegrateAll.RData")
-folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export/"
+Set_Dataset <- "GSE132044_SamePlatform"
+
+# load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/20240715161840IVL_GSE132044_IntegrateAll.RData")
+
+if (Set_Dataset %in% c("GSE132044_SamePlatform", "GSE132044_CrossPlatform")) {
+  folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/"
+  load(paste0(folder_path, "20240715161840IVL_GSE132044_IntegrateAll.RData"))
+}
+
 
 all_data <- combined_data
 all_data_ori <- all_data
@@ -329,12 +336,14 @@ filtered_dataframe_FP <- combined_data %>% filter(Class == 'FP')
 # Name_Note <- paste0(Name_Note,"_",Set_Obs_CellType,Set_Title_End)
 Name_Note <- paste0(Set_Method,"_",max_value_fileID,"_",Set_Obs_CellType,Set_Title_End)
 
-Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
+# Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
 Name_ExportFolder <- folder_path # Name_ExportFolder <- paste0("Export_IntegAll")
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 # Name_ExportFolder <- paste0(Name_ExportFolder,"/",Name_time_wo_micro)
 # if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
-Name_Export <- paste0(Name_time_wo_micro,"_",Name_Note)
+
+# Name_Export <- paste0(Name_time_wo_micro,"_",Name_Note)
+Name_Export <- paste0(Name_Note)
 
 
 ## Export PDF
