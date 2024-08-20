@@ -116,21 +116,40 @@ Summary.df2 <- lapply(names(method_mapping), function(method) {
 # head(Summary.df2)
 
 
-# # 设置 Victors_Method 和 Set_Method
-# Victors_Method <- "singleR_VICTOR"  # 替换为您的实际 VICTORS 方法名称
-# Set_Method <- "singleR"  # 替换为您的实际 Set 方法名称
+# # # 设置 Victors_Method 和 Set_Method
+# # Victors_Method <- "singleR_VICTOR"  # 替换为您的实际 VICTORS 方法名称
+# # Set_Method <- "singleR"  # 替换为您的实际 Set 方法名称
+#
+# # # 计算 Victors_Method 和 Set_Method 之间的差异，并找出最大的差异对应的 FileID 和 Actual_Cell_Type
+# # max_diff <- Summary.df2 %>%
+# #   filter(Method %in% c(Victors_Method, Set_Method)) %>%
+# #   pivot_wider(names_from = Method, values_from = Value) %>%
+# #   mutate(Difference = !!sym(Victors_Method) - !!sym(Set_Method)) %>%
+# #   arrange(desc(Difference)) %>%
+# #   slice(1) %>%
+# #   select(FileID, Actual_Cell_Type, Difference)
+#
+# # # 显示结果
+# # max_diff
 
-# 计算 Victors_Method 和 Set_Method 之间的差异，并找出最大的差异对应的 FileID 和 Actual_Cell_Type
+# 计算每个 Actual_Cell_Type 在 TargetCell_data 中的出现次数
+type_count <- TargetCell_data %>%
+  group_by(Actual_Cell_Type) %>%
+  summarise(Count = n())
+
+# 计算 Victors_Method 和 Set_Method 之间的差异，并找到差异最大且考虑数量的情况
 max_diff <- Summary.df2 %>%
   filter(Method %in% c(Victors_Method, Set_Method)) %>%
   pivot_wider(names_from = Method, values_from = Value) %>%
   mutate(Difference = !!sym(Victors_Method) - !!sym(Set_Method)) %>%
-  arrange(desc(Difference)) %>%
+  left_join(type_count, by = "Actual_Cell_Type") %>%
+  arrange(desc(Difference), desc(Count)) %>%
   slice(1) %>%
-  select(FileID, Actual_Cell_Type, Difference)
+  select(FileID, Actual_Cell_Type, Difference, Count)
 
-# # 显示结果
-# max_diff
+# 显示结果
+max_diff
+
 
 max_value_fileID <- max_diff$FileID
 
