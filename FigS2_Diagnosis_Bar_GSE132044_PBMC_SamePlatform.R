@@ -20,10 +20,10 @@ Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
 Set_RmUnassign <- FALSE
 
 # 设置参数以指定要比较的方法
-Set_Method <- "singleR" # 示例，可以改为其他方法，如"singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
+Set_Method <- "singleR" # "singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
 Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
 
-Set_Dataset <- "GSE132044_SamePlatform" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc"
+Set_Dataset <- "scRNAseqPanc" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc"
 
 #### Load data ####
 
@@ -33,6 +33,8 @@ if (Set_Dataset %in% c("GSE132044_SamePlatform", "GSE132044_CrossPlatform")) {
   folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/"
   load(paste0(folder_path, "20240715161840IVL_GSE132044_IntegrateAll.RData"))
 }else if(Set_Dataset == "scRNAseqPanc" ){
+  folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715165652CTZ_scRNAseqPanc/"
+  load(paste0(folder_path, "20240715165652CTZ_scRNAseqPanc_IntegrateAll.RData"))
 
 }
 
