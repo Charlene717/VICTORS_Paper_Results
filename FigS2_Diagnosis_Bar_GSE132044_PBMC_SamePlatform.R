@@ -86,9 +86,12 @@ if(Set_Ref_State == "with" ){
     filter(Mislabel_CellType == "None") %>%
     filter(Actual_Cell_Type == Set_Obs_CellType)
 } else {
+  # TargetCell_data <- selected_data %>%
+  #   filter(Mislabel_CellType == Set_Obs_CellType) %>%
+  #   filter(Actual_Cell_Type == Set_Obs_CellType)
+
   TargetCell_data <- selected_data %>%
-    filter(Mislabel_CellType == Set_Obs_CellType) %>%
-    filter(Actual_Cell_Type == Set_Obs_CellType)
+    filter(Mislabel_CellType == Set_Obs_CellType)
 }
 
 
@@ -100,16 +103,65 @@ min_value_fileID <- Summary.df %>%
   slice(1) %>%
   pull(FileID)
 
-# # 計算 Victors_Method - Set_Method 最大的 FileID
-# min_value_fileID <- Summary.df %>%
-#   filter(Metric == "Accuracy", Mislabel_CellType %in% Set_Obs_CellType) %>%
-#   group_by(FileID) %>%
-#   summarise(Value_Diff = max(ifelse(Method == Victors_Method, Value, NA), na.rm = TRUE) -
-#               max(ifelse(Method == Set_Method, Value, NA), na.rm = TRUE)) %>%
-#   arrange(desc(Value_Diff)) %>%
-#   slice(1) %>%
-#   pull(FileID)
+################################################################################
+library(dplyr)
+library(tidyr)  # for pivot_wider
 
+# 创建方法的映射，用于转换 Method 名称
+method_mapping <- c(
+  "label_singleR_ConfStat" = "singleR",
+  "label_scmap_ConfStat" = "scmap",
+  "label_SCINA_ConfStat" = "SCINA",
+  "label_scPred_ConfStat" = "scPred",
+  "label_CHETAH_ConfStat" = "CHETAH",
+  "label_scClassify_ConfStat" = "scClassify",
+  "label_Seurat_ConfStat" = "Seurat",
+  "ConfStat_VICTOR_label_singleR_NoReject" = "singleR_VICTOR",
+  "ConfStat_VICTOR_label_scmap_NoReject" = "scmap_VICTOR",
+  "ConfStat_VICTOR_label_SCINA_NoReject" = "SCINA_VICTOR",
+  "ConfStat_VICTOR_label_scPred_NoReject" = "scPred_VICTOR",
+  "ConfStat_VICTOR_label_CHETAH_NoReject" = "CHETAH_VICTOR",
+  "ConfStat_VICTOR_label_scClassify_NoReject" = "scClassify_VICTOR",
+  "ConfStat_VICTOR_label_Seurat_NoReject" = "Seurat_VICTOR"
+)
+
+# 计算 Accuracy 并合并到 Summary.df2
+Summary.df2 <- lapply(names(method_mapping), function(method) {
+  TargetCell_data %>%
+    group_by(FileID, Actual_Cell_Type) %>%
+    summarise(
+      Value = sum(get(method) %in% c("TP", "TN"), na.rm = TRUE) /
+        sum(get(method) %in% c("TP", "TN", "FP", "FN"), na.rm = TRUE),
+      Method = method_mapping[[method]]
+    )
+}) %>%
+  bind_rows() %>%
+  ungroup()
+
+
+# # 检查结果
+# head(Summary.df2)
+
+
+# 设置 Victors_Method 和 Set_Method
+Victors_Method <- "singleR_VICTOR"  # 替换为您的实际 VICTORS 方法名称
+Set_Method <- "singleR"  # 替换为您的实际 Set 方法名称
+
+# 计算 Victors_Method 和 Set_Method 之间的差异，并找出最大的差异对应的 FileID 和 Actual_Cell_Type
+max_diff <- Summary.df2 %>%
+  filter(Method %in% c(Victors_Method, Set_Method)) %>%
+  pivot_wider(names_from = Method, values_from = Value) %>%
+  mutate(Difference = !!sym(Victors_Method) - !!sym(Set_Method)) %>%
+  arrange(desc(Difference)) %>%
+  slice(1) %>%
+  select(FileID, Actual_Cell_Type, Difference)
+
+# # 显示结果
+# max_diff
+
+min_value_fileID <- max_diff$FileID
+
+################################################################################
 
 # 第四步：使用FileID筛选TargetCell_data
 TargetCell_data <- TargetCell_data %>%
@@ -161,7 +213,7 @@ prepare_data <- function(data, method, diag_methods, Set_CellType, Set_CellType_
   }else{
     data %>%
       filter(Actual_Cell_Type == Set_CellType) %>%
-      filter(Mislabel_CellType == Set_CellType) %>%
+      # filter(Mislabel_CellType == Set_CellType) %>%
       select(Predicted_Cell_Type = {{method}}, all_of(diag_methods)) %>%
       pivot_longer(cols = -Predicted_Cell_Type, names_to = "Diag_Method", values_to = "Class") %>%
       mutate(Method_Type = as.character(substitute(method)))
@@ -169,10 +221,10 @@ prepare_data <- function(data, method, diag_methods, Set_CellType, Set_CellType_
 
 }
 
-singleR_data <- prepare_data(TargetCell_data, label_singleR_NoReject, c("label_singleR_ConfStat", "ConfStat_VICTOR_label_singleR_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
-scmap_data <- prepare_data(TargetCell_data, label_scmap_NoReject, c("label_scmap_ConfStat", "ConfStat_VICTOR_label_scmap_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
-SCINA_data <- prepare_data(TargetCell_data, label_SCINA_NoReject, c("label_SCINA_ConfStat", "ConfStat_VICTOR_label_SCINA_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
-scPred_data <- prepare_data(TargetCell_data, label_scPred_NoReject, c("label_scPred_ConfStat", "ConfStat_VICTOR_label_scPred_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+singleR_data <- prepare_data(TargetCell_data, label_singleR_NoReject, c("label_singleR_ConfStat", "ConfStat_VICTOR_label_singleR_NoReject"), Set_CellType = max_diff$Actual_Cell_Type, Set_CellType_Reverse = Set_Ref_State)
+scmap_data <- prepare_data(TargetCell_data, label_scmap_NoReject, c("label_scmap_ConfStat", "ConfStat_VICTOR_label_scmap_NoReject"), Set_CellType = max_diff$Actual_Cell_Type, Set_CellType_Reverse = Set_Ref_State)
+SCINA_data <- prepare_data(TargetCell_data, label_SCINA_NoReject, c("label_SCINA_ConfStat", "ConfStat_VICTOR_label_SCINA_NoReject"), Set_CellType = max_diff$Actual_Cell_Type, Set_CellType_Reverse = Set_Ref_State)
+scPred_data <- prepare_data(TargetCell_data, label_scPred_NoReject, c("label_scPred_ConfStat", "ConfStat_VICTOR_label_scPred_NoReject"), Set_CellType = max_diff$Actual_Cell_Type, Set_CellType_Reverse = Set_Ref_State)
 
 # Combine all method data
 combined_data <- bind_rows(singleR_data, scmap_data, SCINA_data, scPred_data) %>%
