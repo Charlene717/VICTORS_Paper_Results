@@ -19,9 +19,9 @@ if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
 Set_RmUnassign <- FALSE
 
-Set_TopN <- 4  # 设置为 2, 3 或其他值，获取对应名次
+Set_TopN <- 1
 # 设置参数以指定要比较的方法
-Set_Method <- "Seurat" # "singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
+Set_Method <- "singleR" # "singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
 Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
 
 Set_Dataset <- "scRNAseqPanc"
@@ -365,7 +365,18 @@ color_Class <- list(
 
 # 设定y轴的范围，这里假设为0到最大值的一定比例或具体数值
 y_min <- 0
-y_max <- 717 # 示例，根据你的数据调整
+# y_max <- 717 # 示例，根据你的数据调整
+
+if (Set_Dataset %in% c("GSE132044_SamePlatform", "GSE132044_CrossPlatform")) {
+  y_max <- 717
+}else if(Set_Dataset == "scRNAseqPanc" ){
+  y_max <- 326
+}else if(Set_Dataset == "HLCA_core" ){
+  y_max <- 717
+
+}
+
+
 
 ## Plot a Bar Chart
 library(ggplot2)
