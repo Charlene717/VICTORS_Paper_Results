@@ -13,11 +13,16 @@ if(!require("tidyr")) install.packages("tidyr"); library(tidyr)
 if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 
 #### Load data ####
-load("D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Fig3_Fig4_GSE132044_PBMC/20240213020617_GSE132044_Sum_SVDLRglmnet_ROC.RData")
-folder_path <- "D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/FigS2_GSE132044_PBMC_SamePlatform_Bar/"
+# load("D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/Fig3_Fig4_GSE132044_PBMC/20240213020617_GSE132044_Sum_SVDLRglmnet_ROC.RData")
+# folder_path <- "D:/Dropbox/###_VUMC/##_Research/VICTORS/Figures/FigS2_GSE132044_PBMC_SamePlatform_Bar/"
+
+load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/20240715161840IVL_GSE132044_IntegrateAll.RData")
+folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export/"
 
 # all_data$Actual_Cell_Type %>% unique()
+all_data <- combined_data
 all_data_ori <- all_data
+# all_data <- all_data %>%  filter(Mislabel_CellType != "None")
 
 
 #### Set Parameter ####
@@ -27,14 +32,19 @@ Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
 Set_RmUnassign <- FALSE
 
 # 设置参数以指定要比较的方法
-Set_Method <- "singleR" # 示例，可以改为其他方法，如"singleR", "scmap", "SCINA", "scPred"等
-Victors_Method <- paste(Set_Method, "VICTORS", sep = "_")
+Set_Method <- "scmap" # 示例，可以改为其他方法，如"singleR", "scmap", "SCINA", "scPred"等
+Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
 
 
 Summary.df <- data_same_platform
-if(Set_Method == "scPred"){
-  Summary.df <- Summary.df %>% filter(!FileID == "20231211182309SZHNDI")
-}
+# if(Set_Method == "scPred"){
+#   Summary.df <- Summary.df %>% filter(!FileID == "20231211182309SZHNDI")
+# }
+
+# # 刪除 Mislabel_CellType 為 None 的列
+# Summary.df <- Summary.df %>%  filter(Mislabel_CellType != "None")
+
+
 
 #### Data prepocessing ####
 # 處理數據集，避免重複的數據並選擇相關列
@@ -88,20 +98,32 @@ if(Set_Ref_State == "with" ){
 
 # 第三步：找到对应Mislabel_CellType且Method为Set_Method的Value最小的FileID
 min_value_fileID <- Summary.df %>%
-  filter(Metric == "Accuracy", Mislabel_CellType %in% Set_Obs_CellType, Method == Set_Method) %>%
+  filter(Metric == "Accuracy", Mislabel_CellType %in% Set_Obs_CellType, # Actual_Cell_Type %in% Set_Obs_CellType,
+         Method == Set_Method) %>%
   arrange(Value) %>%
   slice(1) %>%
   pull(FileID)
+
+# # 計算 Victors_Method - Set_Method 最大的 FileID
+# min_value_fileID <- Summary.df %>%
+#   filter(Metric == "Accuracy", Mislabel_CellType %in% Set_Obs_CellType) %>%
+#   group_by(FileID) %>%
+#   summarise(Value_Diff = max(ifelse(Method == Victors_Method, Value, NA), na.rm = TRUE) -
+#               max(ifelse(Method == Set_Method, Value, NA), na.rm = TRUE)) %>%
+#   arrange(desc(Value_Diff)) %>%
+#   slice(1) %>%
+#   pull(FileID)
+
 
 # 第四步：使用FileID筛选TargetCell_data
 TargetCell_data <- TargetCell_data %>%
   filter(FileID %in% min_value_fileID)
 
 if(Set_Method == "SCINA"){
-  TargetCell_data <- TargetCell_data %>% filter(label_SCINA_DiagPara != "Other")
+  TargetCell_data <- TargetCell_data %>% filter(label_SCINA_ConfStat != "Other")
 }
 if(Set_Method == "scmap"){
-  TargetCell_data <- TargetCell_data %>% filter(label_scmap_DiagPara != "Other")
+  TargetCell_data <- TargetCell_data %>% filter(label_scmap_ConfStat != "Other")
 }
 
 # Reshape the data for visualization
@@ -151,10 +173,10 @@ prepare_data <- function(data, method, diag_methods, Set_CellType, Set_CellType_
 
 }
 
-singleR_data <- prepare_data(TargetCell_data, label_singleR_NoReject, c("label_singleR_DiagPara", "DiagPara_label_singleR_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
-scmap_data <- prepare_data(TargetCell_data, label_scmap_NoReject, c("label_scmap_DiagPara", "DiagPara_label_scmap_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
-SCINA_data <- prepare_data(TargetCell_data, label_SCINA_NoReject, c("label_SCINA_DiagPara", "DiagPara_label_SCINA_NoReject_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
-scPred_data <- prepare_data(TargetCell_data, label_scPred_NoReject_Annot, c("label_scPred_DiagPara_Annot", "DiagPara_label_scPred_NoReject_Annot_SVGLRglmnet_ROC"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+singleR_data <- prepare_data(TargetCell_data, label_singleR_NoReject, c("label_singleR_ConfStat", "ConfStat_VICTOR_label_singleR_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+scmap_data <- prepare_data(TargetCell_data, label_scmap_NoReject, c("label_scmap_ConfStat", "ConfStat_VICTOR_label_scmap_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+SCINA_data <- prepare_data(TargetCell_data, label_SCINA_NoReject, c("label_SCINA_ConfStat", "ConfStat_VICTOR_label_SCINA_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
+scPred_data <- prepare_data(TargetCell_data, label_scPred_NoReject, c("label_scPred_ConfStat", "ConfStat_VICTOR_label_scPred_NoReject"), Set_CellType = Set_Obs_CellType, Set_CellType_Reverse = Set_Ref_State)
 
 # Combine all method data
 combined_data <- bind_rows(singleR_data, scmap_data, SCINA_data, scPred_data) %>%
@@ -164,17 +186,17 @@ combined_data <- bind_rows(singleR_data, scmap_data, SCINA_data, scPred_data) %>
 # Rename Diag_Method names and reorder them
 combined_data <- combined_data %>%
   mutate(Diag_Method = case_when(
-    Diag_Method == "DiagPara_label_SCINA_NoReject_SVGLRglmnet_ROC" ~ "SCINA_VICTORS",
-    Diag_Method == "DiagPara_label_scPred_NoReject_Annot_SVGLRglmnet_ROC" ~ "scPred_VICTORS",
-    Diag_Method == "DiagPara_label_scmap_NoReject_SVGLRglmnet_ROC" ~ "scmap_VICTORS",
-    Diag_Method == "DiagPara_label_singleR_NoReject_SVGLRglmnet_ROC" ~ "singleR_VICTORS",
-    Diag_Method == "label_SCINA_DiagPara" ~ "SCINA",
-    Diag_Method == "label_scPred_DiagPara_Annot" ~ "scPred",
-    Diag_Method == "label_scmap_DiagPara" ~ "scmap",
-    Diag_Method == "label_singleR_DiagPara" ~ "singleR",
+    Diag_Method == "ConfStat_VICTOR_label_SCINA_NoReject" ~ "SCINA_VICTOR",
+    Diag_Method == "ConfStat_VICTOR_label_scPred_NoReject" ~ "scPred_VICTOR",
+    Diag_Method == "ConfStat_VICTOR_label_scmap_NoReject" ~ "scmap_VICTOR",
+    Diag_Method == "ConfStat_VICTOR_label_singleR_NoReject" ~ "singleR_VICTOR",
+    Diag_Method == "label_SCINA_ConfStat" ~ "SCINA",
+    Diag_Method == "label_scPred_ConfStat" ~ "scPred",
+    Diag_Method == "label_scmap_ConfStat" ~ "scmap",
+    Diag_Method == "label_singleR_ConfStat" ~ "singleR",
     TRUE ~ Diag_Method
   )) %>%
-  mutate(Diag_Method = factor(Diag_Method, levels = c("singleR", "singleR_VICTORS", "scmap", "scmap_VICTORS", "SCINA", "SCINA_VICTORS", "scPred", "scPred_VICTORS")))
+  mutate(Diag_Method = factor(Diag_Method, levels = c("singleR", "singleR_VICTOR", "scmap", "scmap_VICTOR", "SCINA", "SCINA_VICTOR", "scPred", "scPred_VICTOR")))
 
 
 
