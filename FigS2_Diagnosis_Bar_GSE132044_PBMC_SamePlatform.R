@@ -12,14 +12,28 @@ if(!require("tidyr")) install.packages("tidyr"); library(tidyr)
 
 if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 
+
+#### Set Parameter ####
+# Set_Obs_CellType <- "Alpha cell" # "Beta cell" # "Alpha cell" # "Acinar cell"
+
+Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
+Set_RmUnassign <- FALSE
+
+# 设置参数以指定要比较的方法
+Set_Method <- "singleR" # 示例，可以改为其他方法，如"singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
+Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
+
+Set_Dataset <- "GSE132044_SamePlatform" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc"
+
 #### Load data ####
-Set_Dataset <- "GSE132044_SamePlatform" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform"
 
 # load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/20240715161840IVL_GSE132044_IntegrateAll.RData")
 
 if (Set_Dataset %in% c("GSE132044_SamePlatform", "GSE132044_CrossPlatform")) {
   folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/"
   load(paste0(folder_path, "20240715161840IVL_GSE132044_IntegrateAll.RData"))
+}else if(Set_Dataset == "scRNAseqPanc" ){
+
 }
 
 
@@ -42,15 +56,6 @@ Summary.df <- data_same_platform
 all_data <- all_data %>%  filter(Mislabel_CellType != "None")
 Summary.df <- Summary.df %>%  filter(Mislabel_CellType != "None")
 
-#### Set Parameter ####
-# Set_Obs_CellType <- "Alpha cell" # "Beta cell" # "Alpha cell" # "Acinar cell"
-
-Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
-Set_RmUnassign <- FALSE
-
-# 设置参数以指定要比较的方法
-Set_Method <- "singleR" # 示例，可以改为其他方法，如"singleR", "scmap", "SCINA", "scPred"等
-Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
 
 
 #### Data prepocessing ####
@@ -211,14 +216,17 @@ if(Set_Method == "scmap"){
 
 # Reshape the data for visualization
 TargetCell_long <- TargetCell_data %>%
-  select(Actual_Cell_Type, label_singleR_NoReject, label_singleR, label_scmap_NoReject, label_scmap, label_SCINA_NoReject, label_SCINA, label_scPred_NoReject, label_scPred) %>%
+  select(Actual_Cell_Type, label_singleR_NoReject, label_singleR, label_scmap_NoReject, label_scmap, label_SCINA_NoReject, label_SCINA, label_scPred_NoReject, label_scPred,
+         label_CHETAH_NoReject, label_CHETAH, label_scClassify_NoReject, label_scClassify, label_Seurat_NoReject, label_Seurat) %>%
   pivot_longer(cols = -Actual_Cell_Type, names_to = "Labeling_Method", values_to = "Predicted_Cell_Type")
 
 
 
 # Modify labeling methods and order them
 TargetCell_long$Labeling_Method <- gsub("label_", "", TargetCell_long$Labeling_Method)
-TargetCell_long$Labeling_Method <- factor(TargetCell_long$Labeling_Method, levels = c("singleR_NoReject", "singleR", "scmap_NoReject", "scmap", "SCINA_NoReject", "SCINA", "scPred_NoReject", "scPred"))
+TargetCell_long$Labeling_Method <- factor(TargetCell_long$Labeling_Method,
+                                          levels = c("singleR_NoReject", "singleR", "scmap_NoReject", "scmap", "SCINA_NoReject", "SCINA", "scPred_NoReject", "scPred",
+                                                     "CHETAH_NoReject", "CHETAH","scClassify_NoReject", "scClassify","Seurat_NoReject", "Seurat"))
 
 
 
@@ -240,9 +248,15 @@ singleR_data <- prepare_data(TargetCell_data, label_singleR_NoReject, c("label_s
 scmap_data <- prepare_data(TargetCell_data, label_scmap_NoReject, c("label_scmap_ConfStat", "ConfStat_VICTOR_label_scmap_NoReject"), Set_CellType = max_diff$Actual_Cell_Type)
 SCINA_data <- prepare_data(TargetCell_data, label_SCINA_NoReject, c("label_SCINA_ConfStat", "ConfStat_VICTOR_label_SCINA_NoReject"), Set_CellType = max_diff$Actual_Cell_Type)
 scPred_data <- prepare_data(TargetCell_data, label_scPred_NoReject, c("label_scPred_ConfStat", "ConfStat_VICTOR_label_scPred_NoReject"), Set_CellType = max_diff$Actual_Cell_Type)
+CHETAH_data <- prepare_data(TargetCell_data, label_CHETAH_NoReject, c("label_CHETAH_ConfStat", "ConfStat_VICTOR_label_CHETAH_NoReject"), Set_CellType = max_diff$Actual_Cell_Type)
+scClassify_data <- prepare_data(TargetCell_data, label_scClassify_NoReject, c("label_scClassify_ConfStat", "ConfStat_VICTOR_label_scClassify_NoReject"), Set_CellType = max_diff$Actual_Cell_Type)
+Seurat_data <- prepare_data(TargetCell_data, label_Seurat_NoReject, c("label_Seurat_ConfStat", "ConfStat_VICTOR_label_Seurat_NoReject"), Set_CellType = max_diff$Actual_Cell_Type)
+
+
 
 # Combine all method data
-combined_data <- bind_rows(singleR_data, scmap_data, SCINA_data, scPred_data) %>%
+combined_data <- bind_rows(singleR_data, scmap_data, SCINA_data, scPred_data,
+                           CHETAH_data,scClassify_data,Seurat_data) %>%
   group_by(Method_Type, Diag_Method, Predicted_Cell_Type, Class) %>%
   summarise(Count = n(), .groups = 'drop')
 
@@ -253,13 +267,20 @@ combined_data <- combined_data %>%
     Diag_Method == "ConfStat_VICTOR_label_scPred_NoReject" ~ "scPred_VICTOR",
     Diag_Method == "ConfStat_VICTOR_label_scmap_NoReject" ~ "scmap_VICTOR",
     Diag_Method == "ConfStat_VICTOR_label_singleR_NoReject" ~ "singleR_VICTOR",
+    Diag_Method == "ConfStat_VICTOR_label_CHETAH_NoReject" ~ "CHETAH_VICTOR",
+    Diag_Method == "ConfStat_VICTOR_label_scClassify_NoReject" ~ "scClassify_VICTOR",
+    Diag_Method == "ConfStat_VICTOR_label_Seurat_NoReject" ~ "Seurat_VICTOR",
     Diag_Method == "label_SCINA_ConfStat" ~ "SCINA",
     Diag_Method == "label_scPred_ConfStat" ~ "scPred",
     Diag_Method == "label_scmap_ConfStat" ~ "scmap",
     Diag_Method == "label_singleR_ConfStat" ~ "singleR",
+    Diag_Method == "label_CHETAH_ConfStat" ~ "CHETAH",
+    Diag_Method == "label_scClassify_ConfStat" ~ "scClassify",
+    Diag_Method == "label_Seurat_ConfStat" ~ "Seurat",
     TRUE ~ Diag_Method
   )) %>%
-  mutate(Diag_Method = factor(Diag_Method, levels = c("singleR", "singleR_VICTOR", "scmap", "scmap_VICTOR", "SCINA", "SCINA_VICTOR", "scPred", "scPred_VICTOR")))
+  mutate(Diag_Method = factor(Diag_Method, levels = c("singleR", "singleR_VICTOR", "scmap", "scmap_VICTOR", "SCINA", "SCINA_VICTOR", "scPred", "scPred_VICTOR",
+                                                      "CHETAH","CHETAH_VICTOR", "scClassify", "scClassify_VICTOR", "Seurat","Seurat_VICTOR")))
 
 
 
