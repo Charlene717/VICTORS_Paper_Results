@@ -13,7 +13,7 @@ if(!require("tidyr")) install.packages("tidyr"); library(tidyr)
 if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 
 #### Load data ####
-Set_Dataset <- "GSE132044_SamePlatform"
+Set_Dataset <- "GSE132044_SamePlatform" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform"
 
 # load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/20240715161840IVL_GSE132044_IntegrateAll.RData")
 
@@ -21,6 +21,16 @@ if (Set_Dataset %in% c("GSE132044_SamePlatform", "GSE132044_CrossPlatform")) {
   folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/"
   load(paste0(folder_path, "20240715161840IVL_GSE132044_IntegrateAll.RData"))
 }
+
+
+if (Set_Dataset =="GSE132044_SamePlatform"){
+  Set_Platform <- "same"
+}else if(Set_Dataset %in% c("scRNAseqPanc","GSE132044_CrossPlatform")){
+  Set_Platform <- "cross"
+}else{
+  Set_Platform <- "other"
+}
+
 
 
 all_data <- combined_data
@@ -50,10 +60,36 @@ selected_data <- all_data %>%
   distinct()
 
 
-# 筛选Sample_Platform和Ref_Platform相等的行
+## 設定 Same_platform 和 Cross_platform
+if (!require("dplyr")) install.packages("dplyr")
+library(dplyr)
+# 定义 platform_group 函数
+platform_group <- function(platform) {
+  if (platform %in% c("10xV2", "10xV2A", "10xV2B")) {
+    return("10xV2_Group")
+  } else {
+    return(platform)
+  }
+}
+
+# 根据 Sample_Platform 和 Ref_Platform 分组
 selected_data <- selected_data %>%
-  filter(Sample_Platform == Ref_Platform |
-           (grepl("10x", Sample_Platform) & grepl("10x", Ref_Platform)))
+  mutate(Sample_Platform_Group = sapply(Sample_Platform, platform_group),
+         Ref_Platform_Group = sapply(Ref_Platform, platform_group))
+
+# Set_Platform 逻辑
+if (Set_Platform == "same") {
+  # 筛选 Same_platform
+  selected_data <- selected_data %>%
+    filter(Sample_Platform_Group == Ref_Platform_Group)
+} else if (Set_Platform == "cross") {
+  # 筛选 Cross_platform
+  selected_data <- selected_data %>%
+    filter(Sample_Platform_Group != Ref_Platform_Group)
+}else{
+  selected_data <- selected_data
+}
+
 
 library(dplyr)
 library(tidyr)
@@ -337,13 +373,13 @@ filtered_dataframe_FP <- combined_data %>% filter(Class == 'FP')
 Name_Note <- paste0(Set_Method,"_",max_value_fileID,"_",Set_Obs_CellType,Set_Title_End)
 
 # Name_time_wo_micro <- substr(gsub("[- :]", "", as.character(Sys.time())), 1, 14)
-Name_ExportFolder <- folder_path # Name_ExportFolder <- paste0("Export_IntegAll")
+Name_ExportFolder <- paste0(folder_path,"Diagnosis_Bar/") # Name_ExportFolder <- paste0("Export_IntegAll")
 if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 # Name_ExportFolder <- paste0(Name_ExportFolder,"/",Name_time_wo_micro)
 # if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 
 # Name_Export <- paste0(Name_time_wo_micro,"_",Name_Note)
-Name_Export <- paste0(Name_Note)
+Name_Export <- paste0(Set_Dataset,"_",Set_Method,"_",max_value_fileID)
 
 
 ## Export PDF
