@@ -19,7 +19,7 @@ if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
 Set_RmUnassign <- FALSE
 
-Set_TopN <- 2  # 设置为 2, 3 或其他值，获取对应名次
+Set_TopN <- 4  # 设置为 2, 3 或其他值，获取对应名次
 # 设置参数以指定要比较的方法
 Set_Method <- "Seurat" # "singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
 Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
@@ -57,7 +57,12 @@ if (Set_Dataset %in% c("GSE132044_SamePlatform", "HLCA_core")){
 all_data <- combined_data
 all_data_ori <- all_data
 
-Summary.df <- data_same_platform
+if (Set_Platform == "same") {
+  Summary.df <- data_same_platform
+} else if (Set_Platform == "cross") {
+  Summary.df <- data_cross_platform
+}
+
 
 ## Remove Nonw
 all_data <- all_data %>%  filter(Mislabel_CellType != "None")
