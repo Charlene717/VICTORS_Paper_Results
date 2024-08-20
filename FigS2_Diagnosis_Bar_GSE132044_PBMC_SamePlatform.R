@@ -19,7 +19,6 @@ if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 load("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715161840IVL_GSE132044/20240715161840IVL_GSE132044_IntegrateAll.RData")
 folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export/"
 
-# all_data$Actual_Cell_Type %>% unique()
 all_data <- combined_data
 all_data_ori <- all_data
 # all_data <- all_data %>%  filter(Mislabel_CellType != "None")
@@ -37,9 +36,6 @@ Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
 
 
 Summary.df <- data_same_platform
-# if(Set_Method == "scPred"){
-#   Summary.df <- Summary.df %>% filter(!FileID == "20231211182309SZHNDI")
-# }
 
 # # 刪除 Mislabel_CellType 為 None 的列
 # Summary.df <- Summary.df %>%  filter(Mislabel_CellType != "None")
