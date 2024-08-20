@@ -19,11 +19,13 @@ if(!require(cowplot)) install.packages("cowplot"); library(cowplot)
 Set_Ref_State <- "lack" # "with" #"lack" #"Comp"
 Set_RmUnassign <- FALSE
 
+Set_TopN <- 2  # 设置为 2, 3 或其他值，获取对应名次
 # 设置参数以指定要比较的方法
-Set_Method <- "singleR" # "singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
+Set_Method <- "Seurat" # "singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
 Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
 
-Set_Dataset <- "HLCA_core" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc"
+Set_Dataset <- "scRNAseqPanc"
+# "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc" # "HLCA_core"
 
 #### Load data ####
 
@@ -36,13 +38,13 @@ if (Set_Dataset %in% c("GSE132044_SamePlatform", "GSE132044_CrossPlatform")) {
   folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715165652CTZ_scRNAseqPanc/"
   load(paste0(folder_path, "20240715165652CTZ_scRNAseqPanc_IntegrateAll.RData"))
 }else if(Set_Dataset == "HLCA_core" ){
-  folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240818/Export_IntegrateAll_20240817172921OSN_HLCA_core/"
+  folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_IntegrateAll_20240817172921OSN_HLCA_core/"
   load(paste0(folder_path, "IntegrateAll_20240817172921OSN_HLCA_core.RData"))
 
 }
 
 
-if (Set_Dataset =="GSE132044_SamePlatform"){
+if (Set_Dataset %in% c("GSE132044_SamePlatform", "HLCA_core")){
   Set_Platform <- "same"
 }else if(Set_Dataset %in% c("scRNAseqPanc","GSE132044_CrossPlatform")){
   Set_Platform <- "cross"
@@ -185,23 +187,26 @@ Summary.df2 <- lapply(names(method_mapping), function(method) {
 # # # 显示结果
 # # max_diff
 
+# # 设置要获取的名次
+# Set_TopN <- 3  # 设置为 2, 3 或其他值，获取对应名次
+
 # 计算每个 Actual_Cell_Type 在 TargetCell_data 中的出现次数
 type_count <- TargetCell_data %>%
   group_by(Actual_Cell_Type) %>%
   summarise(Count = n())
 
-# 计算 Victors_Method 和 Set_Method 之间的差异，并找到差异最大且考虑数量的情况
+# 计算 Victors_Method 和 Set_Method 之间的差异，并找到指定名次的情况
 max_diff <- Summary.df2 %>%
   filter(Method %in% c(Victors_Method, Set_Method)) %>%
   pivot_wider(names_from = Method, values_from = Value) %>%
   mutate(Difference = !!sym(Victors_Method) - !!sym(Set_Method)) %>%
   left_join(type_count, by = "Actual_Cell_Type") %>%
   arrange(desc(Difference), desc(Count)) %>%
-  slice(1) %>%
+  slice(Set_TopN) %>%  # 获取指定的第 N 名
   select(FileID, Actual_Cell_Type, Difference, Count)
 
-# 显示结果
-max_diff
+# # 显示结果
+# max_diff
 
 
 max_value_fileID <- max_diff$FileID
