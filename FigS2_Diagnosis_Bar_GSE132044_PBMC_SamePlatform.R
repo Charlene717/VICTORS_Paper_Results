@@ -415,7 +415,7 @@ if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create n
 # if (!dir.exists(Name_ExportFolder)){dir.create(Name_ExportFolder)}   ## Create new folder
 
 # Name_Export <- paste0(Name_time_wo_micro,"_",Name_Note)
-Name_Export <- paste0(Set_Dataset,"_",Set_Method,"_",max_value_fileID)
+Name_Export <- paste0(Set_Dataset,"_",Set_Method,"_",max_value_fileID,"_Top",Set_TopN)
 
 
 ## Export PDF
