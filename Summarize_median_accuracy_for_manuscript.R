@@ -10,7 +10,7 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require('dplyr')) {install.packages('dplyr'); library(dplyr)}
 if(!require('readr')) {install.packages('readr'); library(readr)}
 
-Set_Dataset = "GSE132044_CrossPlatform" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform"
+Set_Dataset = "scRNAseqPanc" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc"
 ## Load data
 if(Set_Dataset == "GSE132044_SamePlatform"){
   file_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure 3 GSE132044 Within-platform/"
@@ -19,6 +19,11 @@ if(Set_Dataset == "GSE132044_SamePlatform"){
 }else if(Set_Dataset == "GSE132044_CrossPlatform"){
   file_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure 4 GSE132044 Cross-platform/"
   file_Name <- "IntegrateAll_20240817164107OSN_GSE132044_CrossPlatform.tsv"
+
+}else if(Set_Dataset == "scRNAseqPanc"){
+  file_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure 5 scRNAseqPanc Cross-platform Cross-study/"
+  file_Name <- "IntegrateAll_20240817171725OSN_scRNAseqPanc_CrossPlatform.tsv"
+
 }
 
 
