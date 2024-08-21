@@ -24,7 +24,7 @@ Set_TopN <- 1
 Set_Method <- "singleR" # "singleR", "scmap", "SCINA", "scPred", "CHETAH", "scClassify" ,"Seurat"等
 Victors_Method <- paste(Set_Method, "VICTOR", sep = "_")
 
-Set_Dataset <- "scRNAseqPanc"
+Set_Dataset <- "HLCA_core"
 # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc" # "HLCA_core"
 
 #### Load data ####
@@ -38,8 +38,8 @@ if (Set_Dataset %in% c("GSE132044_SamePlatform", "GSE132044_CrossPlatform")) {
   folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240717/Export_IntegrateAll_20240715165652CTZ_scRNAseqPanc/"
   load(paste0(folder_path, "20240715165652CTZ_scRNAseqPanc_IntegrateAll.RData"))
 }else if(Set_Dataset == "HLCA_core" ){
-  folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_IntegrateAll_20240817172921OSN_HLCA_core/"
-  load(paste0(folder_path, "IntegrateAll_20240817172921OSN_HLCA_core.RData"))
+  folder_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Export_20240722/Export_IntegrateAll_20240808050550OSN_HLCA_core/"
+  load(paste0(folder_path, "IntegrateAll_20240808050550OSN_HLCA_core.RData"))
 
 }
 
