@@ -10,7 +10,7 @@ if(!require("tidyverse")) install.packages("tidyverse"); library(tidyverse)
 if(!require('dplyr')) {install.packages('dplyr'); library(dplyr)}
 if(!require('readr')) {install.packages('readr'); library(readr)}
 
-Set_Dataset = "scRNAseqPanc" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc"
+Set_Dataset = "HCA_HLCA_core" # "GSE132044_SamePlatform" # "GSE132044_CrossPlatform" # "scRNAseqPanc" # "HCA_HLCA_core"
 ## Load data
 if(Set_Dataset == "GSE132044_SamePlatform"){
   file_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure 3 GSE132044 Within-platform/"
@@ -23,6 +23,10 @@ if(Set_Dataset == "GSE132044_SamePlatform"){
 }else if(Set_Dataset == "scRNAseqPanc"){
   file_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure 5 scRNAseqPanc Cross-platform Cross-study/"
   file_Name <- "IntegrateAll_20240817171725OSN_scRNAseqPanc_CrossPlatform.tsv"
+
+}else if(Set_Dataset == "HCA_HLCA_core"){
+  file_path <- "D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure 6 HCA HLCA_core/"
+  file_Name <- "IntegrateAll_20240817172921OSN_HLCA_core_10xPlatform.tsv"
 
 }
 
