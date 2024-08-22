@@ -21,11 +21,19 @@ Count_ActualCT_Query.df <- seuratObject_Sample@meta.data$Actual_Cell_Type %>%
   setNames(c("Cell_Type", "Freq")) %>%
   rbind(data.frame(Cell_Type = "Total", Freq = sum(.$Freq)))
 
-# Count_ActualCT_Ref.df <- seuratObject_Ref@meta.data$Actual_Cell_Type %>%
-#   table() %>%
-#   as.data.frame() %>%
-#   setNames(c("Cell_Type", "Freq")) %>%
-#   rbind(data.frame(Cell_Type = "Total", Freq = sum(.$Freq)))
+Count_ActualCT_Ref.df <- seuratObject_Ref@meta.data$Actual_Cell_Type %>%
+  table() %>%
+  as.data.frame() %>%
+  setNames(c("Cell_Type", "Freq")) %>%
+  rbind(data.frame(Cell_Type = "Total", Freq = sum(.$Freq)))
+
+# 添加 B cell 並更新總和
+Count_ActualCT_Ref.df <- Count_ActualCT_Ref.df %>%
+  filter(Cell_Type != "Total") %>%  # 移除原來的總和行
+  rbind(data.frame(Cell_Type = "B cell", Freq = 141)) %>%  # 添加 B cell
+  mutate(Freq = if_else(Cell_Type == "Total", sum(Freq), Freq)) %>%  # 計算新的總和
+  rbind(data.frame(Cell_Type = "Total", Freq = sum(.$Freq)))  # 添加新的總和行
+
 
 #### ConfStat ####
 # # 確保所需的包已安裝並載入
@@ -85,4 +93,8 @@ results_VICTOR_list <- list(
   Seurat = summarize_labeling("label_Seurat_NoReject", "ConfStat_VICTOR_label_Seurat_NoReject")
 )
 
+rm(long_metadata, metadata, Metadata)
 
+
+#### Export ####
+save.image("D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/#_Revision_20240818_Fin/Figure S1 Cell annotations/Count.RData")
