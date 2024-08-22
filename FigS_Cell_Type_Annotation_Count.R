@@ -75,6 +75,14 @@ results_list <- list(
 print(results_list)
 
 
-
+results_VICTOR_list <- list(
+  singleR = summarize_labeling("label_singleR_NoReject", "ConfStat_VICTOR_label_singleR_NoReject"),
+  scmap = summarize_labeling("label_scmap_NoReject", "ConfStat_VICTOR_label_scmap_NoReject"),
+  SCINA = summarize_labeling("label_SCINA_NoReject", "ConfStat_VICTOR_label_SCINA_NoReject" ),
+  scPred = summarize_labeling("label_scPred_NoReject", "ConfStat_VICTOR_label_scPred_NoReject"),
+  CHETAH = summarize_labeling("label_CHETAH_NoReject", "ConfStat_VICTOR_label_CHETAH_NoReject"),
+  scClassify = summarize_labeling("label_scClassify_NoReject", "ConfStat_VICTOR_label_scClassify_NoReject"),
+  Seurat = summarize_labeling("label_Seurat_NoReject", "ConfStat_VICTOR_label_Seurat_NoReject")
+)
 
 
