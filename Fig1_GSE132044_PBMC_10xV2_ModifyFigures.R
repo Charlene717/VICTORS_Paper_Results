@@ -36,59 +36,42 @@ update_plot <- function(plot, index) {
   return(plot)
 }
 
-# 更新 plots1 和 plots2
-plots1_1 <- c(plots[1:(length(plots)/2)])
-plots1_1 <- lapply(seq_along(plots1_1), function(i) update_plot(plots1_1[[i]], i))
-plots1 <- lapply(seq_along(plots1), function(i) update_plot(plots1[[i]], i))
+# 更新 plots 的函数
+update_plots <- function(plots) {
+  lapply(seq_along(plots), function(i) update_plot(plots[[i]], i))
+}
 
-plots2_1 <- c(plots[1:(length(plots)/2)])
-plots2_1 <- lapply(seq_along(plots2_1), function(i) update_plot(plots2_1[[i]], i))
-plots2 <- lapply(seq_along(plots2), function(i) update_plot(plots2[[i]], i))
+# 将 plots 分为两组并更新
+half_length <- length(plots) / 2
+plots1_1 <- update_plots(plots[1:half_length])
+plots1 <- update_plots(plots1)
 
+plots2_1 <- update_plots(plots[1:half_length])
+plots2 <- update_plots(plots2)
 
+# 合并并打印 combined plots
+combine_and_print <- function(plots, ncol = 7) {
+  combined_plot <- plot_grid(
+    plotlist = plots,
+    ncol = ncol,
+    align = 'hv',
+    axis = "tb",
+    rel_widths = rep(1, length(plots)),
+    rel_heights = rep(1, length(plots))
+  )
+  print(combined_plot)
+  return(combined_plot)
+}
 
-# 合并并打印 combined_Percent_plot 和 combined_Percent_plot2
-combined_plots1_1 <- plot_grid(
-  plotlist = plots1_1,
-  ncol = 7,
-  align = 'hv',
-  axis = "tb",
-  rel_widths = rep(1, length(plots1_1)),
-  rel_heights = rep(1, length(plots1_1))
-)
-print(combined_plots1_1)
+combined_plots1_1 <- combine_and_print(plots1_1)
+combined_plots2_1 <- combine_and_print(plots2_1)
+combined_Percent_plot <- combine_and_print(plots1)
+combined_Percent_plot2 <- combine_and_print(plots2)
 
-combined_plots2_1 <- plot_grid(
-  plotlist = plots2_1,
-  ncol = 7,
-  align = 'hv',
-  axis = "tb",
-  rel_widths = rep(1, length(plots2_1)),
-  rel_heights = rep(1, length(plots2_1))
-)
-print(combined_plots2_1)
+# 打印组合的 plots
+print(combined_plots1_1 / combined_Percent_plot)
+print(combined_plots2_1 / combined_Percent_plot2)
 
-
-
-combined_Percent_plot <- plot_grid(
-  plotlist = plots1,
-  ncol = 7,
-  align = 'hv',
-  axis = "tb",
-  rel_widths = rep(1, length(plots1)),
-  rel_heights = rep(1, length(plots1))
-)
-print(combined_Percent_plot)
-
-combined_Percent_plot2 <- plot_grid(
-  plotlist = plots2,
-  ncol = 7,
-  align = 'hv',
-  axis = "tb",
-  rel_widths = rep(1, length(plots2)),
-  rel_heights = rep(1, length(plots2))
-)
-print(combined_Percent_plot2)
 
 # 输出编号与细胞类型的对照表
 print(cell_type_mapping)
