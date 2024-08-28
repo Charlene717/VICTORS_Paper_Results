@@ -192,7 +192,7 @@ color_CellType_Ref <- list(
 )
 
 # 在绘图函数中设置 alpha 参数
-plot_accuracy_single <- function(accuracy_data, method, dataset) {
+plot_accuracy_single <- function(accuracy_data, method, dataset, color_CellType = NULL) {
   plot <- ggplot(accuracy_data[accuracy_data$Method == method, ], aes(x = Actual_Cell_Type, y = Accuracy, fill = Actual_Cell_Type)) +
     geom_bar(stat = "identity", color = "black", alpha = 0.8) +  # 设置透明度
     geom_text(aes(label = sprintf("%.2f", Accuracy)), vjust = 0.5, hjust = 1, size = 6, angle = 90) +
@@ -207,9 +207,15 @@ plot_accuracy_single <- function(accuracy_data, method, dataset) {
     ylim(0, 1.05) +
     labs(x = "Cell Type", y = "Accuracy", title = method)
 
-  # 条件检查数据集名称并设置颜色填充
-  if (grepl("^GSE132044", dataset)) {
-    plot <- plot + scale_fill_manual(values = color_CellType_Ref)
+  # 根据 color_CellType_Ref 是否存在来决定填充颜色
+  if (!is.null(color_CellType)) {
+    plot <- plot + scale_fill_manual(values = color_CellType)
+  } else {
+    # 使用灰色填充，确保为每个类都提供灰色
+    unique_types <- unique(accuracy_data$Actual_Cell_Type)
+    gray_palette <- rep(alpha("#9e9b9b", 0.8), length(unique_types))
+    names(gray_palette) <- unique_types
+    plot <- plot + scale_fill_manual(values = gray_palette)  # 使用灰色透明
   }
 
   return(plot)
@@ -226,6 +232,7 @@ All_accuracy_data1 <- do.call(rbind, lapply(Method1, function(alg) {
 
 # 为每个算法生成图表对象
 plots1 <- lapply(Method1, function(alg) plot_accuracy_single(All_accuracy_data1, alg, Dataset))
+# plots1 <- lapply(Method1, function(alg) plot_accuracy_single(All_accuracy_data1, alg, Dataset, color_CellType = color_CellType_Ref))
 
 # 使用 grid.arrange 并排排列所有图表，设置 nrow = 1 以排成一行
 grid.arrange(grobs = plots1, nrow = 1)
@@ -273,9 +280,117 @@ All_accuracy_data <- rbind(All_accuracy_data1, All_accuracy_data2_VICTOR)
 try(write_tsv(All_accuracy_data, paste0(Name_ExportFolder, "/", Name_Export, "_Accuracy_Table.tsv")))
 
 
-# 移除环境中的其他对象
-rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","Name_ExportFolder","Name_Export",
-                        "long_metadata", "seuratObject_Sample", "seuratObject_Ref")))
+# # 移除环境中的其他对象
+# rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","Name_ExportFolder","Name_Export",
+#                         "long_metadata", "seuratObject_Sample", "seuratObject_Ref")))
+#
+# # Export RData
+# save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
+#
+#
 
-# Export RData
-save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
+################################################################################
+library(ggplot2)
+library(cowplot)
+library(dplyr)
+library(rlang)
+
+# 提取所有子图的 x 轴标签（细胞类型）
+cell_types <- unique(unlist(lapply(plots1, function(plot) {
+  x_var <- as_label(plot$mapping$x)  # 使用 as_label 提取变量名
+  plot$data[[x_var]]
+})))
+
+# 创建编号与细胞类型的对照表
+cell_type_mapping <- data.frame(
+  Number = seq_along(cell_types),
+  Cell_Type = cell_types
+)
+
+# 定義一個函數來處理每個 plot 的更新
+update_plot <- function(plot, index) {
+  plot <- plot + scale_x_discrete(labels = setNames(cell_type_mapping$Number, cell_types)) +
+    theme(axis.text.x = element_text(angle = 0, size = 24, face = "plain"),
+          axis.text.y = element_text(size = 24, face = "plain"),
+          axis.title = element_text(size = 24),
+          text = element_text(size = 18, face = "bold"),
+          plot.margin = unit(c(0, 0, 0, 0), "cm")) +  # 完全移除边距，减少空隙
+    labs(title = gsub(" on Actual_Cell_Type", "", plot$labels$title)) +
+    theme(plot.title = element_text(size = 24, face = "bold"))  # 放大标题字体
+
+  if (index != 1) {
+    plot <- plot + theme(
+      axis.title.y = element_blank(),
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank()
+    )
+  }
+
+  plot <- plot + theme(axis.title.x = element_blank())
+
+  return(plot)
+}
+
+# 更新 plots 的函数
+update_plots <- function(plots) {
+  lapply(seq_along(plots), function(i) update_plot(plots[[i]], i))
+}
+
+# 将 plots 分为两组并更新
+half_length <- length(plots) / 2
+plots1_1 <- update_plots(plots[1:half_length])
+plots1 <- update_plots(plots1)
+
+plots2_1 <- update_plots(plots[1:half_length])
+plots2 <- update_plots(plots2)
+
+# 合并并打印 combined plots
+combine_and_print <- function(plots, ncol = 7) {
+  combined_plot <- plot_grid(
+    plotlist = plots,
+    ncol = ncol,
+    align = 'hv',
+    axis = "tb",
+    rel_widths = rep(1, length(plots)),
+    rel_heights = rep(1, length(plots))
+  )
+  print(combined_plot)
+  return(combined_plot)
+}
+
+combined_plots1_1 <- combine_and_print(plots1_1)
+combined_plots2_1 <- combine_and_print(plots2_1)
+combined_Percent_plot <- combine_and_print(plots1)
+combined_Percent_plot2 <- combine_and_print(plots2)
+
+# 打印组合的 plots
+print(combined_plots1_1 / combined_Percent_plot)
+print(combined_plots2_1 / combined_Percent_plot2)
+
+
+# 输出编号与细胞类型的对照表
+print(cell_type_mapping)
+
+
+
+#### Export ####
+## Export PDF
+pdf_width <- if (grepl("^GSE132044", Dataset)) 28 else 40
+pdf_height <- if (grepl("^GSE132044", Dataset)) 12 else 14
+
+pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_2.pdf"),
+    width = pdf_width, height = pdf_height)
+print(combined_plots1_1 / combined_Percent_plot)
+print(combined_plots2_1 / combined_Percent_plot2)
+dev.off()
+
+
+
+# # 移除环境中的其他对象
+# rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","Name_ExportFolder","Name_Export",
+#                         "long_metadata", "seuratObject_Sample", "seuratObject_Ref")))
+#
+# # Export RData
+# save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
+#
+
