@@ -399,8 +399,8 @@ legend2 <- ggplot(data = data.frame(Legend_Text = legend_labels), aes(x = factor
   guides(fill = guide_legend(title = "Cell Type", nrow = 2, byrow = TRUE,
                              keywidth = 2, keyheight = 2)) +  # 放大色塊
   theme(legend.position = "bottom",
-        legend.title = element_text(size = 20),  # 放大標題文字
-        legend.text = element_text(size = 18))   # 放大圖例文字
+        legend.title = element_text(size = 26),  # 放大標題文字
+        legend.text = element_text(size = 24))   # 放大圖例文字
 
 color_Class <- c(
   "TP" = "#b58b2a",
@@ -415,10 +415,10 @@ legend1 <- ggplot(data = data.frame(Class = names(color_Class)), aes(x = Class, 
   scale_fill_manual(values = color_Class) +
   theme_void() +
   guides(fill = guide_legend(title = "Confusion Matrix",
-                             keywidth = 2, keyheight = 2)) +  # 放大色塊
+                             keywidth = 2.5, keyheight = 2.5)) +  # 放大色塊
   theme(legend.position = "bottom",
-        legend.title = element_text(size = 20),  # 放大標題文字
-        legend.text = element_text(size = 18))   # 放大圖例文字
+        legend.title = element_text(size = 26),  # 放大標題文字
+        legend.text = element_text(size = 24))   # 放大圖例文字
 
 # 提取圖例
 get_legend <- function(myggplot) {
