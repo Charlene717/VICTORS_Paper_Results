@@ -372,6 +372,57 @@ print(combined_plots2_1 / combined_Percent_plot2)
 print(cell_type_mapping)
 
 
+#### Plot Figure legend ####
+library(ggplot2)
+library(gridExtra)
+
+# 重新排列數據以顯示在兩行中
+n <- nrow(cell_type_mapping)
+half_n <- ceiling(n / 2)
+
+# 將數據分成兩部分，一部分顯示在第一行，另一部分顯示在第二行
+first_row <- cell_type_mapping[1:half_n, ]
+second_row <- cell_type_mapping[(half_n + 1):n, ]
+
+# 組合成為兩行顯示的圖例文本
+legend_labels <- c(
+  paste(first_row$Number, first_row$Cell_Type, sep = ": "),
+  paste(second_row$Number, second_row$Cell_Type, sep = ": ")
+)
+
+# 創建一個空的 ggplot 圖形來顯示 cell_type_mapping 的圖例
+legend2 <- ggplot(data = data.frame(Legend_Text = legend_labels), aes(x = factor(1), fill = Legend_Text)) +
+  geom_bar() +
+  scale_fill_manual(values = rep("white", length(legend_labels)),
+                    labels = legend_labels) +
+  theme_void() +
+  guides(fill = guide_legend(title = "Cell Type", nrow = 2, byrow = TRUE)) +  # 兩行橫向排列
+  theme(legend.position = "bottom", legend.title = element_text(size = 12), legend.text = element_text(size = 10))
+
+# 創建另一個 ggplot 圖形來顯示 color_Class 的圖例
+legend1 <- ggplot(data = data.frame(Class = names(color_Class)), aes(x = Class, fill = Class)) +
+  geom_bar() +
+  scale_fill_manual(values = color_Class) +
+  theme_void() +
+  guides(fill = guide_legend(title = "Confusion Matrix")) +
+  theme(legend.position = "bottom", legend.title = element_text(size = 12), legend.text = element_text(size = 10))
+
+# 提取圖例
+get_legend <- function(myggplot) {
+  tmp <- ggplot_gtable(ggplot_build(myggplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+legend1_plot <- get_legend(legend1)
+legend2_plot <- get_legend(legend2)
+
+# 顯示兩個圖例，並排顯示
+grid.arrange(legend1_plot, legend2_plot, ncol = 1)
+
+
+
 
 #### Export ####
 ## Export PDF
@@ -382,15 +433,17 @@ pdf(paste0(Name_ExportFolder, "/", Name_Export, "_MainResult_2.pdf"),
     width = pdf_width, height = pdf_height)
 print(combined_plots1_1 / combined_Percent_plot)
 print(combined_plots2_1 / combined_Percent_plot2)
+grid.arrange(legend1_plot, legend2_plot, ncol = 1)
+
 dev.off()
 
 
 
-# # 移除环境中的其他对象
-# rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","Name_ExportFolder","Name_Export",
-#                         "long_metadata", "seuratObject_Sample", "seuratObject_Ref")))
-#
-# # Export RData
-# save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
-#
+# 移除环境中的其他对象
+rm(list=setdiff(ls(), c("All_accuracy_data","Metadata","Name_ExportFolder","Name_Export",
+                        "long_metadata", "seuratObject_Sample", "seuratObject_Ref")))
+
+# Export RData
+save.image(paste0(Name_ExportFolder,"/", Name_Export,".RData"))
+
 
