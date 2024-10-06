@@ -6,7 +6,9 @@
 # path <- "D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20240205_GSE132044_OriQC_2LR_Rank_padj005/#_AllMix_Export_20240205_GSE132044_OriQC_2LR_Rank_padj005"
 # path <- "D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20231209_GSE132044_OriQC_DeBug/#_AllMix_Export_GSE132044_OriQC_DeBug_Sum"
 # path <-"D:/Dropbox/##_GitHub/###_VUMC/CTAEvaluator_20240205_GSE132044_OriQC_2LR_padj005/#_AllMix_Export_20240205_GSE132044_OriQC_2LR_padj005"
-path <-"D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results_HLCA_core/Export_HLCA_core_20240808"
+# path <-"D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results_HLCA_core/Export_HLCA_core_20240808"
+
+path <-"D:/Dropbox/##_GitHub/###_VUMC/VICTORS_Paper_Results/Export_GSE132044_20240712/Export_GSE132044_MislabelB cell"
 
 
 # 使用list.files()找到所有的.RData檔案
